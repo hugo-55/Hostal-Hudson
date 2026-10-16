@@ -1,5 +1,7 @@
 # Hostal Hudson — versión renovada (demo con permiso de los dueños)
 
+Vivo en: https://hostal-hudson.vercel.app/ — Repo: https://github.com/hugo-55/Hostal-Hudson
+
 Rebuild rápido del sitio 2016 (Joomla) en Next.js estático.
 
 ## Qué mejora vs el original
