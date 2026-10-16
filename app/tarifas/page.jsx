@@ -1,5 +1,7 @@
 'use client';
 import WhatsAppButton, { Footer } from '../../components/Chrome';
+import Estimator from '../../components/Estimator';
+import Availability from '../../components/Availability';
 import { useLang } from '../../lib/i18n';
 import { waLink, HOSTAL_PHONE_DISPLAY } from '../../lib/site';
 
@@ -28,6 +30,9 @@ export default function Tarifas() {
         <h3>{t.includesTitle}</h3>
         <p>{t.includesText}</p>
       </div>
+
+      <Estimator />
+      <Availability />
 
       <Footer />
       <WhatsAppButton />
