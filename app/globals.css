@@ -229,6 +229,26 @@ body[data-theme="dark"] .sticky-book { background: #292524; }
 /* Icon button (theme toggle) */
 .icon-btn { background: none; border: 1.5px solid var(--line); border-radius: 50%; width: 34px; height: 34px; cursor: pointer; font-size: 16px; display: inline-flex; align-items: center; justify-content: center; }
 
+/* Occupancy strip + bars */
+.occ-strip { display: grid; grid-template-columns: repeat(15, 1fr); gap: 4px; font-size: 12px; text-align: center; }
+.occ-day { background: #dcfce7; color: #166534; border-radius: 6px; padding: 6px 0; font-weight: 700; position: relative; }
+.occ-day.busy { background: #fee2e2; color: #991b1b; }
+.occ-day.today { outline: 2px solid var(--teal-700); }
+.occ-day i { font-style: normal; position: absolute; top: 0; right: 3px; font-size: 10px; color: #15803d; }
+.bar-row { display: flex; align-items: center; gap: 10px; margin: 8px 0; font-size: 14px; }
+.bar-label { width: 70px; font-weight: 700; }
+.bar-track { flex: 1; background: #e7e5e4; border-radius: 6px; height: 14px; overflow: hidden; }
+.bar-fill { background: linear-gradient(90deg, var(--teal-700), var(--green, #16a34a)); height: 100%; border-radius: 6px; }
+.bar-val { width: 110px; text-align: right; font-weight: 700; }
+
+/* Print: solo la tabla de reservas */
+@media print {
+  .topbar, .sticky-book, .wa-float, .no-print, .footer { display: none !important; }
+  .container { padding: 0; max-width: 100%; }
+  body { background: #fff; }
+  .card { box-shadow: none; break-inside: avoid; }
+}
+
 /* Accessibility: visible focus */
 a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, summary:focus-visible {
   outline: 3px solid var(--teal-700);

@@ -19,6 +19,36 @@ function daysUntil(iso) {
 }
 const rowKey = (r) => `${r.nombre}|${r.llegada}`;
 
+// Tira de ocupación 30 días: rojo = marcado ocupado, verde = llega pasajero.
+function Occupancy({ rows, busy }) {
+  const days = [];
+  const t = new Date(); t.setHours(0, 0, 0, 0);
+  const arrivals = {};
+  (rows || []).forEach((r) => {
+    const d = String(r.llegada || '').slice(0, 10);
+    if (/^\d{4}-\d{2}-\d{2}$/.test(d)) arrivals[d] = (arrivals[d] || 0) + 1;
+  });
+  for (let k = 0; k < 30; k++) {
+    const d = new Date(t);
+    d.setDate(d.getDate() + k);
+    const iso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    days.push({ iso, label: d.getDate(), busy: busy.has(iso), arr: arrivals[iso] || 0, today: k === 0 });
+  }
+  const occ = Math.round((days.filter((d) => d.busy).length / 30) * 100);
+  return (
+    <>
+      <p className="muted">Ocupación marcada: <strong>{occ}%</strong> · 🟢 = llegada ese día</p>
+      <div className="occ-strip">
+        {days.map((d) => (
+          <span key={d.iso} title={`${d.iso}${d.arr ? ` · ${d.arr} llegada(s)` : ''}`} className={`occ-day${d.busy ? ' busy' : ''}${d.today ? ' today' : ''}`}>
+            {d.label}{d.arr > 0 && <i>●</i>}
+          </span>
+        ))}
+      </div>
+    </>
+  );
+}
+
 function monthGrid(year, month, busy, toggle) {
   const startPad = (new Date(year, month, 1).getDay() + 6) % 7;
   const days = new Date(year, month + 1, 0).getDate();
@@ -93,7 +123,15 @@ export default function AdminPanel() {
     const prox7 = activas.filter((r) => { const d = daysUntil(r.llegada); return d >= 0 && d <= 7; });
     const noches = activas.reduce((a, r) => a + (Number(r.noches) || 0), 0);
     const ingreso = activas.reduce((a, r) => a + (Number(r.noches) || 0) * (Number(r.personas) || 0) * RATE_PER_PERSON_NIGHT, 0);
-    return { total: list.length, prox7: prox7.length, noches, ingreso, proxList: prox7.slice(0, 5) };
+    const byMonth = {};
+    activas.forEach((r) => {
+      const m = String(r.llegada || '').slice(0, 7);
+      if (!/^\d{4}-\d{2}$/.test(m)) return;
+      byMonth[m] = (byMonth[m] || 0) + (Number(r.noches) || 0) * (Number(r.personas) || 0) * RATE_PER_PERSON_NIGHT;
+    });
+    const months = Object.keys(byMonth).sort().slice(-4);
+    const maxM = Math.max(1, ...months.map((m) => byMonth[m]));
+    return { total: list.length, prox7: prox7.length, noches, ingreso, proxList: prox7.slice(0, 5), byMonth, months, maxM };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rows, estados]);
 
@@ -172,6 +210,26 @@ export default function AdminPanel() {
           </div>
           <p className="muted">*Con tarifa referencial actual. {demo && 'Datos de ejemplo — conecta RESERVAS_READ_URL.'}</p>
 
+          <div className="card">
+            <h3>Ocupación próximos 30 días</h3>
+            <Occupancy rows={rows || []} busy={busy} />
+          </div>
+
+          {kpis.months.length > 0 && (
+            <div className="card">
+              <h3>Ingreso estimado por mes</h3>
+              {kpis.months.map((m) => (
+                <div key={m} className="bar-row">
+                  <span className="bar-label">{m}</span>
+                  <div className="bar-track">
+                    <div className="bar-fill" style={{ width: `${Math.round((kpis.byMonth[m] / kpis.maxM) * 100)}%` }} />
+                  </div>
+                  <span className="bar-val">{fmtCLP(kpis.byMonth[m])}</span>
+                </div>
+              ))}
+            </div>
+          )}
+
           {kpis.proxList.length > 0 && (
             <div className="alert-low" style={{ background: '#f0fdf4', borderColor: '#bbf7d0', color: '#166534' }}>
               🛎️ Próximas llegadas: {kpis.proxList.map((r) => `${r.nombre} (${fmtDate(r.llegada)})`).join(' · ')}
@@ -192,9 +250,10 @@ export default function AdminPanel() {
                 </select>
               </div>
             </div>
-            <p>
+            <p className="no-print">
               <button className="btn btn-outline" onClick={loadBookings}>↻ Actualizar</button>{' '}
-              <button className="btn btn-outline" onClick={exportCSV}>⬇ Exportar CSV</button>
+              <button className="btn btn-outline" onClick={exportCSV}>⬇ Exportar CSV</button>{' '}
+              <button className="btn btn-outline" onClick={() => window.print()}>🖨 Imprimir llegadas</button>
             </p>
             {!rows ? <p>Cargando...</p> : filtered.length === 0 ? <p>Sin resultados.</p> : (
               <table>
