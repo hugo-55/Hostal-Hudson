@@ -3,9 +3,10 @@ import WhatsAppButton, { Footer } from '../components/Chrome';
 import Slideshow from '../components/Slideshow';
 import BookingBar from '../components/BookingBar';
 import ReservaCTA from '../components/ReservaCTA';
+import Weather from '../components/Weather';
 import { TestimonialCarousel, CountUp } from '../components/Widgets';
 import { useLang } from '../lib/i18n';
-import { SERVICES, TESTIMONIALS, waLink, MAPS_URL, HOSTAL_PHONE_DISPLAY, PAGESPEED_URL } from '../lib/site';
+import { SERVICES, TESTIMONIALS, waLink, MAPS_URL, REVIEW_URL, HOSTAL_PHONE_DISPLAY, PAGESPEED_URL } from '../lib/site';
 
 const SLIDES = [
   { src: '/img/slide1.jpg', alt: 'Hostal Hudson frente al río Aysén' },
@@ -78,6 +79,12 @@ export default function Home() {
           </p>
         </div>
 
+        <div className="card">
+          <h3>{t.review.title}</h3>
+          <p className="muted">{t.review.text}</p>
+          <a className="btn btn-outline" href={REVIEW_URL || waLink('Hola, me alojé en el hostal y quiero dejar una opinión en Google')} target="_blank">{t.review.btn}</a>
+        </div>
+
         <h2 className="section-title">{t.visitTitle}</h2>
         <p className="section-sub">{t.visitSub}</p>
         <div className="visit-strip">
@@ -92,6 +99,7 @@ export default function Home() {
         <div className="grid-2" style={{ marginTop: 18 }}>
           <div className="card">
             <h3>📍 {t.locationTitle}</h3>
+            <p><Weather /></p>
             <p>{t.locationText}</p>
             <p><a className="btn btn-outline" href={MAPS_URL} target="_blank">{t.directions}</a></p>
           </div>

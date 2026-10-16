@@ -17,8 +17,7 @@ export const metadata = {
   description:
     'Hostal familiar en pleno centro de Puerto Aysén, frente al río y a 2 cuadras de la plaza. Wi-Fi gratis, desayuno incluido, recepción 24 h. Reserva por WhatsApp.',
   keywords: ['hostal puerto aysén', 'alojamiento aysén', 'hospedaje patagonia', 'hostal hudson'],
-  robots: 'index, follow',
-  openGraph: {
+  robots: 'index, follow',  openGraph: {
     type: 'website',
     locale: 'es_CL',
     url: SITE_URL,
@@ -33,6 +32,10 @@ export const metadata = {
     description: 'Alojamiento familiar en Puerto Aysén. Reserva por WhatsApp en 1 minuto.',
     images: [`${SITE_URL}/img/slide1.jpg`],
   },
+};
+
+export const viewport = {
+  themeColor: '#164e63',
 };
 
 export default function RootLayout({ children }) {
