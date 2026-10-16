@@ -386,7 +386,8 @@ export default function AdminPanel() {
               <button className="btn btn-outline" onClick={() => window.print()}>🖨 Imprimir llegadas</button>
             </p>
             {!rows ? <p>Cargando...</p> : filtered.length === 0 ? <p>Sin resultados.</p> : (
-              <table>
+              <div className="admin-table-wrap">
+              <table className="admin-table">
                 <thead><tr><th>Nombre</th><th>Llegada</th><th>Estado</th><th>Msg</th></tr></thead>
                 <tbody>
                   {filtered.map((r, k) => {
@@ -396,7 +397,7 @@ export default function AdminPanel() {
                     return (
                       <>
                         <tr key={rk}>
-                          <td>
+                          <td className="name-cell">
                             <strong>{r.nombre}</strong>
                             {notaDe(r) ? <div className="note-preview">📝 {notaDe(r).slice(0, 60)}{notaDe(r).length > 60 ? '…' : ''}</div> : null}
                             <button className="btn btn-outline note-btn" onClick={() => setNoteOpen(noteOpen === rk ? null : rk)}>
@@ -409,7 +410,7 @@ export default function AdminPanel() {
                               {ESTADOS.map((s) => <option key={s} value={s}>{s}</option>)}
                             </select>
                           </td>
-                          <td style={{ whiteSpace: 'nowrap' }}>
+                          <td className="msg-cell" style={{ whiteSpace: 'nowrap' }}>
                             {wa1 ? (
                               <>
                                 <a className="btn btn-green" style={{ padding: '6px 10px' }} href={wa1} target="_blank" title="Te esperamos mañana">🛬</a>{' '}
@@ -435,6 +436,7 @@ export default function AdminPanel() {
                   })}
                 </tbody>
               </table>
+              </div>
             )}
             <p className="muted">Los estados se guardan en este navegador (ideal: PC del hostal).</p>
           </div>
