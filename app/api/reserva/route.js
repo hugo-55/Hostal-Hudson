@@ -1,6 +1,6 @@
 import { SHEET_ENDPOINT, NOTIFY_ENDPOINT, NOTIFY_TO } from '../../../lib/site';
 
-// POST { name, llegada, noches, personas } → Sheets del hostal + aviso WhatsApp.
+// POST { name, llegada, noches, personas, telefono } → Sheets del hostal + aviso WhatsApp.
 // Sin endpoints = modo demo (reserva por WhatsApp manual, como hoy).
 export async function POST(req) {
   let body;
@@ -9,7 +9,7 @@ export async function POST(req) {
   } catch {
     return Response.json({ ok: false, error: 'JSON inválido' }, { status: 400 });
   }
-  const { name = '', llegada = '', noches = 1, personas = 2 } = body;
+  const { name = '', llegada = '', noches = 1, personas = 2, telefono = '' } = body;
   if (!String(name).trim() || !String(llegada).trim()) {
     return Response.json({ ok: false, error: 'Faltan nombre o fecha' }, { status: 400 });
   }
@@ -19,6 +19,7 @@ export async function POST(req) {
     llegada: String(llegada).slice(0, 20),
     noches: Math.max(1, Math.min(60, Number(noches) || 1)),
     personas: Math.max(1, Math.min(20, Number(personas) || 1)),
+    telefono: String(telefono || '').replace(/\D/g, '').slice(0, 15),
   };
 
   let sheetMode = 'demo';

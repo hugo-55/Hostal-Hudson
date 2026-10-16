@@ -1,11 +1,23 @@
 'use client';
-import { useEffect, useState } from 'react';
-import { RESERVAS_READ_URL } from '../lib/site';
+import { useEffect, useMemo, useState } from 'react';
+import { RESERVAS_READ_URL, RATE_PER_PERSON_NIGHT } from '../lib/site';
 
 const DEMO_ROWS = [
-  { fecha_registro: '2026-10-20T15:00:00', nombre: 'María G. (ejemplo)', llegada: '2026-11-05', noches: 2, personas: 2 },
-  { fecha_registro: '2026-10-21T10:30:00', nombre: 'John S. (ejemplo)', llegada: '2026-11-12', noches: 3, personas: 1 },
+  { fecha_registro: '2026-10-20T15:00:00', nombre: 'María G. (ejemplo)', llegada: '2026-11-05', noches: 2, personas: 2, telefono: '' },
+  { fecha_registro: '2026-10-21T10:30:00', nombre: 'John S. (ejemplo)', llegada: '2026-11-12', noches: 3, personas: 1, telefono: '' },
 ];
+
+const ESTADOS = ['pendiente', 'confirmada', 'check-in', 'check-out', 'cancelada'];
+const ESTADO_COLOR = { pendiente: 'badge-warn', confirmada: 'ok-pill', 'check-in': 'ok-pill', 'check-out': '', cancelada: 'low-pill' };
+
+function fmtDate(iso) {
+  try { return new Date(iso).toLocaleDateString('es-CL'); } catch { return String(iso).slice(0, 10); }
+}
+function daysUntil(iso) {
+  const t = new Date(); t.setHours(0, 0, 0, 0);
+  return Math.round((new Date(iso).setHours(0, 0, 0, 0) - t) / 86400000);
+}
+const rowKey = (r) => `${r.nombre}|${r.llegada}`;
 
 function monthGrid(year, month, busy, toggle) {
   const startPad = (new Date(year, month, 1).getDay() + 6) % 7;
@@ -23,7 +35,8 @@ function monthGrid(year, month, busy, toggle) {
   return cells;
 }
 
-// Panel privado del dueño: reservas, disponibilidad y estado. Solo español.
+// Panel privado del dueño. Solo español.
+// Límite honesto: los estados viven en este navegador (ideal 1 PC del hostal).
 export default function AdminPanel() {
   const [key, setKey] = useState('');
   const [open, setOpen] = useState(false);
@@ -31,14 +44,19 @@ export default function AdminPanel() {
   const [rows, setRows] = useState(null);
   const [demo, setDemo] = useState(false);
   const [busy, setBusy] = useState(new Set());
+  const [estados, setEstados] = useState({});
   const [status, setStatus] = useState(null);
   const [copied, setCopied] = useState(false);
+  const [q, setQ] = useState('');
+  const [fEstado, setFEstado] = useState('todas');
 
   useEffect(() => {
     try {
       if (sessionStorage.getItem('hostal-admin') === '1') setOpen(true);
       const saved = localStorage.getItem('hostal-busy');
       if (saved) setBusy(new Set(JSON.parse(saved)));
+      const es = localStorage.getItem('hostal-estados');
+      if (es) setEstados(JSON.parse(es));
     } catch {}
     fetch('/api/status').then((r) => r.json()).then(setStatus).catch(() => {});
   }, []);
@@ -59,6 +77,45 @@ export default function AdminPanel() {
       .catch(() => { setRows(DEMO_ROWS); setDemo(true); });
   }
   useEffect(() => { if (open) loadBookings(); }, [open ]);
+
+  const estadoDe = (r) => estados[rowKey(r)] || 'pendiente';
+  function setEstado(r, v) {
+    setEstados((prev) => {
+      const next = { ...prev, [rowKey(r)]: v };
+      try { localStorage.setItem('hostal-estados', JSON.stringify(next)); } catch {}
+      return next;
+    });
+  }
+
+  const kpis = useMemo(() => {
+    const list = rows || [];
+    const activas = list.filter((r) => estadoDe(r) !== 'cancelada');
+    const prox7 = activas.filter((r) => { const d = daysUntil(r.llegada); return d >= 0 && d <= 7; });
+    const noches = activas.reduce((a, r) => a + (Number(r.noches) || 0), 0);
+    const ingreso = activas.reduce((a, r) => a + (Number(r.noches) || 0) * (Number(r.personas) || 0) * RATE_PER_PERSON_NIGHT, 0);
+    return { total: list.length, prox7: prox7.length, noches, ingreso, proxList: prox7.slice(0, 5) };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rows, estados]);
+
+  const filtered = useMemo(() => {
+    const list = rows || [];
+    return list.filter((r) => {
+      const okQ = !q || `${r.nombre} ${r.llegada}`.toLowerCase().includes(q.toLowerCase());
+      const okE = fEstado === 'todas' || estadoDe(r) === fEstado;
+      return okQ && okE;
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rows, estados, q, fEstado]);
+
+  function exportCSV() {
+    const head = 'nombre,llegada,noches,personas,telefono,estado';
+    const lines = filtered.map((r) => [r.nombre, r.llegada, r.noches, r.personas, r.telefono || '', estadoDe(r)].map((v) => `"${String(v ?? '').replace(/"/g, '""')}"`).join(','));
+    const blob = new Blob([[head, ...lines].join('\n')], { type: 'text/csv' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'reservas.csv';
+    a.click();
+  }
 
   function toggle(iso) {
     setBusy((prev) => {
@@ -94,6 +151,7 @@ export default function AdminPanel() {
 
   const now = new Date();
   const months = [0, 1].map((d) => new Date(now.getFullYear(), now.getMonth() + d, 1));
+  const fmtCLP = (n) => `$${Number(n).toLocaleString('es-CL')}`;
 
   return (
     <div className="container">
@@ -105,20 +163,62 @@ export default function AdminPanel() {
       </p>
 
       {tab === 'bookings' && (
-        <div className="card">
-          <h3>Últimas reservas {demo && <span className="badge badge-warn">datos de ejemplo — conecta RESERVAS_READ_URL</span>}</h3>
-          {!rows ? <p>Cargando...</p> : rows.length === 0 ? <p>No hay reservas todavía.</p> : (
-            <table>
-              <thead><tr><th>Nombre</th><th>Llegada</th><th>Noches</th><th>Personas</th></tr></thead>
-              <tbody>
-                {rows.map((r, k) => (
-                  <tr key={k}><td>{r.nombre}</td><td>{r.llegada}</td><td>{r.noches}</td><td>{r.personas}</td></tr>
-                ))}
-              </tbody>
-            </table>
+        <>
+          <div className="grid">
+            <div className="stat"><b>{kpis.total}</b><span>reservas totales</span></div>
+            <div className="stat"><b>{kpis.prox7}</b><span>llegan en 7 días</span></div>
+            <div className="stat"><b>{kpis.noches}</b><span>noches vendidas</span></div>
+            <div className="stat"><b>{fmtCLP(kpis.ingreso)}</b><span>ingreso estimado*</span></div>
+          </div>
+          <p className="muted">*Con tarifa referencial actual. {demo && 'Datos de ejemplo — conecta RESERVAS_READ_URL.'}</p>
+
+          {kpis.proxList.length > 0 && (
+            <div className="alert-low" style={{ background: '#f0fdf4', borderColor: '#bbf7d0', color: '#166534' }}>
+              🛎️ Próximas llegadas: {kpis.proxList.map((r) => `${r.nombre} (${fmtDate(r.llegada)})`).join(' · ')}
+            </div>
           )}
-          <p><button className="btn btn-outline" onClick={loadBookings}>↻ Actualizar</button></p>
-        </div>
+
+          <div className="card">
+            <div className="grid-2">
+              <div>
+                <label>Buscar</label>
+                <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Nombre o fecha..." />
+              </div>
+              <div>
+                <label>Estado</label>
+                <select value={fEstado} onChange={(e) => setFEstado(e.target.value)}>
+                  <option value="todas">Todas</option>
+                  {ESTADOS.map((s) => <option key={s} value={s}>{s}</option>)}
+                </select>
+              </div>
+            </div>
+            <p>
+              <button className="btn btn-outline" onClick={loadBookings}>↻ Actualizar</button>{' '}
+              <button className="btn btn-outline" onClick={exportCSV}>⬇ Exportar CSV</button>
+            </p>
+            {!rows ? <p>Cargando...</p> : filtered.length === 0 ? <p>Sin resultados.</p> : (
+              <table>
+                <thead><tr><th>Nombre</th><th>Llegada</th><th>N/P</th><th>Estado</th><th></th></tr></thead>
+                <tbody>
+                  {filtered.map((r, k) => (
+                    <tr key={k}>
+                      <td><strong>{r.nombre}</strong></td>
+                      <td>{fmtDate(r.llegada)}<br /><span className="muted">{r.noches}n · {r.personas}p</span></td>
+                      <td>{r.noches}/{r.personas}</td>
+                      <td>
+                        <select value={estadoDe(r)} onChange={(e) => setEstado(r, e.target.value)} style={{ margin: 0, padding: '6px' }}>
+                          {ESTADOS.map((s) => <option key={s} value={s}>{s}</option>)}
+                        </select>
+                      </td>
+                      <td>{r.telefono ? <a className="btn btn-green" style={{ padding: '6px 10px' }} href={`https://wa.me/${r.telefono}?text=${encodeURIComponent(`Hola ${r.nombre}, te escribimos de Hostal Hudson por tu reserva del ${fmtDate(r.llegada)}.`)}`} target="_blank">WA</a> : <span className="muted">—</span>}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+            <p className="muted">Los estados se guardan en este navegador (ideal: PC del hostal).</p>
+          </div>
+        </>
       )}
 
       {tab === 'avail' && (

@@ -7,6 +7,7 @@ import { useLang } from '../lib/i18n';
 export default function ReservaCTA({ title } = {}) {
   const { t } = useLang();
   const [name, setName] = useState('');
+  const [telefono, setTelefono] = useState('');
   const [llegada, setLlegada] = useState('');
   const [noches, setNoches] = useState(1);
   const [personas, setPersonas] = useState(2);
@@ -23,7 +24,7 @@ export default function ReservaCTA({ title } = {}) {
       const r = await fetch('/api/reserva', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, llegada, noches, personas }),
+        body: JSON.stringify({ name, llegada, noches, personas, telefono }),
       });
       const data = await r.json();
       if (!data.ok) throw new Error(data.error || 'Error');
@@ -53,6 +54,8 @@ export default function ReservaCTA({ title } = {}) {
       <form onSubmit={handleSubmit}>
         <label>{t.fName}</label>
         <input value={name} onChange={(e) => setName(e.target.value)} placeholder="María" />
+        <label>{t.fPhone}</label>
+        <input value={telefono} onChange={(e) => setTelefono(e.target.value)} placeholder="+56 9 ..." inputMode="tel" />
         <div className="grid-2">
           <div>
             <label>{t.fArrival}</label>
