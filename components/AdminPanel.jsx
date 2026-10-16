@@ -155,8 +155,10 @@ export default function AdminPanel() {
   const [fOrigen, setFOrigen] = useState('todos');
   const [showNew, setShowNew] = useState(false);
   const [manual, setManual] = useState([]);
+  const [overrides, setOverrides] = useState({});
   const [form, setForm] = useState({ nombre: '', llegada: '', noches: 1, personas: 2, telefono: '', nota: '' });
   const [editingId, setEditingId] = useState(null);
+  const [editingKey, setEditingKey] = useState(null);
   const [saving, setSaving] = useState(false);
   const [repMonth, setRepMonth] = useState(() => { const t = new Date(); return `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}`; });
 
@@ -169,6 +171,8 @@ export default function AdminPanel() {
       if (es) setEstados(JSON.parse(es));
       const mn = localStorage.getItem('hostal-manual');
       if (mn) setManual(JSON.parse(mn));
+      const ov = localStorage.getItem('hostal-overrides');
+      if (ov) setOverrides(JSON.parse(ov));
       const nt = localStorage.getItem('hostal-notas');
       if (nt) setNotas(JSON.parse(nt));
     } catch {}
@@ -209,11 +213,14 @@ export default function AdminPanel() {
     });
   }
 
-  // Filas visibles: planilla + manuales (las manuales siempre, con insignia).
+  // Filas visibles: planilla (+ correcciones locales) + manuales.
   const allRows = useMemo(() => {
-    const base = (rows || []).map((r) => ({ ...r, origen: r.origen || 'web' }));
+    const base = (rows || []).map((r) => {
+      const ov = overrides[rowKey(r)];
+      return ov ? { ...r, ...ov, editada: true } : { ...r, origen: r.origen || 'web' };
+    });
     return [...base, ...manual];
-  }, [rows, manual]);
+  }, [rows, manual, overrides]);
 
   const kpis = useMemo(() => {
     const list = allRows;
@@ -283,21 +290,33 @@ export default function AdminPanel() {
     if (f.llegada < todayISO()) return alert('La llegada no puede ser pasada');
     setSaving(true);
     if (editingId) {
-      setManual((prev) => {
-        const next = prev.map((m) => m.id === editingId ? {
-          ...m,
-          nombre: f.nombre.trim().slice(0, 80),
-          llegada: f.llegada.slice(0, 10),
-          noches: Math.max(1, Math.min(60, Number(f.noches) || 1)),
-          personas: Math.max(1, Math.min(20, Number(f.personas) || 1)),
-          telefono: String(f.telefono || '').replace(/\D/g, '').slice(0, 15),
-        } : m);
-        try { localStorage.setItem('hostal-manual', JSON.stringify(next)); } catch {}
-        return next;
-      });
-      const target = { id: editingId, nombre: f.nombre };
+      const isManual = manual.some((m) => m.id === editingId);
+      const patch = {
+        nombre: f.nombre.trim().slice(0, 80),
+        llegada: f.llegada.slice(0, 10),
+        noches: Math.max(1, Math.min(60, Number(f.noches) || 1)),
+        personas: Math.max(1, Math.min(20, Number(f.personas) || 1)),
+        telefono: String(f.telefono || '').replace(/\D/g, '').slice(0, 15),
+      };
+      if (isManual) {
+        setManual((prev) => {
+          const next = prev.map((m) => m.id === editingId ? { ...m, ...patch } : m);
+          try { localStorage.setItem('hostal-manual', JSON.stringify(next)); } catch {}
+          return next;
+        });
+      } else {
+        // Reserva de la web: corrección local (la planilla original no cambia).
+        const okey = editingKey || editingId;
+        setOverrides((prev) => {
+          const next = { ...prev, [okey]: patch };
+          try { localStorage.setItem('hostal-overrides', JSON.stringify(next)); } catch {}
+          return next;
+        });
+      }
+      const target = { id: editingKey || editingId, nombre: patch.nombre, llegada: patch.llegada };
       if (f.nota.trim()) setNota(target, f.nota.trim());
       setEditingId(null);
+      setEditingKey(null);
       setForm({ nombre: '', llegada: '', noches: 1, personas: 2, telefono: '', nota: '' });
       setSaving(false);
       setShowNew(false);
@@ -333,7 +352,8 @@ export default function AdminPanel() {
 
   function startEdit(r) {
     setForm({ nombre: r.nombre, llegada: String(r.llegada).slice(0, 10), noches: r.noches, personas: r.personas, telefono: r.telefono || '', nota: notaDe(r) });
-    setEditingId(r.id);
+    setEditingId(r.id || rowKey(r));
+    setEditingKey(rowKey(r));
     setShowNew(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -529,7 +549,7 @@ export default function AdminPanel() {
               </div>
             </div>
             <p className="no-print">
-              <button className="btn btn-green" onClick={() => { setEditingId(null); setForm({ nombre: '', llegada: '', noches: 1, personas: 2, telefono: '', nota: '' }); setShowNew(!showNew); }}>＋ Nueva reserva directa</button>{' '}
+              <button className="btn btn-green" onClick={() => { setEditingId(null); setEditingKey(null); setForm({ nombre: '', llegada: '', noches: 1, personas: 2, telefono: '', nota: '' }); setShowNew(!showNew); }}>＋ Nueva reserva directa</button>{' '}
               <button className="btn btn-outline" onClick={loadBookings}>↻ Actualizar</button>{' '}
               <button className="btn btn-outline" onClick={exportCSV}>⬇ Exportar CSV</button>{' '}
               <button className="btn btn-outline" onClick={() => window.print()}>🖨 Imprimir llegadas</button>{' '}
@@ -538,8 +558,9 @@ export default function AdminPanel() {
             </p>
             {showNew && (
               <form onSubmit={saveManual} className="card" style={{ border: '2px solid #16a34a', background: '#f0fdf4' }}>
-                <h3>{editingId ? '✏️ Editar reserva directa' : '📞 Nueva reserva directa'}</h3>
-                <p className="muted">Para pasajeros que reservaron por teléfono, WhatsApp o presencial. Queda en estado <strong>confirmada</strong>.</p>
+                <h3>{editingId ? '✏️ Editar reserva' : '📞 Nueva reserva directa'}</h3>
+                {!editingId && <p className="muted">Para pasajeros que reservaron por teléfono, WhatsApp o presencial. Queda en estado <strong>confirmada</strong>.</p>}
+                {editingId && !String(editingId).startsWith('m') && <p className="muted">Corrección local de una reserva web: la planilla original no cambia.</p>}
                 <div className="grid-2">
                   <div>
                     <label>Nombre *</label>
@@ -564,7 +585,7 @@ export default function AdminPanel() {
                 <input value={form.nota} onChange={(e) => setForm({ ...form, nota: e.target.value })} placeholder="Ej. paga al llegar..." />
                 <p>
                   <button className="btn btn-green" type="submit" disabled={saving}>{saving ? 'Guardando...' : '✓ Guardar reserva'}</button>{' '}
-                  <button className="btn btn-outline" type="button" onClick={() => setShowNew(false)}>Cancelar</button>
+                  <button className="btn btn-outline" type="button" onClick={() => { setShowNew(false); setEditingId(null); setEditingKey(null); }}>Cancelar</button>
                 </p>
               </form>
             )}
@@ -582,7 +603,8 @@ export default function AdminPanel() {
                         <tr key={rk}>
                           <td className="name-cell">
                             <strong>{r.nombre}</strong>{' '}
-                            <span title={r.origen === 'manual' ? 'Reserva directa (teléfono/presencial)' : 'Reserva por la web'}>{r.origen === 'manual' ? '📞' : '🌐'}</span>
+                            <span title={r.origen === 'manual' ? 'Reserva directa (teléfono/presencial)' : 'Reserva por la web'}>{r.origen === 'manual' ? '📞' : '🌐'}</span>{' '}
+                            {r.editada && <span className="badge badge-warn" title="Corregida desde el panel (la planilla original no cambia)">✏️ editada</span>}
                             {notaDe(r) ? <div className="note-preview">📝 {notaDe(r).slice(0, 60)}{notaDe(r).length > 60 ? '…' : ''}</div> : null}
                             <button className="btn btn-outline note-btn" onClick={() => setNoteOpen(noteOpen === rk ? null : rk)}>
                               {notaDe(r) ? '✏️ Editar nota' : '＋ Nota'}
@@ -595,12 +617,10 @@ export default function AdminPanel() {
                             </select>
                           </td>
                           <td className="msg-cell" style={{ whiteSpace: 'nowrap' }}>
+                            <button className="btn btn-outline" style={{ padding: '6px 10px' }} onClick={() => startEdit(r)} title="Editar">✏️</button>{' '}
                             {r.origen === 'manual' && (
-                              <>
-                                <button className="btn btn-outline" style={{ padding: '6px 10px' }} onClick={() => startEdit(r)} title="Editar">✏️</button>{' '}
-                                <button className="btn btn-outline" style={{ padding: '6px 10px' }} onClick={() => deleteManual(r)} title="Eliminar">🗑️</button>{' '}
-                              </>
-                            )}
+                              <button className="btn btn-outline" style={{ padding: '6px 10px' }} onClick={() => deleteManual(r)} title="Eliminar">🗑️</button>
+                            )}{' '}
                             {wa1 ? (
                               <>
                                 <a className="btn btn-green" style={{ padding: '6px 10px' }} href={wa1} target="_blank" title="Te esperamos mañana">🛬</a>{' '}
