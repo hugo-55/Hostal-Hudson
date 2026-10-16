@@ -2,6 +2,7 @@ import './globals.css';
 import { Fraunces, Inter } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/react';
 import { NavBar } from '../components/NavBar';
+import { StickyBook } from '../components/Widgets';
 import { LangProvider } from '../lib/i18n';
 import { SITE_URL } from '../lib/site';
 
@@ -67,6 +68,7 @@ export default function RootLayout({ children }) {
         <LangProvider>
           <NavBar />
           {children}
+          <StickyBook />
         </LangProvider>
         <Analytics />
       </body>

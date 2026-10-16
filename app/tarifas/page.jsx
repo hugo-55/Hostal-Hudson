@@ -2,6 +2,7 @@
 import WhatsAppButton, { Footer } from '../../components/Chrome';
 import Estimator from '../../components/Estimator';
 import Availability from '../../components/Availability';
+import { PageTitle, Breadcrumb } from '../../components/Widgets';
 import { useLang } from '../../lib/i18n';
 import { waLink, HOSTAL_PHONE_DISPLAY } from '../../lib/site';
 
@@ -9,6 +10,8 @@ export default function Tarifas() {
   const { t } = useLang();
   return (
     <div className="container">
+      <PageTitle title={t.nav.rates} />
+      <Breadcrumb trail={[t.nav.rates]} />
       <h1>{t.nav.rates}</h1>
       <p className="muted">{t.ratesSub}</p>
 

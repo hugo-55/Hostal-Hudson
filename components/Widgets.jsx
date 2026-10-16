@@ -1,5 +1,7 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
+import { waLink, HOSTAL_PHONE, HOSTAL_PHONE_DISPLAY } from '../lib/site';
+import { useLang } from '../lib/i18n';
 
 // Carrusel de testimonios + contador animado al entrar en pantalla.
 export function TestimonialCarousel({ items }) {
@@ -48,4 +50,34 @@ export function CountUp({ to, suffix = '' }) {
     return () => { obs.disconnect(); cancelAnimationFrame(raf); };
   }, [to]);
   return <b ref={ref}>{val}{suffix}</b>;
+}
+
+// Título único por página (las páginas son client, esto actualiza document.title).
+export function PageTitle({ title }) {
+  useEffect(() => {
+    document.title = `${title} | Hostal Hudson`;
+  }, [title]);
+  return null;
+}
+
+// Migas de pan Home › Página.
+export function Breadcrumb({ trail }) {
+  const { t } = useLang();
+  return (
+    <p className="muted crumbs">
+      <a href="/">{t.nav.home}</a>
+      {trail.map((s) => <span key={s}> › {s}</span>)}
+    </p>
+  );
+}
+
+// Barra de reserva fija solo en móvil: siempre visible al hacer scroll.
+export function StickyBook() {
+  const { t } = useLang();
+  return (
+    <div className="sticky-book">
+      <a href={`tel:+${HOSTAL_PHONE}`}>📞 {HOSTAL_PHONE_DISPLAY}</a>
+      <a className="btn btn-green" href={waLink('Hola Hostal Hudson, quiero reservar')} target="_blank">{t.nav.book}</a>
+    </div>
+  );
 }

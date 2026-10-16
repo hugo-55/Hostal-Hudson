@@ -4,6 +4,7 @@ import Slideshow from '../components/Slideshow';
 import BookingBar from '../components/BookingBar';
 import ReservaCTA from '../components/ReservaCTA';
 import Weather from '../components/Weather';
+import SmartImg from '../components/SmartImg';
 import { TestimonialCarousel, CountUp } from '../components/Widgets';
 import { useLang } from '../lib/i18n';
 import { SERVICES, TESTIMONIALS, waLink, MAPS_URL, REVIEW_URL, HOSTAL_PHONE_DISPLAY, PAGESPEED_URL } from '../lib/site';
@@ -63,7 +64,7 @@ export default function Home() {
         <div className="grid">
           {t.roomCards.map((r, k) => (
             <div className="card room" key={r.name}>
-              <img src={ROOM_IMGS[k]} alt={r.name} loading="lazy" />
+              <SmartImg src={ROOM_IMGS[k]} alt={r.name} height={200} />
               <strong>{r.name}</strong>
               <p className="muted">{r.desc}</p>
               <a href="/habitaciones">{t.roomsCta}</a>
@@ -90,7 +91,7 @@ export default function Home() {
         <div className="visit-strip">
           {VISIT.map((v) => (
             <a key={v.src} href="/galeria" className="visit-card">
-              <img src={v.src} alt={v.alt} loading="lazy" />
+              <SmartImg src={v.src} alt={v.alt} height={190} />
               <span>{v.alt}</span>
             </a>
           ))}

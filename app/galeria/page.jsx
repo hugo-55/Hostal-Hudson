@@ -1,6 +1,7 @@
 'use client';
 import WhatsAppButton, { Footer } from '../../components/Chrome';
 import LightboxGallery from '../../components/Lightbox';
+import { PageTitle, Breadcrumb } from '../../components/Widgets';
 import { useLang } from '../../lib/i18n';
 
 const HOSTAL = [
@@ -26,6 +27,8 @@ export default function Galeria() {
   const { t } = useLang();
   return (
     <div className="container">
+      <PageTitle title={t.galleryTitle} />
+      <Breadcrumb trail={[t.galleryTitle]} />
       <h1>{t.galleryTitle}</h1>
       <p className="muted">{t.gallerySub}</p>
       <h2 className="section-title">{t.galleryHostal}</h2>

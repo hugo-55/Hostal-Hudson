@@ -1,5 +1,6 @@
 'use client';
 import { useCallback, useEffect, useState } from 'react';
+import SmartImg from './SmartImg';
 
 // Galería con lightbox: clic para ampliar, flechas y Escape.
 export default function LightboxGallery({ photos }) {
@@ -21,7 +22,7 @@ export default function LightboxGallery({ photos }) {
       <div className="gallery">
         {photos.map((p, k) => (
           <button key={p.src} className="g-item" onClick={() => setOpen(k)} aria-label={`Ampliar: ${p.alt}`}>
-            <img src={p.src} alt={p.alt} loading="lazy" />
+            <SmartImg src={p.src} alt={p.alt} height={230} />
           </button>
         ))}
       </div>

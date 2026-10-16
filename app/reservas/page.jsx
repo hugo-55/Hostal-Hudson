@@ -1,6 +1,7 @@
 'use client';
 import WhatsAppButton, { Footer } from '../../components/Chrome';
 import ReservaCTA from '../../components/ReservaCTA';
+import { PageTitle, Breadcrumb } from '../../components/Widgets';
 import { useLang } from '../../lib/i18n';
 import { ADDRESS, EMAIL, HOSTAL_PHONE_DISPLAY, MAPS_URL } from '../../lib/site';
 
@@ -8,6 +9,8 @@ export default function Reservas() {
   const { t } = useLang();
   return (
     <div className="container">
+      <PageTitle title={t.nav.book} />
+      <Breadcrumb trail={[t.nav.book]} />
       <h1>{t.bookPageTitle}</h1>
       <p className="muted">{t.bookPageSub}</p>
       <ReservaCTA />

@@ -1,6 +1,8 @@
 'use client';
 import WhatsAppButton, { Footer } from '../../components/Chrome';
 import ReservaCTA from '../../components/ReservaCTA';
+import SmartImg from '../../components/SmartImg';
+import { PageTitle, Breadcrumb } from '../../components/Widgets';
 import { useLang } from '../../lib/i18n';
 import { waLink } from '../../lib/site';
 
@@ -14,12 +16,14 @@ export default function Habitaciones() {
   const { t } = useLang();
   return (
     <div className="container">
+      <PageTitle title={t.nav.rooms} />
+      <Breadcrumb trail={[t.nav.rooms]} />
       <h1>{t.roomsPageTitle}</h1>
       <p className="muted">{t.roomsPageSub}</p>
       <div className="grid">
         {t.roomCards.map((r, k) => (
           <div className="card" key={r.name}>
-            <img src={ROOMS[k].img} alt={r.name} className="room-img" loading="lazy" />
+            <SmartImg src={ROOMS[k].img} alt={r.name} height={210} />
             <strong>{r.name}</strong>
             <p className="muted">{r.desc}</p>
             <a className="btn btn-green" href={waLink(`Hola, consulto disponibilidad: ${r.name}`)} target="_blank">{t.askRoom}</a>

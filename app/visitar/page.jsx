@@ -2,6 +2,8 @@
 import WhatsAppButton, { Footer } from '../../components/Chrome';
 import ReservaCTA from '../../components/ReservaCTA';
 import Weather from '../../components/Weather';
+import SmartImg from '../../components/SmartImg';
+import { PageTitle, Breadcrumb } from '../../components/Widgets';
 import { useLang } from '../../lib/i18n';
 import { waLink } from '../../lib/site';
 
@@ -19,13 +21,15 @@ export default function Visitar() {
   const v = t.visitar;
   return (
     <div className="container">
+      <PageTitle title={t.nav.visit} />
+      <Breadcrumb trail={[t.nav.visit]} />
       <h1>{v.title}</h1>
       <p className="muted">{v.sub}</p>
       <p><Weather /></p>
       <div className="grid">
         {SPOTS.map((s) => (
           <div className="card room" key={s.key}>
-            <img src={s.src} alt={v.spots[s.key].name} loading="lazy" />
+            <SmartImg src={s.src} alt={v.spots[s.key].name} height={200} />
             <strong>{v.spots[s.key].name}</strong>
             <p className="muted">{v.spots[s.key].desc}</p>
             <a className="btn btn-outline" href={waLink(`Hola, me interesa visitar: ${v.spots[s.key].name}. ¿Cómo llego desde el hostal?`)} target="_blank">{v.ask}</a>
