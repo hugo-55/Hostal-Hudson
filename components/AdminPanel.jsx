@@ -19,6 +19,68 @@ function daysUntil(iso) {
 }
 const rowKey = (r) => `${r.nombre}|${r.llegada}`;
 
+// Pestaña Conexiones: qué hace cada una, en qué modo está y cómo activarla.
+const GUIDES = {
+  sheet: 'https://github.com/hugo-55/Hostal-Hudson/blob/main/RESERVAS-SETUP.md',
+  availability: 'https://github.com/hugo-55/Hostal-Hudson/blob/main/AVAILABILITY-SETUP.md',
+};
+
+function Connections({ status }) {
+  if (!status) return <div className="card"><p>Cargando...</p></div>;
+  const items = [
+    {
+      on: status.sheet,
+      name: 'Registro de reservas',
+      ok: 'Cada reserva queda guardada en tu planilla Google automáticamente.',
+      off: 'APAGADO: las reservas solo llegan por WhatsApp y no quedan registradas. Actívalo con la guía de 15 min.',
+      guide: GUIDES.sheet,
+    },
+    {
+      on: status.notify,
+      name: 'Aviso WhatsApp automático',
+      ok: 'Te llega un WhatsApp a tu celular con cada reserva nueva.',
+      off: 'APAGADO: tienes que revisar la planilla a mano. Se activa con CallMeBot (gratis) o UltraMsg.',
+      guide: GUIDES.sheet,
+    },
+    {
+      on: status.availability,
+      name: 'Calendario de disponibilidad',
+      ok: 'Los pasajeros ven en la web qué fechas están ocupadas.',
+      off: 'APAGADO: la web dice "consulta por WhatsApp". Marca tus ocupados en Sheets (10 min).',
+      guide: GUIDES.availability,
+    },
+    {
+      on: status.review,
+      name: 'Opiniones de Google',
+      ok: 'El botón lleva a tu perfil de Google a dejar reseña.',
+      off: 'APAGADO: el botón pide el link por WhatsApp. Pega tu link de reseñas en 1 minuto.',
+      guide: null,
+    },
+  ];
+  const done = items.filter((i) => i.on).length;
+  return (
+    <div className="card">
+      <h3>Conexiones: {done} de {items.length} activas</h3>
+      <div className="bar-row">
+        <div className="bar-track">
+          <div className="bar-fill" style={{ width: `${Math.round((done / items.length) * 100)}%` }} />
+        </div>
+        <span className="bar-val">{Math.round((done / items.length) * 100)}%</span>
+      </div>
+      {done < items.length && (
+        <p className="muted">Mientras algo esté apagado, esa parte funciona en <strong>modo demo</strong>: la web anda igual, pero ese paso lo haces tú a mano.</p>
+      )}
+      {items.map((i) => (
+        <div key={i.name} className="card" style={{ margin: '10px 0', borderLeft: `5px solid ${i.on ? '#16a34a' : '#d97706'}` }}>
+          <p><strong>{i.on ? '🟢' : '🟡'} {i.name}</strong></p>
+          <p className="muted">{i.on ? i.ok : i.off}</p>
+          {!i.on && i.guide && <p><a className="btn btn-outline" href={i.guide} target="_blank">Ver guía paso a paso →</a></p>}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 // Tira de ocupación 30 días: rojo = marcado ocupado, verde = llega pasajero.
 function Occupancy({ rows, busy }) {
   const days = [];
@@ -197,7 +259,7 @@ export default function AdminPanel() {
       <p>
         <button className={`btn ${tab === 'bookings' ? '' : 'btn-outline'}`} onClick={() => setTab('bookings')}>Reservas</button>{' '}
         <button className={`btn ${tab === 'avail' ? '' : 'btn-outline'}`} onClick={() => setTab('avail')}>Disponibilidad</button>{' '}
-        <button className={`btn ${tab === 'state' ? '' : 'btn-outline'}`} onClick={() => setTab('state')}>Estado</button>
+        <button className={`btn ${tab === 'state' ? '' : 'btn-outline'}`} onClick={() => setTab('state')}>Conexiones</button>
       </p>
 
       {tab === 'bookings' && (
@@ -304,18 +366,7 @@ export default function AdminPanel() {
       )}
 
       {tab === 'state' && (
-        <div className="card">
-          <h3>Integraciones</h3>
-          {!status ? <p>Cargando...</p> : (
-            <ul className="check">
-              <li>{status.sheet ? '✅' : '⬜'} Reservas → Sheets</li>
-              <li>{status.notify ? '✅' : '⬜'} Aviso WhatsApp automático</li>
-              <li>{status.availability ? '✅' : '⬜'} Calendario de disponibilidad</li>
-              <li>{status.review ? '✅' : '⬜'} Link de reseñas Google</li>
-            </ul>
-          )}
-          <p className="muted">Cada ⬜ tiene su guía .md en el repo con pasos de 5-10 min.</p>
-        </div>
+        <Connections status={status} />
       )}
     </div>
   );
