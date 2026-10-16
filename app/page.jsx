@@ -96,6 +96,12 @@ export default function Home() {
           <a className="btn btn-outline" href={REVIEW_URL || waLink('Hola, me alojé en el hostal y quiero dejar una opinión en Google')} target="_blank">{t.review.btn}</a>
         </div>
 
+        <div className="card">
+          <h3>{t.share.title}</h3>
+          <p className="muted">{t.share.text}</p>
+          <a className="btn btn-outline" href={waLink('Hola, les comparto mis fotos de la estadía para la galería')} target="_blank">{t.share.btn}</a>
+        </div>
+
         <h2 className="section-title">{t.visitTitle}</h2>
         <p className="section-sub">{t.visitSub}</p>
         <div className="visit-strip">

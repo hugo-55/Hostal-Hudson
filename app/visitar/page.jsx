@@ -36,6 +36,22 @@ export default function Visitar() {
           </div>
         ))}
       </div>
+
+      <h2 className="section-title">{t.exp.title}</h2>
+      <p className="section-sub">{t.exp.sub}</p>
+      <div className="grid">
+        {t.exp.items.map((e, k) => (
+          <div className="card" key={e.name} style={{ borderTop: '4px solid #d97706' }}>
+            <div style={{ fontSize: 32 }}>{['🎣', '🛣️', '📸'][k]}</div>
+            <strong>{e.name}</strong>
+            <p className="muted">{e.desc}</p>
+            <a className="btn btn-green" href={waLink(`Hola Hostal Hudson, me interesa la experiencia: ${e.name}`)} target="_blank">{t.exp.cta}</a>
+          </div>
+        ))}
+      </div>
+
+      <p><a className="btn btn-outline" href="/guia">Guía Aysén completa →</a></p>
+
       <ReservaCTA />
       <Footer />
       <WhatsAppButton />

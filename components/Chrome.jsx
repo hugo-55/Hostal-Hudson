@@ -25,7 +25,7 @@ export function Footer() {
         <strong>{t.footerSections}</strong>
         <p className="muted">
           <a href="/habitaciones">{t.nav.rooms}</a> · <a href="/tarifas">{t.nav.rates}</a> ·{' '}
-          <a href="/galeria">{t.nav.gallery}</a> · <a href="/visitar">{t.nav.visit}</a> · <a href="/reservas">{t.nav.book}</a>
+          <a href="/galeria">{t.nav.gallery}</a> · <a href="/visitar">{t.nav.visit}</a> · <a href="/guia">Guía Aysén</a> · <a href="/reservas">{t.nav.book}</a>
         </p>
       </div>
       <div>
