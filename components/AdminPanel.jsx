@@ -17,6 +17,15 @@ function daysUntil(iso) {
   const t = new Date(); t.setHours(0, 0, 0, 0);
   return Math.round((new Date(iso).setHours(0, 0, 0, 0) - t) / 86400000);
 }
+function addDays(iso, n) {
+  const d = new Date(iso);
+  d.setDate(d.getDate() + n);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+function todayISO() {
+  const t = new Date();
+  return `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`;
+}
 const rowKey = (r) => `${r.nombre}|${r.llegada}`;
 
 // Pestaña Conexiones: qué hace cada una, en qué modo está y cómo activarla.
@@ -137,10 +146,13 @@ export default function AdminPanel() {
   const [demo, setDemo] = useState(false);
   const [busy, setBusy] = useState(new Set());
   const [estados, setEstados] = useState({});
+  const [notas, setNotas] = useState({});
+  const [noteOpen, setNoteOpen] = useState(null);
   const [status, setStatus] = useState(null);
   const [copied, setCopied] = useState(false);
   const [q, setQ] = useState('');
   const [fEstado, setFEstado] = useState('todas');
+  const [repMonth, setRepMonth] = useState(() => { const t = new Date(); return `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}`; });
 
   useEffect(() => {
     try {
@@ -149,6 +161,8 @@ export default function AdminPanel() {
       if (saved) setBusy(new Set(JSON.parse(saved)));
       const es = localStorage.getItem('hostal-estados');
       if (es) setEstados(JSON.parse(es));
+      const nt = localStorage.getItem('hostal-notas');
+      if (nt) setNotas(JSON.parse(nt));
     } catch {}
     fetch('/api/status').then((r) => r.json()).then(setStatus).catch(() => {});
   }, []);
@@ -171,6 +185,14 @@ export default function AdminPanel() {
   useEffect(() => { if (open) loadBookings(); }, [open ]);
 
   const estadoDe = (r) => estados[rowKey(r)] || 'pendiente';
+  const notaDe = (r) => notas[rowKey(r)] || '';
+  function setNota(r, v) {
+    setNotas((prev) => {
+      const next = { ...prev, [rowKey(r)]: v };
+      try { localStorage.setItem('hostal-notas', JSON.stringify(next)); } catch {}
+      return next;
+    });
+  }
   function setEstado(r, v) {
     setEstados((prev) => {
       const next = { ...prev, [rowKey(r)]: v };
@@ -185,6 +207,14 @@ export default function AdminPanel() {
     const prox7 = activas.filter((r) => { const d = daysUntil(r.llegada); return d >= 0 && d <= 7; });
     const noches = activas.reduce((a, r) => a + (Number(r.noches) || 0), 0);
     const ingreso = activas.reduce((a, r) => a + (Number(r.noches) || 0) * (Number(r.personas) || 0) * RATE_PER_PERSON_NIGHT, 0);
+    const hoy = todayISO();
+    const lleganHoy = activas.filter((r) => String(r.llegada).slice(0, 10) === hoy);
+    const salenHoy = activas.filter((r) => addDays(String(r.llegada).slice(0, 10), Number(r.noches) || 0) === hoy);
+    const enCasa = activas.filter((r) => {
+      const l = String(r.llegada).slice(0, 10);
+      const s = addDays(l, Number(r.noches) || 0);
+      return l <= hoy && hoy < s;
+    });
     const byMonth = {};
     activas.forEach((r) => {
       const m = String(r.llegada || '').slice(0, 7);
@@ -193,7 +223,7 @@ export default function AdminPanel() {
     });
     const months = Object.keys(byMonth).sort().slice(-4);
     const maxM = Math.max(1, ...months.map((m) => byMonth[m]));
-    return { total: list.length, prox7: prox7.length, noches, ingreso, proxList: prox7.slice(0, 5), byMonth, months, maxM };
+    return { total: list.length, prox7: prox7.length, noches, ingreso, proxList: prox7.slice(0, 5), byMonth, months, maxM, lleganHoy, salenHoy, enCasa };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rows, estados]);
 
@@ -207,6 +237,30 @@ export default function AdminPanel() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rows, estados, q, fEstado]);
 
+  function waTo(r, text) {
+    if (!r.telefono) return null;
+    return `https://wa.me/${r.telefono}?text=${encodeURIComponent(text)}`;
+  }
+  const TPL = {
+    llegada: (r) => `Hola ${r.nombre}, te escribimos de Hostal Hudson. ¡Te esperamos el ${fmtDate(r.llegada)}! Avísanos tu hora aproximada de llegada.`,
+    gracias: (r) => `Hola ${r.nombre}, gracias por alojarte en Hostal Hudson. Si nos dejas una opinión en Google nos ayudas un montón.`,
+  };
+  function printReport() {
+    const list = (rows || []).filter((r) => String(r.llegada || '').slice(0, 7) === repMonth && estadoDe(r) !== 'cancelada');
+    const canc = (rows || []).filter((r) => String(r.llegada || '').slice(0, 7) === repMonth && estadoDe(r) === 'cancelada').length;
+    const noches = list.reduce((a, r) => a + (Number(r.noches) || 0), 0);
+    const ingreso = list.reduce((a, r) => a + (Number(r.noches) || 0) * (Number(r.personas) || 0) * RATE_PER_PERSON_NIGHT, 0);
+    const fmt = (n) => `$${Number(n).toLocaleString('es-CL')}`;
+    const w = window.open('', '_blank');
+    w.document.write(`<html><head><title>Reporte ${repMonth} - Hostal Hudson</title></head><body style="font-family:sans-serif">
+      <h1>Hostal Hudson — reporte ${repMonth}</h1>
+      <p>Reservas: <strong>${list.length}</strong> · Noches: <strong>${noches}</strong> · Ingreso estimado: <strong>${fmt(ingreso)}</strong> · Canceladas: <strong>${canc}</strong></p>
+      <table border="1" cellpadding="6" cellspacing="0"><tr><th>Nombre</th><th>Llegada</th><th>Noches</th><th>Personas</th><th>Estado</th></tr>
+      ${list.map((r) => `<tr><td>${r.nombre}</td><td>${r.llegada}</td><td>${r.noches}</td><td>${r.personas}</td><td>${estadoDe(r)}</td></tr>`).join('')}
+      </table><p><small>Tarifa referencial. Generado desde el panel.</small></p>
+      <script>window.print()<\/script></body></html>`);
+    w.document.close();
+  }
   function exportCSV() {
     const head = 'nombre,llegada,noches,personas,telefono,estado';
     const lines = filtered.map((r) => [r.nombre, r.llegada, r.noches, r.personas, r.telefono || '', estadoDe(r)].map((v) => `"${String(v ?? '').replace(/"/g, '""')}"`).join(','));
@@ -272,6 +326,15 @@ export default function AdminPanel() {
           </div>
           <p className="muted">*Con tarifa referencial actual. {demo && 'Datos de ejemplo — conecta RESERVAS_READ_URL.'}</p>
 
+          <div className="card" style={{ borderLeft: '5px solid #0e7490' }}>
+            <h3>🏠 Hoy en el hostal ({fmtDate(todayISO())})</h3>
+            <div className="grid">
+              <div><strong>🛬 Llegan ({kpis.lleganHoy.length})</strong><p className="muted">{kpis.lleganHoy.length ? kpis.lleganHoy.map((r) => `${r.nombre} (${r.personas}p)`).join(' · ') : 'Nadie hoy.'}</p></div>
+              <div><strong>🛫 Se van ({kpis.salenHoy.length})</strong><p className="muted">{kpis.salenHoy.length ? kpis.salenHoy.map((r) => `${r.nombre} (${r.personas}p)`).join(' · ') : 'Nadie hoy.'}</p></div>
+              <div><strong>🛏️ En casa ({kpis.enCasa.length})</strong><p className="muted">{kpis.enCasa.length ? kpis.enCasa.map((r) => r.nombre).join(' · ') : 'Vacío hoy.'}</p></div>
+            </div>
+          </div>
+
           <div className="card">
             <h3>Ocupación próximos 30 días</h3>
             <Occupancy rows={rows || []} busy={busy} />
@@ -289,6 +352,11 @@ export default function AdminPanel() {
                   <span className="bar-val">{fmtCLP(kpis.byMonth[m])}</span>
                 </div>
               ))}
+              <p className="no-print">
+                <label>Reporte del mes</label>
+                <input type="month" value={repMonth} onChange={(e) => setRepMonth(e.target.value)} style={{ maxWidth: 220 }} />
+                {' '}<button className="btn" onClick={printReport}>🖨 Imprimir reporte</button>
+              </p>
             </div>
           )}
 
@@ -319,21 +387,47 @@ export default function AdminPanel() {
             </p>
             {!rows ? <p>Cargando...</p> : filtered.length === 0 ? <p>Sin resultados.</p> : (
               <table>
-                <thead><tr><th>Nombre</th><th>Llegada</th><th>N/P</th><th>Estado</th><th></th></tr></thead>
+                <thead><tr><th>Nombre</th><th>Llegada</th><th>Estado</th><th>Msg</th></tr></thead>
                 <tbody>
-                  {filtered.map((r, k) => (
-                    <tr key={k}>
-                      <td><strong>{r.nombre}</strong></td>
-                      <td>{fmtDate(r.llegada)}<br /><span className="muted">{r.noches}n · {r.personas}p</span></td>
-                      <td>{r.noches}/{r.personas}</td>
-                      <td>
-                        <select value={estadoDe(r)} onChange={(e) => setEstado(r, e.target.value)} style={{ margin: 0, padding: '6px' }}>
-                          {ESTADOS.map((s) => <option key={s} value={s}>{s}</option>)}
-                        </select>
-                      </td>
-                      <td>{r.telefono ? <a className="btn btn-green" style={{ padding: '6px 10px' }} href={`https://wa.me/${r.telefono}?text=${encodeURIComponent(`Hola ${r.nombre}, te escribimos de Hostal Hudson por tu reserva del ${fmtDate(r.llegada)}.`)}`} target="_blank">WA</a> : <span className="muted">—</span>}</td>
-                    </tr>
-                  ))}
+                  {filtered.map((r, k) => {
+                    const rk = rowKey(r);
+                    const wa1 = waTo(r, TPL.llegada(r));
+                    const wa2 = waTo(r, TPL.gracias(r));
+                    return (
+                      <>
+                        <tr key={rk}>
+                          <td>
+                            <strong>{r.nombre}</strong>{' '}
+                            <button className="btn btn-outline" style={{ padding: '2px 8px', fontSize: 12 }} onClick={() => setNoteOpen(noteOpen === rk ? null : rk)} title="Nota privada">
+                              📝{notaDe(r) ? '●' : ''}
+                            </button>
+                          </td>
+                          <td>{fmtDate(r.llegada)}<br /><span className="muted">{r.noches}n · {r.personas}p</span></td>
+                          <td>
+                            <select value={estadoDe(r)} onChange={(e) => setEstado(r, e.target.value)} style={{ margin: 0, padding: '6px' }}>
+                              {ESTADOS.map((s) => <option key={s} value={s}>{s}</option>)}
+                            </select>
+                          </td>
+                          <td style={{ whiteSpace: 'nowrap' }}>
+                            {wa1 ? (
+                              <>
+                                <a className="btn btn-green" style={{ padding: '6px 10px' }} href={wa1} target="_blank" title="Te esperamos mañana">🛬</a>{' '}
+                                <a className="btn btn-outline" style={{ padding: '6px 10px' }} href={wa2} target="_blank" title="Gracias + pide opinión">👋</a>
+                              </>
+                            ) : <span className="muted" title="Sin teléfono registrado">—</span>}
+                          </td>
+                        </tr>
+                        {noteOpen === rk && (
+                          <tr key={`${rk}-n`}>
+                            <td colSpan={4}>
+                              <label>Nota privada (solo este navegador)</label>
+                              <textarea rows={2} value={notaDe(r)} onChange={(e) => setNota(r, e.target.value)} placeholder="Ej. viene con mascota, paga al llegar..." style={{ marginBottom: 0 }} />
+                            </td>
+                          </tr>
+                        )}
+                      </>
+                    );
+                  })}
                 </tbody>
               </table>
             )}
