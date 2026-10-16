@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://hostal-hudson.vercel.app/sitemap.xml

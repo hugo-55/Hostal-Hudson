@@ -1,6 +1,6 @@
 import WhatsAppButton, { Footer } from '../../components/Chrome';
 import ReservaCTA from '../../components/ReservaCTA';
-import { ADDRESS, HOSTAL_PHONE_DISPLAY, MAPS_URL } from '../../lib/site';
+import { ADDRESS, EMAIL, HOSTAL_PHONE_DISPLAY, MAPS_URL } from '../../lib/site';
 
 export default function Reservas() {
   return (
@@ -10,7 +10,7 @@ export default function Reservas() {
       <ReservaCTA />
       <div className="card">
         <h3>📞 Contacto directo</h3>
-        <p>{ADDRESS}<br />Tel/WhatsApp: {HOSTAL_PHONE_DISPLAY}</p>
+        <p>{ADDRESS}<br />Tel/WhatsApp: {HOSTAL_PHONE_DISPLAY}<br />Email: <a href={`mailto:${EMAIL}`}>{EMAIL}</a></p>
         <p><a className="btn btn-outline" href={MAPS_URL} target="_blank">Ver mapa →</a></p>
       </div>
       <div className="card faq">

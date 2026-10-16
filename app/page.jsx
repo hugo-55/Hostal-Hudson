@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import WhatsAppButton, { Footer } from '../components/Chrome';
 import ReservaCTA from '../components/ReservaCTA';
 import { SERVICES, TESTIMONIALS, waLink, MAPS_URL, HOSTAL_PHONE_DISPLAY, PAGESPEED_URL } from '../lib/site';
@@ -6,7 +7,7 @@ export default function Home() {
   return (
     <div className="container">
       <div className="hero">
-        <img src="/img/slide1.jpg" alt="Hostal Hudson frente al río Aysén" fetchpriority="high" />
+        <Image src="/img/slide1.jpg" alt="Hostal Hudson frente al río Aysén" fill priority sizes="100vw" style={{ objectFit: 'cover' }} />
         <div className="hero-text">
           <div className="hero-kicker">Puerto Aysén · Patagonia chilena</div>
           <h1>Duerme frente al río, despierta en la Patagonia</h1>

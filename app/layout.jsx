@@ -50,9 +50,31 @@ function Nav() {
 }
 
 export default function RootLayout({ children }) {
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'LodgingBusiness',
+    name: 'Hostal Hudson',
+    description: 'Hostal familiar en Puerto Aysén frente al río, con desayuno incluido y recepción 24 h.',
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: 'Teniente Merino 1080',
+      addressLocality: 'Puerto Aysén',
+      addressRegion: 'Aysén',
+      addressCountry: 'CL',
+    },
+    telephone: '+56994391571',
+    url: SITE_URL,
+    priceRange: '$$',
+    amenityFeature: [
+      { '@type': 'LocationFeatureSpecification', name: 'Wi-Fi gratis' },
+      { '@type': 'LocationFeatureSpecification', name: 'Desayuno incluido' },
+      { '@type': 'LocationFeatureSpecification', name: 'Estacionamiento' },
+    ],
+  };
   return (
     <html lang="es-CL" className={`${inter.variable} ${fraunces.variable}`}>
       <body>
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
         <Nav />
         {children}
       </body>
