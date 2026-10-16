@@ -17,7 +17,7 @@ const CODE = {
 };
 
 // Clima en vivo de Puerto Aysén (Open-Meteo, gratis, sin clave).
-export default function Weather() {
+export default function Weather({ inline = false }) {
   const { t, lang } = useLang();
   const [w, setW] = useState(null);
   useEffect(() => {
@@ -28,9 +28,7 @@ export default function Weather() {
   }, []);
   if (!w) return null;
   const info = CODE[w.weather_code] || { es: 'Variable', en: 'Changeable', icon: '🌡️' };
-  return (
-    <span className="badge">
-      {info.icon} {t.weather.now}: {Math.round(w.temperature_2m)}°C · {lang === 'es' ? info.es : info.en}
-    </span>
-  );
+  const text = `${info.icon} ${t.weather.now}: ${Math.round(w.temperature_2m)}°C · ${lang === 'es' ? info.es : info.en}`;
+  if (inline) return <>{text}</>;
+  return <span className="badge">{text}</span>;
 }

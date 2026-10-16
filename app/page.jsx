@@ -5,7 +5,7 @@ import BookingBar from '../components/BookingBar';
 import ReservaCTA from '../components/ReservaCTA';
 import Weather from '../components/Weather';
 import SmartImg from '../components/SmartImg';
-import { TestimonialCarousel, CountUp } from '../components/Widgets';
+import { TestimonialCarousel, CountUp, Reveal } from '../components/Widgets';
 import { useLang } from '../lib/i18n';
 import { SERVICES, TESTIMONIALS, waLink, MAPS_URL, REVIEW_URL, HOSTAL_PHONE_DISPLAY, PAGESPEED_URL } from '../lib/site';
 
@@ -32,45 +32,55 @@ export default function Home() {
       <div className="hero-full">
         <Slideshow slides={SLIDES} />
         <div className="hero-full-text">
-          <div className="hero-kicker gold">{t.hero.kicker}</div>
-          <h1>{t.hero.titleA}<br />{t.hero.titleB}</h1>
-          <p>{t.hero.sub}</p>
+          <div className="hero-kicker gold rise">{t.hero.kicker}</div>
+          <h1><span className="rise d1">{t.hero.titleA}</span><br /><span className="rise d2">{t.hero.titleB}</span></h1>
+          <p className="rise d3">{t.hero.sub}</p>
+          <div className="hero-chips rise d3">
+            <span className="hero-chip"><Weather inline /></span>
+            <span className="hero-chip">⭐ {t.reviewsTitle}</span>
+          </div>
         </div>
       </div>
 
       <div className="container" style={{ paddingTop: 0 }}>
         <BookingBar />
 
-        <div className="stats-band">
-          <div><CountUp to={2} /><span>{t.stats.plaza}</span></div>
-          <div><CountUp to={24} /><span>{t.stats.reception}</span></div>
-          <div><CountUp to={6} suffix="/6" /><span>{t.stats.included}</span></div>
-          <div><CountUp to={1} /><span>{t.stats.bookMin}</span></div>
-        </div>
+        <Reveal>
+          <div className="stats-band">
+            <div><CountUp to={2} /><span>{t.stats.plaza}</span></div>
+            <div><CountUp to={24} /><span>{t.stats.reception}</span></div>
+            <div><CountUp to={6} suffix="/6" /><span>{t.stats.included}</span></div>
+            <div><CountUp to={1} /><span>{t.stats.bookMin}</span></div>
+          </div>
+        </Reveal>
 
         <h2 className="section-title">{t.servicesTitle}</h2>
         <p className="section-sub">{t.servicesSub}</p>
-        <div className="grid">
-          {SERVICES.map((s) => (
-            <div className="card service" key={s.key}>
-              <div className="service-icon">{s.icon}</div>
-              <strong>{t.services[s.key].name}</strong>
-              <p className="muted">{t.services[s.key].desc}</p>
-            </div>
-          ))}
-        </div>
+        <Reveal>
+          <div className="grid">
+            {SERVICES.map((s) => (
+              <div className="card service" key={s.key}>
+                <div className="service-icon">{s.icon}</div>
+                <strong>{t.services[s.key].name}</strong>
+                <p className="muted">{t.services[s.key].desc}</p>
+              </div>
+            ))}
+          </div>
+        </Reveal>
 
         <h2 className="section-title">{t.roomsTitle}</h2>
-        <div className="grid">
-          {t.roomCards.map((r, k) => (
-            <div className="card room" key={r.name}>
-              <SmartImg src={ROOM_IMGS[k]} alt={r.name} height={200} />
-              <strong>{r.name}</strong>
-              <p className="muted">{r.desc}</p>
-              <a href="/habitaciones">{t.roomsCta}</a>
-            </div>
-          ))}
-        </div>
+        <Reveal>
+          <div className="grid">
+            {t.roomCards.map((r, k) => (
+              <div className="card room" key={r.name}>
+                <SmartImg src={ROOM_IMGS[k]} alt={r.name} height={200} />
+                <strong>{r.name}</strong>
+                <p className="muted">{r.desc}</p>
+                <a href="/habitaciones">{t.roomsCta}</a>
+              </div>
+            ))}
+          </div>
+        </Reveal>
 
         <div className="dark-section">
           <h2>{t.reviewsTitle}</h2>

@@ -19,7 +19,7 @@ export default function LightboxGallery({ photos }) {
   }, [open, step]);
   return (
     <>
-      <div className="gallery">
+      <div className="masonry">
         {photos.map((p, k) => (
           <button key={p.src} className="g-item" onClick={() => setOpen(k)} aria-label={`Ampliar: ${p.alt}`}>
             <SmartImg src={p.src} alt={p.alt} height={230} />

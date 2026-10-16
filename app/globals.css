@@ -88,8 +88,10 @@ label { font-size: 13.5px; font-weight: 700; }
 
 /* Slideshow */
 .slideshow { position: absolute; inset: 0; }
-.slide { position: absolute; inset: 0; opacity: 0; transition: opacity 1s ease; }
+.slide { position: absolute; inset: 0; opacity: 0; transition: opacity 1.2s ease; }
 .slide.active { opacity: 1; }
+.slide.active img { animation: kenburns 7s ease-out forwards; }
+@keyframes kenburns { from { transform: scale(1); } to { transform: scale(1.12); } }
 .slide-arrow { position: absolute; top: 42%; z-index: 3; background: rgba(0,0,0,.4); color: #fff; border: 0; width: 44px; height: 44px; border-radius: 50%; font-size: 26px; cursor: pointer; line-height: 1; }
 .slide-arrow.left { left: 14px; }
 .slide-arrow.right { right: 14px; }
@@ -172,6 +174,26 @@ label { font-size: 13.5px; font-weight: 700; }
 .visit-card img { width: 100%; height: 100%; object-fit: cover; transition: transform .25s ease; }
 .visit-card:hover img { transform: scale(1.06); }
 .visit-card span { position: absolute; left: 12px; bottom: 10px; color: #fff; font-weight: 800; font-size: 17px; text-shadow: 0 2px 8px rgba(0,0,0,.7); }
+
+/* Reveal on scroll */
+.reveal { opacity: 0; transform: translateY(26px); transition: opacity .7s ease, transform .7s ease; }
+.reveal.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } .slide.active img { animation: none; } }
+
+/* Hero entrance */
+.rise { display: inline-block; opacity: 0; animation: rise .9s cubic-bezier(.2,.7,.2,1) forwards; }
+.rise.d1 { animation-delay: .15s; } .rise.d2 { animation-delay: .3s; } .rise.d3 { animation-delay: .45s; }
+@keyframes rise { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: none; } }
+
+/* Masonry gallery */
+.masonry { columns: 3 240px; column-gap: 12px; }
+.masonry .g-item { break-inside: avoid; margin-bottom: 12px; width: 100%; display: block; }
+.masonry .g-item .smart-img { height: auto !important; }
+.masonry .g-item img { position: static !important; height: auto !important; }
+
+/* Hero chips row */
+.hero-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+.hero-chip { background: rgba(0,0,0,.45); border: 1px solid rgba(255,255,255,.35); color: #fff; padding: 6px 12px; border-radius: 999px; font-size: 13.5px; font-weight: 600; backdrop-filter: blur(4px); }
 .visit-card .smart-img { position: absolute; inset: 0; margin: 0; border-radius: 0; height: 100% !important; }
 .visit-card { position: relative; }
 

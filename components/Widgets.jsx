@@ -71,6 +71,22 @@ export function Breadcrumb({ trail }) {
   );
 }
 
+// Aparece suavemente al entrar en pantalla.
+export function Reveal({ children, className = '' }) {
+  const ref = useRef(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([e]) => { if (e.isIntersecting) { el.classList.add('in'); obs.disconnect(); } },
+      { threshold: 0.12 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+  return <div ref={ref} className={`reveal ${className}`}>{children}</div>;
+}
+
 // Barra de reserva fija solo en móvil: siempre visible al hacer scroll.
 export function StickyBook() {
   const { t } = useLang();
