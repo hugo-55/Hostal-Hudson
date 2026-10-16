@@ -397,9 +397,10 @@ export default function AdminPanel() {
                       <>
                         <tr key={rk}>
                           <td>
-                            <strong>{r.nombre}</strong>{' '}
-                            <button className="btn btn-outline" style={{ padding: '2px 8px', fontSize: 12 }} onClick={() => setNoteOpen(noteOpen === rk ? null : rk)} title="Nota privada">
-                              📝{notaDe(r) ? '●' : ''}
+                            <strong>{r.nombre}</strong>
+                            {notaDe(r) ? <div className="note-preview">📝 {notaDe(r).slice(0, 60)}{notaDe(r).length > 60 ? '…' : ''}</div> : null}
+                            <button className="btn btn-outline note-btn" onClick={() => setNoteOpen(noteOpen === rk ? null : rk)}>
+                              {notaDe(r) ? '✏️ Editar nota' : '＋ Nota'}
                             </button>
                           </td>
                           <td>{fmtDate(r.llegada)}<br /><span className="muted">{r.noches}n · {r.personas}p</span></td>
@@ -418,10 +419,14 @@ export default function AdminPanel() {
                           </td>
                         </tr>
                         {noteOpen === rk && (
-                          <tr key={`${rk}-n`}>
+                          <tr key={`${rk}-n`} className="note-row">
                             <td colSpan={4}>
-                              <label>Nota privada (solo este navegador)</label>
-                              <textarea rows={2} value={notaDe(r)} onChange={(e) => setNota(r, e.target.value)} placeholder="Ej. viene con mascota, paga al llegar..." style={{ marginBottom: 0 }} />
+                              <label>📝 Nota privada <span className="muted">— solo visible en este navegador</span></label>
+                              <textarea rows={2} value={notaDe(r)} onChange={(e) => setNota(r, e.target.value)} placeholder="Ej. viene con mascota, paga al llegar, alérgico al polvo..." style={{ marginBottom: 4 }} />
+                              <div>
+                                <button className="btn btn-green" style={{ padding: '8px 16px' }} onClick={() => setNoteOpen(null)}>✓ Guardar y cerrar</button>{' '}
+                                {notaDe(r) && <button className="btn btn-outline" style={{ padding: '8px 16px' }} onClick={() => { setNota(r, ''); setNoteOpen(null); }}>Borrar</button>}
+                              </div>
                             </td>
                           </tr>
                         )}
