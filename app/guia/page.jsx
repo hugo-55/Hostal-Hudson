@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import WhatsAppButton, { Footer } from '../../components/Chrome';
 import SmartImg from '../../components/SmartImg';
-import { PageTitle, Breadcrumb } from '../../components/Widgets';
+import { PageTitle, Breadcrumb, ShareBar } from '../../components/Widgets';
 import { useLang } from '../../lib/i18n';
 import { waLink } from '../../lib/site';
 
@@ -34,6 +34,7 @@ export default function Guia() {
           </div>
         ))}
       </div>
+      <ShareBar />
       <Footer />
       <WhatsAppButton />
     </div>

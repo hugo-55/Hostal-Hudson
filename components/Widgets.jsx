@@ -87,6 +87,21 @@ export function Reveal({ children, className = '' }) {
   return <div ref={ref} className={`reveal ${className}`}>{children}</div>;
 }
 
+// Compartir esta página por WhatsApp.
+export function ShareBar({ text }) {
+  const { lang } = useLang();
+  const [url, setUrl] = useState('');
+  useEffect(() => { setUrl(window.location.href); }, []);
+  if (!url) return null;
+  const msg = `${text || (lang === 'es' ? 'Mira esto de Hostal Hudson' : 'Look at this from Hostal Hudson')}: ${url}`;
+  return (
+    <p>
+      <a className="btn btn-outline" href={`https://wa.me/?text=${encodeURIComponent(msg)}`} target="_blank">
+        ↗ {lang === 'es' ? 'Compartir por WhatsApp' : 'Share via WhatsApp'}
+      </a>
+    </p>
+  );
+}
 // Barra de reserva fija solo en móvil: siempre visible al hacer scroll.
 export function StickyBook() {
   const { t } = useLang();

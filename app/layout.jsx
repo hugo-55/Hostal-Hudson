@@ -61,10 +61,20 @@ export default function RootLayout({ children }) {
       { '@type': 'LocationFeatureSpecification', name: 'Estacionamiento' },
     ],
   };
+  const faqLd = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: [
+      { '@type': 'Question', name: '¿A qué hora puedo llegar?', acceptedAnswer: { '@type': 'Answer', text: 'Recepción 24 h con entrega de llaves, sin restricción de horario.' } },
+      { '@type': 'Question', name: '¿Cómo confirmo mi reserva?', acceptedAnswer: { '@type': 'Answer', text: 'Por WhatsApp y transferencia al Banco BCI con comprobante.' } },
+      { '@type': 'Question', name: '¿Incluye desayuno y estacionamiento?', acceptedAnswer: { '@type': 'Answer', text: 'Sí, ambos incluidos sin costo adicional.' } },
+    ],
+  };
   return (
     <html lang="es-CL" className={`${inter.variable} ${fraunces.variable}`}>
       <body>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
         <LangProvider>
           <NavBar />
           {children}

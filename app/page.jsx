@@ -26,7 +26,7 @@ const VISIT = [
 const ROOM_IMGS = ['/img/gal-hostal-interior1.jpg', '/img/gal-hostal-interior2.jpg', '/img/gal-hostal-interior4.jpg'];
 
 export default function Home() {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   return (
     <div>
       <div className="hero-full">
@@ -132,10 +132,19 @@ export default function Home() {
 
         <ReservaCTA />
 
-        <p className="muted" style={{ marginTop: 20 }}>
-          {t.renewed} {HOSTAL_PHONE_DISPLAY}.{' '}
-          <a href={PAGESPEED_URL} target="_blank">{t.compareSpeed}</a>
-        </p>
+        <div className="card">
+          <h3>{lang === 'es' ? 'Web vieja vs web nueva' : 'Old site vs new site'}</h3>
+          <table>
+            <thead><tr><th></th><th>❌ {lang === 'es' ? 'Antes (2016)' : 'Before (2016)'}</th><th>✅ {lang === 'es' ? 'Ahora' : 'Now'}</th></tr></thead>
+            <tbody>
+              <tr><td><strong>{lang === 'es' ? 'Velocidad' : 'Speed'}</strong></td><td>{lang === 'es' ? 'Varios segundos, fotos pesadas' : 'Several seconds, heavy photos'}</td><td>{lang === 'es' ? '<1 segundo, imágenes optimizadas' : '<1 second, optimized images'}</td></tr>
+              <tr><td><strong>{lang === 'es' ? 'Reserva' : 'Booking'}</strong></td><td>{lang === 'es' ? 'Formulario sin respuesta clara' : 'Form with no clear reply'}</td><td>WhatsApp {lang === 'es' ? 'en 1 minuto + registro' : 'in 1 minute + record'}</td></tr>
+              <tr><td><strong>{lang === 'es' ? 'Celular' : 'Mobile'}</strong></td><td>{lang === 'es' ? 'Menú roto, textos chicos' : 'Broken menu, tiny text'}</td><td>{lang === 'es' ? 'Barra de reserva siempre visible' : 'Booking bar always visible'}</td></tr>
+              <tr><td><strong>{lang === 'es' ? 'Idiomas' : 'Languages'}</strong></td><td>{lang === 'es' ? 'Solo español' : 'Spanish only'}</td><td>ES/EN {lang === 'es' ? 'completo' : 'full'}</td></tr>
+            </tbody>
+          </table>
+          <p><a href={PAGESPEED_URL} target="_blank">{t.compareSpeed}</a></p>
+        </div>
 
         <Footer />
       </div>

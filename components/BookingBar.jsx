@@ -19,6 +19,7 @@ export default function BookingBar() {
 
   const msg = `Hola Hostal Hudson, soy ${name || '...'}. Quiero reservar: llegada ${llegada || '...'}, salida ${salida || '...'} (${nights} noche(s)), ${personas} persona(s). ¿Tienen disponibilidad?`;
   const valid = name.trim() && llegada && salida && nights > 0;
+  const today = new Date().toISOString().slice(0, 10);
 
   return (
     <div className="booking-bar">
@@ -28,11 +29,11 @@ export default function BookingBar() {
       </div>
       <div className="bb-field">
         <label>{b.arrival}</label>
-        <input type="date" value={llegada} onChange={(e) => setLlegada(e.target.value)} />
+        <input type="date" min={today} value={llegada} onChange={(e) => setLlegada(e.target.value)} />
       </div>
       <div className="bb-field">
         <label>{b.departure}</label>
-        <input type="date" value={salida} onChange={(e) => setSalida(e.target.value)} />
+        <input type="date" min={llegada || today} value={salida} onChange={(e) => setSalida(e.target.value)} />
       </div>
       <div className="bb-field">
         <label>{b.people}</label>

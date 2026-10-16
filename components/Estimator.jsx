@@ -18,6 +18,7 @@ export default function Estimator() {
       ? Math.max(0, Math.round((new Date(salida) - new Date(llegada)) / 86400000))
       : 0;
   const total = nights > 0 ? nights * personas * RATE_PER_PERSON_NIGHT : 0;
+  const today = new Date().toISOString().slice(0, 10);
   const msg = `Hola Hostal Hudson, estimé en la web: llegada ${llegada}, salida ${salida} (${nights} noches), ${personas} personas ≈ ${fmt(total)}. ¿Me confirmas disponibilidad y tarifa final?`;
 
   return (
@@ -27,11 +28,11 @@ export default function Estimator() {
       <div className="grid-2">
         <div>
           <label>{e.arrival}</label>
-          <input type="date" value={llegada} onChange={(e2) => setLlegada(e2.target.value)} />
+          <input type="date" min={today} value={llegada} onChange={(e2) => setLlegada(e2.target.value)} />
         </div>
         <div>
           <label>{e.departure}</label>
-          <input type="date" value={salida} onChange={(e2) => setSalida(e2.target.value)} />
+          <input type="date" min={llegada || today} value={salida} onChange={(e2) => setSalida(e2.target.value)} />
         </div>
       </div>
       <label>{e.people}</label>

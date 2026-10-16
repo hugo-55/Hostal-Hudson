@@ -15,6 +15,7 @@ export default function ReservaCTA({ title } = {}) {
   const [live, setLive] = useState(false);
 
   const msg = `Hola Hostal Hudson, soy ${name || '...'}. Quiero reservar: llegada ${llegada || '...'}, ${noches} noche(s), ${personas} persona(s). ¿Tienen disponibilidad?`;
+  const today = new Date().toISOString().slice(0, 10);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -59,7 +60,7 @@ export default function ReservaCTA({ title } = {}) {
         <div className="grid-2">
           <div>
             <label>{t.fArrival}</label>
-            <input type="date" value={llegada} onChange={(e) => setLlegada(e.target.value)} />
+            <input type="date" min={today} value={llegada} onChange={(e) => setLlegada(e.target.value)} />
           </div>
           <div>
             <label>{t.fNights}</label>
