@@ -1,5 +1,7 @@
+'use client';
 import WhatsAppButton, { Footer } from '../../components/Chrome';
 import LightboxGallery from '../../components/Lightbox';
+import { useLang } from '../../lib/i18n';
 
 const HOSTAL = [
   { src: '/img/gal-hostal-exterior1.jpg', alt: 'Exterior de Hostal Hudson' },
@@ -21,14 +23,14 @@ const ZONA = [
 ];
 
 export default function Galeria() {
+  const { t } = useLang();
   return (
     <div className="container">
-      <h1>Galería</h1>
-      <p className="muted">Fotos reales del hostal y de la zona. Toca cualquier foto para ampliarla.</p>
-      <h2 className="section-title">Nuestro hostal</h2>
+      <h1>{t.galleryTitle}</h1>
+      <p className="muted">{t.gallerySub}</p>
+      <h2 className="section-title">{t.galleryHostal}</h2>
       <LightboxGallery photos={HOSTAL} />
-      <h2 className="section-title">Aysén por descubrir</h2>
-      <p className="section-sub">Todo esto a distancia de paseo desde nuestra puerta. Pregúntanos cómo llegar.</p>
+      <h2 className="section-title">{t.galleryZone}</h2>
       <LightboxGallery photos={ZONA} />
       <Footer />
       <WhatsAppButton />

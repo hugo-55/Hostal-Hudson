@@ -1,6 +1,8 @@
 import './globals.css';
 import { Fraunces, Inter } from 'next/font/google';
+import { Analytics } from '@vercel/analytics/react';
 import { NavBar } from '../components/NavBar';
+import { LangProvider } from '../lib/i18n';
 import { SITE_URL } from '../lib/site';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-body' });
@@ -59,8 +61,11 @@ export default function RootLayout({ children }) {
     <html lang="es-CL" className={`${inter.variable} ${fraunces.variable}`}>
       <body>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-        <NavBar />
-        {children}
+        <LangProvider>
+          <NavBar />
+          {children}
+        </LangProvider>
+        <Analytics />
       </body>
     </html>
   );

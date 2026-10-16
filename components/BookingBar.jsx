@@ -1,9 +1,12 @@
 'use client';
 import { useState } from 'react';
 import { waLink } from '../lib/site';
+import { useLang } from '../lib/i18n';
 
-// Barra de reserva estilo hotel: llegada + salida + personas → calcula noches → WhatsApp.
+// Booking bar with language support. Computes nights automatically.
 export default function BookingBar() {
+  const { t } = useLang();
+  const b = t.booking;
   const [llegada, setLlegada] = useState('');
   const [salida, setSalida] = useState('');
   const [personas, setPersonas] = useState(2);
@@ -20,27 +23,27 @@ export default function BookingBar() {
   return (
     <div className="booking-bar">
       <div className="bb-field">
-        <label>Nombre</label>
-        <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Tu nombre" />
+        <label>{b.name}</label>
+        <input value={name} onChange={(e) => setName(e.target.value)} placeholder={b.namePh} />
       </div>
       <div className="bb-field">
-        <label>Llegada</label>
+        <label>{b.arrival}</label>
         <input type="date" value={llegada} onChange={(e) => setLlegada(e.target.value)} />
       </div>
       <div className="bb-field">
-        <label>Salida</label>
+        <label>{b.departure}</label>
         <input type="date" value={salida} onChange={(e) => setSalida(e.target.value)} />
       </div>
       <div className="bb-field">
-        <label>Personas</label>
+        <label>{b.people}</label>
         <input type="number" min="1" max="20" value={personas} onChange={(e) => setPersonas(Number(e.target.value))} />
       </div>
       <div className="bb-action">
-        {nights > 0 && <span className="bb-nights">{nights} noche{nights > 1 ? 's' : ''}</span>}
+        {nights > 0 && <span className="bb-nights">{nights} {nights > 1 ? b.nights : b.night}</span>}
         {valid ? (
-          <a className="btn btn-green" href={waLink(msg)} target="_blank">Reservar →</a>
+          <a className="btn btn-green" href={waLink(msg)} target="_blank">{b.submit}</a>
         ) : (
-          <span className="btn btn-disabled">Completa fechas</span>
+          <span className="btn btn-disabled">{b.fill}</span>
         )}
       </div>
     </div>

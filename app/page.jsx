@@ -1,8 +1,10 @@
+'use client';
 import WhatsAppButton, { Footer } from '../components/Chrome';
 import Slideshow from '../components/Slideshow';
 import BookingBar from '../components/BookingBar';
 import ReservaCTA from '../components/ReservaCTA';
 import { TestimonialCarousel, CountUp } from '../components/Widgets';
+import { useLang } from '../lib/i18n';
 import { SERVICES, TESTIMONIALS, waLink, MAPS_URL, HOSTAL_PHONE_DISPLAY, PAGESPEED_URL } from '../lib/site';
 
 const SLIDES = [
@@ -13,21 +15,24 @@ const SLIDES = [
 ];
 
 const VISIT = [
-  { src: '/img/gal-quevisitar-puente.jpg', alt: 'Puente Presidente Ibáñez', name: 'Puente Ibáñez' },
-  { src: '/img/gal-quevisitar-cascada.jpg', alt: 'Cascada de la región', name: 'Cascadas' },
-  { src: '/img/gal-quevisitar-caleta.jpg', alt: 'Caleta de pescadores', name: 'Caletas' },
-  { src: '/img/gal-quevisitar-camino.jpg', alt: 'Carretera Austral', name: 'Carretera Austral' },
+  { src: '/img/gal-quevisitar-puente.jpg', alt: 'Puente Presidente Ibáñez' },
+  { src: '/img/gal-quevisitar-cascada.jpg', alt: 'Cascada de la región' },
+  { src: '/img/gal-quevisitar-caleta.jpg', alt: 'Caleta de pescadores' },
+  { src: '/img/gal-quevisitar-camino.jpg', alt: 'Carretera Austral' },
 ];
 
+const ROOM_IMGS = ['/img/gal-hostal-interior1.jpg', '/img/gal-hostal-interior2.jpg', '/img/gal-hostal-interior4.jpg'];
+
 export default function Home() {
+  const { t } = useLang();
   return (
     <div>
       <div className="hero-full">
         <Slideshow slides={SLIDES} />
         <div className="hero-full-text">
-          <div className="hero-kicker gold">Puerto Aysén · Patagonia chilena</div>
-          <h1>Duerme frente al río,<br />despierta en la Patagonia</h1>
-          <p>Hostal familiar a 2 cuadras de la plaza · Desayuno incluido · Recepción 24 h</p>
+          <div className="hero-kicker gold">{t.hero.kicker}</div>
+          <h1>{t.hero.titleA}<br />{t.hero.titleB}</h1>
+          <p>{t.hero.sub}</p>
         </div>
       </div>
 
@@ -35,64 +40,60 @@ export default function Home() {
         <BookingBar />
 
         <div className="stats-band">
-          <div><CountUp to={2} /><span>cuadras a la plaza de armas</span></div>
-          <div><CountUp to={24} /><span>horas de recepción, todos los días</span></div>
-          <div><CountUp to={6} suffix="/6" /><span>servicios incluidos en tu noche</span></div>
-          <div><CountUp to={1} /><span>minuto para reservar por WhatsApp</span></div>
+          <div><CountUp to={2} /><span>{t.stats.plaza}</span></div>
+          <div><CountUp to={24} /><span>{t.stats.reception}</span></div>
+          <div><CountUp to={6} suffix="/6" /><span>{t.stats.included}</span></div>
+          <div><CountUp to={1} /><span>{t.stats.bookMin}</span></div>
         </div>
 
-        <h2 className="section-title">Todo incluido en tu estadía</h2>
-        <p className="section-sub">Sin cargos ocultos ni letra chica.</p>
+        <h2 className="section-title">{t.servicesTitle}</h2>
+        <p className="section-sub">{t.servicesSub}</p>
         <div className="grid">
           {SERVICES.map((s) => (
-            <div className="card service" key={s.name}>
+            <div className="card service" key={s.key}>
               <div className="service-icon">{s.icon}</div>
-              <strong>{s.name}</strong>
-              <p className="muted">{s.desc}</p>
+              <strong>{t.services[s.key].name}</strong>
+              <p className="muted">{t.services[s.key].desc}</p>
             </div>
           ))}
         </div>
 
-        <h2 className="section-title">Habitaciones que invitan a quedarse</h2>
+        <h2 className="section-title">{t.roomsTitle}</h2>
         <div className="grid">
-          {[
-            { img: '/img/gal-hostal-interior1.jpg', name: 'Vista al río', desc: 'Despierta con el Aysén en la ventana.' },
-            { img: '/img/gal-hostal-interior2.jpg', name: 'Familiar', desc: 'Espacio y calidez para los tuyos.' },
-            { img: '/img/gal-hostal-interior4.jpg', name: 'Descanso total', desc: 'Camas cómodas y silencio nocturno.' },
-          ].map((r) => (
+          {t.roomCards.map((r, k) => (
             <div className="card room" key={r.name}>
-              <img src={r.img} alt={r.name} loading="lazy" />
+              <img src={ROOM_IMGS[k]} alt={r.name} loading="lazy" />
               <strong>{r.name}</strong>
               <p className="muted">{r.desc}</p>
-              <a href="/habitaciones">Ver habitaciones →</a>
+              <a href="/habitaciones">{t.roomsCta}</a>
             </div>
           ))}
         </div>
 
         <div className="dark-section">
-          <h2>Lo que dicen quienes ya durmieron aquí</h2>
+          <h2>{t.reviewsTitle}</h2>
           <TestimonialCarousel items={TESTIMONIALS} />
           <p style={{ marginTop: 18 }}>
-            <a className="btn btn-green" href={waLink('Hola Hostal Hudson, quiero reservar')} target="_blank">Yo también quiero reservar</a>
+            <a className="btn btn-green" href={waLink('Hola Hostal Hudson, quiero reservar')} target="_blank">{t.wantBook}</a>
           </p>
         </div>
 
-        <h2 className="section-title">Aysén por descubrir</h2>
-        <p className="section-sub">Todo a distancia de paseo desde nuestra puerta.</p>
+        <h2 className="section-title">{t.visitTitle}</h2>
+        <p className="section-sub">{t.visitSub}</p>
         <div className="visit-strip">
           {VISIT.map((v) => (
             <a key={v.src} href="/galeria" className="visit-card">
               <img src={v.src} alt={v.alt} loading="lazy" />
-              <span>{v.name}</span>
+              <span>{v.alt}</span>
             </a>
           ))}
         </div>
 
         <div className="grid-2" style={{ marginTop: 18 }}>
           <div className="card">
-            <h3>📍 Teniente Merino 1080</h3>
-            <p>A orillas del río Aysén, frente al puente Presidente Ibáñez. Cerca de bancos, oficinas y comercio.</p>
-            <p><a className="btn btn-outline" href={MAPS_URL} target="_blank">Cómo llegar →</a></p>
+            <h3>📍 {t.locationTitle}</h3>
+            <p>{t.locationText}</p>
+            <p><a className="btn btn-outline" href={MAPS_URL} target="_blank">{t.directions}</a></p>
           </div>
           <div className="card" style={{ padding: 10 }}>
             <iframe
@@ -107,8 +108,8 @@ export default function Home() {
         <ReservaCTA />
 
         <p className="muted" style={{ marginTop: 20 }}>
-          Sitio renovado: carga en menos de 1 segundo y la reserva cae a nuestro WhatsApp {HOSTAL_PHONE_DISPLAY}.{' '}
-          <a href={PAGESPEED_URL} target="_blank">Comparar velocidad →</a>
+          {t.renewed} {HOSTAL_PHONE_DISPLAY}.{' '}
+          <a href={PAGESPEED_URL} target="_blank">{t.compareSpeed}</a>
         </p>
 
         <Footer />

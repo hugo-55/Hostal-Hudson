@@ -1,23 +1,24 @@
 'use client';
 import { useState } from 'react';
 import { waLink, HOSTAL_PHONE_DISPLAY } from '../lib/site';
+import { useLang } from '../lib/i18n';
 
-// Reserva en 4 campos → queda registrada + abre WhatsApp del hostal.
-export default function ReservaCTA({ title = 'Reserva por WhatsApp en 1 minuto' }) {
+// Booking form: registers via API, then confirms on WhatsApp.
+export default function ReservaCTA({ title } = {}) {
+  const { t } = useLang();
   const [name, setName] = useState('');
   const [llegada, setLlegada] = useState('');
   const [noches, setNoches] = useState(1);
   const [personas, setPersonas] = useState(2);
-  const [state, setState] = useState('idle'); // idle|sending|done|error
-  const [detail, setDetail] = useState('');
+  const [state, setState] = useState('idle');
+  const [live, setLive] = useState(false);
 
   const msg = `Hola Hostal Hudson, soy ${name || '...'}. Quiero reservar: llegada ${llegada || '...'}, ${noches} noche(s), ${personas} persona(s). ¿Tienen disponibilidad?`;
 
   async function handleSubmit(e) {
     e.preventDefault();
-    if (!name.trim() || !llegada) return alert('Completa tu nombre y la fecha de llegada');
+    if (!name.trim() || !llegada) return alert(t.fillAll);
     setState('sending');
-    setDetail('');
     try {
       const r = await fetch('/api/reserva', {
         method: 'POST',
@@ -26,50 +27,46 @@ export default function ReservaCTA({ title = 'Reserva por WhatsApp en 1 minuto' 
       });
       const data = await r.json();
       if (!data.ok) throw new Error(data.error || 'Error');
-      const live = data.sheetMode === 'live' || data.notifyMode === 'live';
+      setLive(data.sheetMode === 'live' || data.notifyMode === 'live');
       setState('done');
-      setDetail(live ? 'live' : 'demo');
     } catch {
-      setState('demo');
+      setState('done');
+      setLive(false);
     }
   }
 
-  if (state === 'done' || state === 'demo') {
+  if (state === 'done') {
     return (
       <div className="card" style={{ border: '2px solid #16a34a' }}>
-        <h3>✅ ¡Reserva enviada, {name}!</h3>
-        <p>
-          {detail === 'live'
-            ? 'Quedó registrada en nuestro sistema y te contactaremos a la brevedad.'
-            : 'Ahora confirma por WhatsApp para asegurar tu fecha:'}
-        </p>
-        <a className="btn btn-green" href={waLink(msg)} target="_blank">Confirmar por WhatsApp ({HOSTAL_PHONE_DISPLAY})</a>
-        <p><button className="btn btn-outline" onClick={() => setState('idle')}>Hacer otra reserva</button></p>
+        <h3>✅ {t.sentTitle} {name}!</h3>
+        <p>{live ? t.recordedLive : t.recordedDemo}</p>
+        <a className="btn btn-green" href={waLink(msg)} target="_blank">{t.confirmWa} ({HOSTAL_PHONE_DISPLAY})</a>
+        <p><button className="btn btn-outline" onClick={() => setState('idle')}>{t.another}</button></p>
       </div>
     );
   }
 
   return (
     <div className="card" style={{ border: '2px solid #16a34a' }}>
-      <h3>{title}</h3>
-      <p className="muted">Completa y tu reserva queda registrada. Después la confirmas por WhatsApp ({HOSTAL_PHONE_DISPLAY}).</p>
+      <h3>{title || t.reserveTitle}</h3>
+      <p className="muted">{t.reserveText} ({HOSTAL_PHONE_DISPLAY}).</p>
       <form onSubmit={handleSubmit}>
-        <label>Tu nombre</label>
-        <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Ej. María" />
+        <label>{t.fName}</label>
+        <input value={name} onChange={(e) => setName(e.target.value)} placeholder="María" />
         <div className="grid-2">
           <div>
-            <label>Fecha de llegada</label>
+            <label>{t.fArrival}</label>
             <input type="date" value={llegada} onChange={(e) => setLlegada(e.target.value)} />
           </div>
           <div>
-            <label>Noches</label>
+            <label>{t.fNights}</label>
             <input type="number" min="1" max="60" value={noches} onChange={(e) => setNoches(Number(e.target.value))} />
           </div>
         </div>
-        <label>Personas</label>
+        <label>{t.fPeople}</label>
         <input type="number" min="1" max="20" value={personas} onChange={(e) => setPersonas(Number(e.target.value))} />
         <button className="btn btn-green" type="submit" disabled={state === 'sending'}>
-          {state === 'sending' ? 'Enviando...' : 'Enviar reserva'}
+          {state === 'sending' ? t.sending : t.send}
         </button>
       </form>
     </div>
