@@ -156,6 +156,7 @@ export default function AdminPanel() {
   const [showNew, setShowNew] = useState(false);
   const [manual, setManual] = useState([]);
   const [form, setForm] = useState({ nombre: '', llegada: '', noches: 1, personas: 2, telefono: '', nota: '' });
+  const [editingId, setEditingId] = useState(null);
   const [saving, setSaving] = useState(false);
   const [repMonth, setRepMonth] = useState(() => { const t = new Date(); return `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}`; });
 
@@ -281,6 +282,27 @@ export default function AdminPanel() {
     if (!f.nombre.trim() || !f.llegada) return alert('Completa nombre y llegada');
     if (f.llegada < todayISO()) return alert('La llegada no puede ser pasada');
     setSaving(true);
+    if (editingId) {
+      setManual((prev) => {
+        const next = prev.map((m) => m.id === editingId ? {
+          ...m,
+          nombre: f.nombre.trim().slice(0, 80),
+          llegada: f.llegada.slice(0, 10),
+          noches: Math.max(1, Math.min(60, Number(f.noches) || 1)),
+          personas: Math.max(1, Math.min(20, Number(f.personas) || 1)),
+          telefono: String(f.telefono || '').replace(/\D/g, '').slice(0, 15),
+        } : m);
+        try { localStorage.setItem('hostal-manual', JSON.stringify(next)); } catch {}
+        return next;
+      });
+      const target = { id: editingId, nombre: f.nombre };
+      if (f.nota.trim()) setNota(target, f.nota.trim());
+      setEditingId(null);
+      setForm({ nombre: '', llegada: '', noches: 1, personas: 2, telefono: '', nota: '' });
+      setSaving(false);
+      setShowNew(false);
+      return;
+    }
     const entry = {
       id: `m${Date.now()}`,
       origen: 'manual',
@@ -307,6 +329,57 @@ export default function AdminPanel() {
     setForm({ nombre: '', llegada: '', noches: 1, personas: 2, telefono: '', nota: '' });
     setSaving(false);
     setShowNew(false);
+  }
+
+  function startEdit(r) {
+    setForm({ nombre: r.nombre, llegada: String(r.llegada).slice(0, 10), noches: r.noches, personas: r.personas, telefono: r.telefono || '', nota: notaDe(r) });
+    setEditingId(r.id);
+    setShowNew(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  function deleteManual(r) {
+    if (!confirm(`¿Eliminar la reserva de ${r.nombre}?`)) return;
+    setManual((prev) => {
+      const next = prev.filter((m) => m.id !== r.id);
+      try { localStorage.setItem('hostal-manual', JSON.stringify(next)); } catch {}
+      return next;
+    });
+    setEstados((prev) => { const n = { ...prev }; delete n[rowKey(r)]; try { localStorage.setItem('hostal-estados', JSON.stringify(n)); } catch {} return n; });
+    setNotas((prev) => { const n = { ...prev }; delete n[rowKey(r)]; try { localStorage.setItem('hostal-notas', JSON.stringify(n)); } catch {} return n; });
+  }
+  function shiftSummary() {
+    const L = [`🏠 Turno Hostal Hudson — ${fmtDate(todayISO())}`, ''];
+    L.push(`🛬 Llegan (${kpis.lleganHoy.length}): ${kpis.lleganHoy.map((r) => `${r.nombre} ${r.personas}p`).join(', ') || '—'}`);
+    L.push(`🛫 Se van (${kpis.salenHoy.length}): ${kpis.salenHoy.map((r) => `${r.nombre} ${r.personas}p`).join(', ') || '—'}`);
+    L.push(`🛏️ En casa (${kpis.enCasa.length}): ${kpis.enCasa.map((r) => r.nombre).join(', ') || '—'}`);
+    const withNotes = kpis.enCasa.map((r) => ({ r, n: notaDe(r) })).filter((x) => x.n);
+    if (withNotes.length) { L.push('', '📝 Notas:'); withNotes.forEach((x) => L.push(`· ${x.r.nombre}: ${x.n}`)); }
+    return `https://wa.me/?text=${encodeURIComponent(L.join('\n'))}`;
+  }
+  function backup() {
+    const data = { manual, estados, notas, busy: [...busy], fecha: new Date().toISOString() };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `respaldo-hostal-${todayISO()}.json`;
+    a.click();
+  }
+  function restore(e) {
+    const f = e.target.files[0];
+    if (!f) return;
+    const rd = new FileReader();
+    rd.onload = () => {
+      try {
+        const d = JSON.parse(rd.result);
+        if (d.manual) { setManual(d.manual); localStorage.setItem('hostal-manual', JSON.stringify(d.manual)); }
+        if (d.estados) { setEstados(d.estados); localStorage.setItem('hostal-estados', JSON.stringify(d.estados)); }
+        if (d.notas) { setNotas(d.notas); localStorage.setItem('hostal-notas', JSON.stringify(d.notas)); }
+        if (d.busy) { setBusy(new Set(d.busy)); localStorage.setItem('hostal-busy', JSON.stringify(d.busy)); }
+        alert('Respaldo restaurado');
+      } catch { alert('Archivo inválido'); }
+    };
+    rd.readAsText(f);
+    e.target.value = '';
   }
 
   function exportCSV() {    const head = 'nombre,llegada,noches,personas,telefono,estado';
@@ -376,9 +449,27 @@ export default function AdminPanel() {
           <div className="card" style={{ borderLeft: '5px solid #0e7490' }}>
             <h3>🏠 Hoy en el hostal ({fmtDate(todayISO())})</h3>
             <div className="grid">
-              <div><strong>🛬 Llegan ({kpis.lleganHoy.length})</strong><p className="muted">{kpis.lleganHoy.length ? kpis.lleganHoy.map((r) => `${r.nombre} (${r.personas}p)`).join(' · ') : 'Nadie hoy.'}</p></div>
-              <div><strong>🛫 Se van ({kpis.salenHoy.length})</strong><p className="muted">{kpis.salenHoy.length ? kpis.salenHoy.map((r) => `${r.nombre} (${r.personas}p)`).join(' · ') : 'Nadie hoy.'}</p></div>
-              <div><strong>🛏️ En casa ({kpis.enCasa.length})</strong><p className="muted">{kpis.enCasa.length ? kpis.enCasa.map((r) => r.nombre).join(' · ') : 'Vacío hoy.'}</p></div>
+              <div>
+                <strong>🛬 Llegan ({kpis.lleganHoy.length})</strong>
+                {kpis.lleganHoy.length === 0 ? <p className="muted">Nadie hoy.</p> : kpis.lleganHoy.map((r) => (
+                  <p key={rowKey(r)}>{r.nombre} ({r.personas}p){' '}
+                    <button className="btn btn-green" style={{ padding: '4px 10px', fontSize: 12 }} onClick={() => setEstado(r, 'check-in')}>✓ Check-in</button>
+                  </p>
+                ))}
+              </div>
+              <div>
+                <strong>🛫 Se van ({kpis.salenHoy.length})</strong>
+                {kpis.salenHoy.length === 0 ? <p className="muted">Nadie hoy.</p> : kpis.salenHoy.map((r) => (
+                  <p key={rowKey(r)}>{r.nombre} ({r.personas}p){' '}
+                    <button className="btn btn-outline" style={{ padding: '4px 10px', fontSize: 12 }} onClick={() => setEstado(r, 'check-out')}>✓ Check-out</button>
+                  </p>
+                ))}
+              </div>
+              <div>
+                <strong>🛏️ En casa ({kpis.enCasa.length})</strong>
+                <p className="muted">{kpis.enCasa.length ? kpis.enCasa.map((r) => r.nombre).join(' · ') : 'Vacío hoy.'}</p>
+                <p><a className="btn btn-green" style={{ padding: '8px 14px' }} href={shiftSummary()} target="_blank">📤 Resumen de turno</a></p>
+              </div>
             </div>
           </div>
 
@@ -438,14 +529,16 @@ export default function AdminPanel() {
               </div>
             </div>
             <p className="no-print">
-              <button className="btn btn-green" onClick={() => setShowNew(!showNew)}>＋ Nueva reserva directa</button>{' '}
+              <button className="btn btn-green" onClick={() => { setEditingId(null); setForm({ nombre: '', llegada: '', noches: 1, personas: 2, telefono: '', nota: '' }); setShowNew(!showNew); }}>＋ Nueva reserva directa</button>{' '}
               <button className="btn btn-outline" onClick={loadBookings}>↻ Actualizar</button>{' '}
               <button className="btn btn-outline" onClick={exportCSV}>⬇ Exportar CSV</button>{' '}
-              <button className="btn btn-outline" onClick={() => window.print()}>🖨 Imprimir llegadas</button>
+              <button className="btn btn-outline" onClick={() => window.print()}>🖨 Imprimir llegadas</button>{' '}
+              <button className="btn btn-outline" onClick={backup}>💾 Respaldo</button>{' '}
+              <label className="btn btn-outline" style={{ cursor: 'pointer' }}>📥 Restaurar<input type="file" accept=".json" onChange={restore} style={{ display: 'none' }} /></label>
             </p>
             {showNew && (
               <form onSubmit={saveManual} className="card" style={{ border: '2px solid #16a34a', background: '#f0fdf4' }}>
-                <h3>📞 Nueva reserva directa</h3>
+                <h3>{editingId ? '✏️ Editar reserva directa' : '📞 Nueva reserva directa'}</h3>
                 <p className="muted">Para pasajeros que reservaron por teléfono, WhatsApp o presencial. Queda en estado <strong>confirmada</strong>.</p>
                 <div className="grid-2">
                   <div>
@@ -502,6 +595,12 @@ export default function AdminPanel() {
                             </select>
                           </td>
                           <td className="msg-cell" style={{ whiteSpace: 'nowrap' }}>
+                            {r.origen === 'manual' && (
+                              <>
+                                <button className="btn btn-outline" style={{ padding: '6px 10px' }} onClick={() => startEdit(r)} title="Editar">✏️</button>{' '}
+                                <button className="btn btn-outline" style={{ padding: '6px 10px' }} onClick={() => deleteManual(r)} title="Eliminar">🗑️</button>{' '}
+                              </>
+                            )}
                             {wa1 ? (
                               <>
                                 <a className="btn btn-green" style={{ padding: '6px 10px' }} href={wa1} target="_blank" title="Te esperamos mañana">🛬</a>{' '}
