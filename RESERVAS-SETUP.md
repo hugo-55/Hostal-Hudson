@@ -26,3 +26,20 @@ Mismo puente, el mensaje ya viene armado: "🏨 Nueva reserva: nombre, llegada, 
 
 ## 4. Verificar
 Reserva de prueba en `/reservas` → fila en Sheets + WhatsApp al +56 9 9439 1571.
+
+## 5. Panel del dueño (/admin)
+1. En el MISMO Apps Script agrega:
+```gs
+function doGet() {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Reservas');
+  const vals = sheet.getDataRange().getValues();
+  const rows = vals.slice(1).map((r) => ({
+    fecha_registro: r[0], nombre: r[1], llegada: r[2], noches: r[3], personas: r[4],
+  }));
+  return ContentService.createTextOutput(JSON.stringify({ rows }))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+```
+2. Nueva implementación del script (misma URL base sirve GET y POST) → pégala en `lib/site.js → RESERVAS_READ_URL`
+3. Clave del panel: en Vercel agrega `NEXT_PUBLIC_ADMIN_KEY=tu-clave` (o usa `hudson123` temporal y cámbiala ya)
+4. Abre `/admin`: reservas reales, editor de disponibilidad y estado de integraciones.
