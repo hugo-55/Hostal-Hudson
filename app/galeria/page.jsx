@@ -1,4 +1,5 @@
 import WhatsAppButton, { Footer } from '../../components/Chrome';
+import LightboxGallery from '../../components/Lightbox';
 
 const HOSTAL = [
   { src: '/img/gal-hostal-exterior1.jpg', alt: 'Exterior de Hostal Hudson' },
@@ -23,24 +24,12 @@ export default function Galeria() {
   return (
     <div className="container">
       <h1>Galería</h1>
-      <p className="muted">Fotos reales del hostal y de la zona. Toca para ampliar.</p>
+      <p className="muted">Fotos reales del hostal y de la zona. Toca cualquier foto para ampliarla.</p>
       <h2 className="section-title">Nuestro hostal</h2>
-      <div className="gallery">
-        {HOSTAL.map((p) => (
-          <a key={p.src} href={p.src} target="_blank" rel="noreferrer">
-            <img src={p.src} alt={p.alt} loading="lazy" />
-          </a>
-        ))}
-      </div>
+      <LightboxGallery photos={HOSTAL} />
       <h2 className="section-title">Aysén por descubrir</h2>
       <p className="section-sub">Todo esto a distancia de paseo desde nuestra puerta. Pregúntanos cómo llegar.</p>
-      <div className="gallery">
-        {ZONA.map((p) => (
-          <a key={p.src} href={p.src} target="_blank" rel="noreferrer">
-            <img src={p.src} alt={p.alt} loading="lazy" />
-          </a>
-        ))}
-      </div>
+      <LightboxGallery photos={ZONA} />
       <Footer />
       <WhatsAppButton />
     </div>

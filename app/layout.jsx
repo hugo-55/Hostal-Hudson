@@ -1,5 +1,6 @@
 import './globals.css';
 import { Fraunces, Inter } from 'next/font/google';
+import { NavBar } from '../components/NavBar';
 import { SITE_URL } from '../lib/site';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-body' });
@@ -32,23 +33,6 @@ export const metadata = {
   },
 };
 
-function Nav() {
-  return (
-    <div className="topbar">
-      <div className="topbar-inner">
-        <a className="logo" href="/"><img src="/img/logo.png" alt="Hostal Hudson" /> <span>Hostal Hudson<small>Puerto Aysén · Patagonia</small></span></a>
-        <nav className="nav">
-          <a href="/">Inicio</a>
-          <a href="/habitaciones">Habitaciones</a>
-          <a href="/tarifas">Tarifas</a>
-          <a href="/galeria">Galería</a>
-          <a className="nav-cta" href="/reservas">Reservar</a>
-        </nav>
-      </div>
-    </div>
-  );
-}
-
 export default function RootLayout({ children }) {
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -75,7 +59,7 @@ export default function RootLayout({ children }) {
     <html lang="es-CL" className={`${inter.variable} ${fraunces.variable}`}>
       <body>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-        <Nav />
+        <NavBar />
         {children}
       </body>
     </html>

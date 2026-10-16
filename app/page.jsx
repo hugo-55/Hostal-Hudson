@@ -1,13 +1,20 @@
-import Image from 'next/image';
 import WhatsAppButton, { Footer } from '../components/Chrome';
+import Slideshow from '../components/Slideshow';
 import ReservaCTA from '../components/ReservaCTA';
 import { SERVICES, TESTIMONIALS, waLink, MAPS_URL, HOSTAL_PHONE_DISPLAY, PAGESPEED_URL } from '../lib/site';
+
+const SLIDES = [
+  { src: '/img/slide1.jpg', alt: 'Hostal Hudson frente al río Aysén' },
+  { src: '/img/slide2.jpg', alt: 'Vista al río desde el hostal' },
+  { src: '/img/slide3.jpg', alt: 'Habitaciones acogedoras' },
+  { src: '/img/slide4.jpg', alt: 'Paisaje patagónico' },
+];
 
 export default function Home() {
   return (
     <div className="container">
       <div className="hero">
-        <Image src="/img/slide1.jpg" alt="Hostal Hudson frente al río Aysén" fill priority sizes="100vw" style={{ objectFit: 'cover' }} />
+        <Slideshow slides={SLIDES} />
         <div className="hero-text">
           <div className="hero-kicker">Puerto Aysén · Patagonia chilena</div>
           <h1>Duerme frente al río, despierta en la Patagonia</h1>
@@ -43,10 +50,20 @@ export default function Home() {
         <div className="card">
           <h3>📍 Teniente Merino 1080</h3>
           <p>A 2 cuadras de la plaza de armas, a orillas del río Aysén y frente al puente Presidente Ibáñez, Monumento Nacional. Cerca de bancos, oficinas públicas y comercio.</p>
+          <div className="stats-row">
+            <div><b>2</b><span>cuadras a la plaza</span></div>
+            <div><b>24 h</b><span>recepción</span></div>
+            <div><b>6/6</b><span>servicios incluidos</span></div>
+          </div>
           <p><a className="btn btn-outline" href={MAPS_URL} target="_blank">Cómo llegar →</a></p>
         </div>
         <div className="card" style={{ padding: 10 }}>
-          <img src="/img/slide2.jpg" alt="Vista al río Aysén desde el hostal" style={{ borderRadius: 10, height: '100%', minHeight: 240, objectFit: 'cover', width: '100%' }} />
+          <iframe
+            title="Mapa Hostal Hudson"
+            src="https://www.google.com/maps?q=Teniente+Merino+1080,+Puerto+Ays%C3%A9n&output=embed"
+            style={{ border: 0, borderRadius: 10, width: '100%', height: '100%', minHeight: 300 }}
+            loading="lazy"
+          />
         </div>
       </div>
 
