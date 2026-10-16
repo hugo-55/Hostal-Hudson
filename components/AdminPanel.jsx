@@ -26,7 +26,7 @@ function todayISO() {
   const t = new Date();
   return `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`;
 }
-const rowKey = (r) => `${r.nombre}|${r.llegada}`;
+const rowKey = (r) => r.id || `${r.nombre}|${r.llegada}`;
 
 // Pestaña Conexiones: qué hace cada una, en qué modo está y cómo activarla.
 const GUIDES = {
@@ -152,6 +152,11 @@ export default function AdminPanel() {
   const [copied, setCopied] = useState(false);
   const [q, setQ] = useState('');
   const [fEstado, setFEstado] = useState('todas');
+  const [fOrigen, setFOrigen] = useState('todos');
+  const [showNew, setShowNew] = useState(false);
+  const [manual, setManual] = useState([]);
+  const [form, setForm] = useState({ nombre: '', llegada: '', noches: 1, personas: 2, telefono: '', nota: '' });
+  const [saving, setSaving] = useState(false);
   const [repMonth, setRepMonth] = useState(() => { const t = new Date(); return `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}`; });
 
   useEffect(() => {
@@ -161,6 +166,8 @@ export default function AdminPanel() {
       if (saved) setBusy(new Set(JSON.parse(saved)));
       const es = localStorage.getItem('hostal-estados');
       if (es) setEstados(JSON.parse(es));
+      const mn = localStorage.getItem('hostal-manual');
+      if (mn) setManual(JSON.parse(mn));
       const nt = localStorage.getItem('hostal-notas');
       if (nt) setNotas(JSON.parse(nt));
     } catch {}
@@ -201,8 +208,14 @@ export default function AdminPanel() {
     });
   }
 
+  // Filas visibles: planilla + manuales (las manuales siempre, con insignia).
+  const allRows = useMemo(() => {
+    const base = (rows || []).map((r) => ({ ...r, origen: r.origen || 'web' }));
+    return [...base, ...manual];
+  }, [rows, manual]);
+
   const kpis = useMemo(() => {
-    const list = rows || [];
+    const list = allRows;
     const activas = list.filter((r) => estadoDe(r) !== 'cancelada');
     const prox7 = activas.filter((r) => { const d = daysUntil(r.llegada); return d >= 0 && d <= 7; });
     const noches = activas.reduce((a, r) => a + (Number(r.noches) || 0), 0);
@@ -225,17 +238,18 @@ export default function AdminPanel() {
     const maxM = Math.max(1, ...months.map((m) => byMonth[m]));
     return { total: list.length, prox7: prox7.length, noches, ingreso, proxList: prox7.slice(0, 5), byMonth, months, maxM, lleganHoy, salenHoy, enCasa };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rows, estados]);
+  }, [allRows, estados]);
 
   const filtered = useMemo(() => {
-    const list = rows || [];
+    const list = allRows;
     return list.filter((r) => {
       const okQ = !q || `${r.nombre} ${r.llegada}`.toLowerCase().includes(q.toLowerCase());
       const okE = fEstado === 'todas' || estadoDe(r) === fEstado;
-      return okQ && okE;
+      const okO = fOrigen === 'todos' || (r.origen || 'web') === fOrigen;
+      return okQ && okE && okO;
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rows, estados, q, fEstado]);
+  }, [allRows, estados, q, fEstado, fOrigen]);
 
   function waTo(r, text) {
     if (!r.telefono) return null;
@@ -261,8 +275,41 @@ export default function AdminPanel() {
       <script>window.print()<\/script></body></html>`);
     w.document.close();
   }
-  function exportCSV() {
-    const head = 'nombre,llegada,noches,personas,telefono,estado';
+  async function saveManual(e) {
+    e.preventDefault();
+    const f = form;
+    if (!f.nombre.trim() || !f.llegada) return alert('Completa nombre y llegada');
+    if (f.llegada < todayISO()) return alert('La llegada no puede ser pasada');
+    setSaving(true);
+    const entry = {
+      id: `m${Date.now()}`,
+      origen: 'manual',
+      nombre: f.nombre.trim().slice(0, 80),
+      llegada: f.llegada.slice(0, 10),
+      noches: Math.max(1, Math.min(60, Number(f.noches) || 1)),
+      personas: Math.max(1, Math.min(20, Number(f.personas) || 1)),
+      telefono: String(f.telefono || '').replace(/\D/g, '').slice(0, 15),
+    };
+    try {
+      await fetch('/api/reserva', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: entry.nombre, llegada: entry.llegada, noches: entry.noches, personas: entry.personas, telefono: entry.telefono }),
+      });
+    } catch {}
+    setManual((prev) => {
+      const next = [...prev, entry];
+      try { localStorage.setItem('hostal-manual', JSON.stringify(next)); } catch {}
+      return next;
+    });
+    if (f.nota.trim()) setNota(entry, f.nota.trim());
+    setEstado(entry, 'confirmada');
+    setForm({ nombre: '', llegada: '', noches: 1, personas: 2, telefono: '', nota: '' });
+    setSaving(false);
+    setShowNew(false);
+  }
+
+  function exportCSV() {    const head = 'nombre,llegada,noches,personas,telefono,estado';
     const lines = filtered.map((r) => [r.nombre, r.llegada, r.noches, r.personas, r.telefono || '', estadoDe(r)].map((v) => `"${String(v ?? '').replace(/"/g, '""')}"`).join(','));
     const blob = new Blob([[head, ...lines].join('\n')], { type: 'text/csv' });
     const a = document.createElement('a');
@@ -380,12 +427,55 @@ export default function AdminPanel() {
                 </select>
               </div>
             </div>
+            <div className="grid-2">
+              <div>
+                <label>Origen</label>
+                <select value={fOrigen} onChange={(e) => setFOrigen(e.target.value)}>
+                  <option value="todos">Todos</option>
+                  <option value="web">🌐 Web</option>
+                  <option value="manual">📞 Directa</option>
+                </select>
+              </div>
+            </div>
             <p className="no-print">
+              <button className="btn btn-green" onClick={() => setShowNew(!showNew)}>＋ Nueva reserva directa</button>{' '}
               <button className="btn btn-outline" onClick={loadBookings}>↻ Actualizar</button>{' '}
               <button className="btn btn-outline" onClick={exportCSV}>⬇ Exportar CSV</button>{' '}
               <button className="btn btn-outline" onClick={() => window.print()}>🖨 Imprimir llegadas</button>
             </p>
-            {!rows ? <p>Cargando...</p> : filtered.length === 0 ? <p>Sin resultados.</p> : (
+            {showNew && (
+              <form onSubmit={saveManual} className="card" style={{ border: '2px solid #16a34a', background: '#f0fdf4' }}>
+                <h3>📞 Nueva reserva directa</h3>
+                <p className="muted">Para pasajeros que reservaron por teléfono, WhatsApp o presencial. Queda en estado <strong>confirmada</strong>.</p>
+                <div className="grid-2">
+                  <div>
+                    <label>Nombre *</label>
+                    <input value={form.nombre} onChange={(e) => setForm({ ...form, nombre: e.target.value })} placeholder="Nombre del pasajero" />
+                  </div>
+                  <div>
+                    <label>WhatsApp</label>
+                    <input value={form.telefono} onChange={(e) => setForm({ ...form, telefono: e.target.value })} placeholder="+56 9 ..." inputMode="tel" />
+                  </div>
+                  <div>
+                    <label>Llegada *</label>
+                    <input type="date" min={todayISO()} value={form.llegada} onChange={(e) => setForm({ ...form, llegada: e.target.value })} />
+                  </div>
+                  <div>
+                    <label>Noches</label>
+                    <input type="number" min="1" max="60" value={form.noches} onChange={(e) => setForm({ ...form, noches: Number(e.target.value) })} />
+                  </div>
+                </div>
+                <label>Personas</label>
+                <input type="number" min="1" max="20" value={form.personas} onChange={(e) => setForm({ ...form, personas: Number(e.target.value) })} style={{ maxWidth: 200 }} />
+                <label>Nota (opcional)</label>
+                <input value={form.nota} onChange={(e) => setForm({ ...form, nota: e.target.value })} placeholder="Ej. paga al llegar..." />
+                <p>
+                  <button className="btn btn-green" type="submit" disabled={saving}>{saving ? 'Guardando...' : '✓ Guardar reserva'}</button>{' '}
+                  <button className="btn btn-outline" type="button" onClick={() => setShowNew(false)}>Cancelar</button>
+                </p>
+              </form>
+            )}
+            {!rows && manual.length === 0 ? <p>Cargando...</p> : filtered.length === 0 ? <p>Sin resultados.</p> : (
               <div className="admin-table-wrap">
               <table className="admin-table">
                 <thead><tr><th>Nombre</th><th>Llegada</th><th>Estado</th><th>Msg</th></tr></thead>
@@ -398,7 +488,8 @@ export default function AdminPanel() {
                       <>
                         <tr key={rk}>
                           <td className="name-cell">
-                            <strong>{r.nombre}</strong>
+                            <strong>{r.nombre}</strong>{' '}
+                            <span title={r.origen === 'manual' ? 'Reserva directa (teléfono/presencial)' : 'Reserva por la web'}>{r.origen === 'manual' ? '📞' : '🌐'}</span>
                             {notaDe(r) ? <div className="note-preview">📝 {notaDe(r).slice(0, 60)}{notaDe(r).length > 60 ? '…' : ''}</div> : null}
                             <button className="btn btn-outline note-btn" onClick={() => setNoteOpen(noteOpen === rk ? null : rk)}>
                               {notaDe(r) ? '✏️ Editar nota' : '＋ Nota'}
