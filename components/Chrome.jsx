@@ -1,4 +1,4 @@
-import { HOSTAL_PHONE, HOSTAL_PHONE_DISPLAY } from '../lib/site';
+import { HOSTAL_PHONE, HOSTAL_PHONE_DISPLAY, ADDRESS, MAPS_URL } from '../lib/site';
 
 export default function WhatsAppButton({ text = 'Hola, quiero reservar en Hostal Hudson' }) {
   const href = `https://wa.me/${HOSTAL_PHONE}?text=${encodeURIComponent(text)}`;
@@ -12,10 +12,18 @@ export default function WhatsAppButton({ text = 'Hola, quiero reservar en Hostal
 export function Footer() {
   return (
     <div className="footer">
-      <p>
-        <strong>Hostal Hudson</strong> · Teniente Merino 1080, Puerto Aysén · {HOSTAL_PHONE_DISPLAY}
-      </p>
-      <p className="muted">Versión renovada del sitio — diseño rápido y reserva por WhatsApp. Sitio original: hostalhudson.cl</p>
+      <div>
+        <strong>Hostal Hudson</strong>
+        <p className="muted">{ADDRESS}<br />Tel/WhatsApp: {HOSTAL_PHONE_DISPLAY}</p>
+      </div>
+      <div>
+        <strong>Secciones</strong>
+        <p className="muted"><a href="/habitaciones">Habitaciones</a> · <a href="/tarifas">Tarifas</a> · <a href="/galeria">Galería</a> · <a href="/reservas">Reservas</a></p>
+      </div>
+      <div>
+        <strong>Reserva directa</strong>
+        <p className="muted">Sin intermediarios ni comisiones. <a href={MAPS_URL} target="_blank">Cómo llegar →</a></p>
+      </div>
     </div>
   );
 }
