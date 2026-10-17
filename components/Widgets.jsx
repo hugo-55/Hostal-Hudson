@@ -4,25 +4,53 @@ import { waLink, HOSTAL_PHONE, HOSTAL_PHONE_DISPLAY } from '../lib/site';
 import { useLang } from '../lib/i18n';
 
 // Carrusel de testimonios + contador animado al entrar en pantalla.
-export function TestimonialCarousel({ items }) {
+function stars(n = 5) {
+  const v = Math.round(Number(n) || 5);
+  return '★★★★★'.slice(0, v) + '☆☆☆☆☆'.slice(0, 5 - v);
+}
+
+export function TestimonialCarousel({ items, rating, total, mapsUrl, live }) {
   const [i, setI] = useState(0);
   useEffect(() => {
+    if (!items?.length) return;
     const t = setInterval(() => setI((v) => (v + 1) % items.length), 7000);
     return () => clearInterval(t);
-  }, [items.length]);
+  }, [items?.length]);
+  if (!items?.length) return null;
   const t = items[i];
   return (
     <div className="t-carousel">
-      <div className="review-stars">★★★★★</div>
+      <div className="review-stars">{stars(t.rating || 5)}</div>
       <p className="t-quote">“{t.text}”</p>
-      <p><strong>{t.name}</strong> <span className="muted">· {t.tag}</span></p>
+      <p><strong>{t.name}</strong> <span className="muted">· {t.tag || 'Reseña de Google'}{t.time ? ` · ${t.time}` : ''}</span></p>
       <div className="slide-dots dark">
         {items.map((_, k) => (
           <button key={k} className={k === i ? 'on' : ''} onClick={() => setI(k)} aria-label={`Opinión ${k + 1}`} />
         ))}
       </div>
+      {typeof rating === 'number' && (
+        <p className="muted" style={{ marginTop: 8, fontSize: 13 }}>
+          {live ? '★' : '☆'} {rating} en Google{total ? ` · ${total} reseñas` : ''}{' '}
+          {mapsUrl && <a href={mapsUrl} target="_blank">Ver todas →</a>}
+        </p>
+      )}
     </div>
   );
+}
+
+// Versión en vivo: intenta /api/reviews y cae a items locales si no hay API key.
+export function ReviewsLive({ fallback }) {
+  const [data, setData] = useState(null);
+  useEffect(() => {
+    let alive = true;
+    fetch('/api/reviews')
+      .then((r) => r.json())
+      .then((j) => { if (alive) setData(j); })
+      .catch(() => {});
+    return () => { alive = false; };
+  }, []);
+  const d = data || { live: false, reviews: fallback, rating: undefined, total: undefined, mapsUrl: undefined };
+  return <TestimonialCarousel items={d.reviews} rating={d.rating} total={d.total} mapsUrl={d.mapsUrl} live={d.live} />;
 }
 
 export function CountUp({ to, suffix = '' }) {

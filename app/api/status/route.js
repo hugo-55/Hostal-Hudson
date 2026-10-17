@@ -1,4 +1,4 @@
-import { SHEET_ENDPOINT, NOTIFY_ENDPOINT, AVAILABILITY_CSV, REVIEW_URL } from '../../../lib/site';
+import { SHEET_ENDPOINT, NOTIFY_ENDPOINT, AVAILABILITY_CSV, REVIEW_URL, GOOGLE_PLACE_ID } from '../../../lib/site';
 
 // Estado de integraciones (solo booleanos, sin secretos).
 export async function GET() {
@@ -7,5 +7,6 @@ export async function GET() {
     notify: Boolean(NOTIFY_ENDPOINT),
     availability: Boolean(AVAILABILITY_CSV),
     review: Boolean(REVIEW_URL),
+    reviewsLive: Boolean(GOOGLE_PLACE_ID && process.env.GOOGLE_PLACES_API_KEY),
   });
 }

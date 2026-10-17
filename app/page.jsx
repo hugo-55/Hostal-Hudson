@@ -5,7 +5,7 @@ import BookingBar from '../components/BookingBar';
 import ReservaCTA from '../components/ReservaCTA';
 import Weather from '../components/Weather';
 import SmartImg from '../components/SmartImg';
-import { TestimonialCarousel, CountUp, Reveal } from '../components/Widgets';
+import { TestimonialCarousel, CountUp, Reveal, ReviewsLive } from '../components/Widgets';
 import { useLang } from '../lib/i18n';
 import { SERVICES, TESTIMONIALS, waLink, MAPS_URL, REVIEW_URL, HOSTAL_PHONE_DISPLAY, PAGESPEED_URL } from '../lib/site';
 
@@ -84,7 +84,7 @@ export default function Home() {
 
         <div className="dark-section">
           <h2>{t.reviewsTitle}</h2>
-          <TestimonialCarousel items={TESTIMONIALS} />
+          <ReviewsLive fallback={TESTIMONIALS} />
           <p style={{ marginTop: 18 }}>
             <a className="btn btn-green" href={waLink('Hola Hostal Hudson, quiero reservar')} target="_blank">{t.wantBook}</a>
           </p>
