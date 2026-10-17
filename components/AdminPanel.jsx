@@ -163,6 +163,28 @@ export default function AdminPanel() {
   const [repMonth, setRepMonth] = useState(() => { const t = new Date(); return `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}`; });
 
   useEffect(() => {
+    // Verificar sesión con el servidor antes de mostrar cualquier cosa
+    let mounted = true;
+    fetch('/api/auth/session')
+      .then((r) => r.json())
+      .then((d) => { if (mounted) setOpen(Boolean(d.ok)); })
+      .catch(() => { if (mounted) setOpen(false); });
+
+    // Cargar estado guardado en el servidor (si hay URL configurada)
+    fetch('/api/admin/state')
+      .then((r) => r.json())
+      .then((d) => {
+        if (!mounted || !d.ok || !d.data) return;
+        const data = d.data;
+        if (data.estados) { setEstados(data.estados); try { localStorage.setItem('hostal-estados', JSON.stringify(data.estados)); } catch {} }
+        if (data.notas) { setNotas(data.notas); try { localStorage.setItem('hostal-notas', JSON.stringify(data.notas)); } catch {} }
+        if (data.busy) { setBusy(new Set(data.busy)); try { localStorage.setItem('hostal-busy', JSON.stringify(data.busy)); } catch {} }
+        if (data.overrides) { setOverrides(data.overrides); try { localStorage.setItem('hostal-overrides', JSON.stringify(data.overrides)); } catch {} }
+        if (data.manual) { setManual(data.manual); try { localStorage.setItem('hostal-manual', JSON.stringify(data.manual)); } catch {} }
+      })
+      .catch(() => {});
+
+    // Cargar del navegador (fallback / primera vez)
     try {
       if (sessionStorage.getItem('hostal-admin') === '1') setOpen(true);
       const saved = localStorage.getItem('hostal-busy');
@@ -177,11 +199,44 @@ export default function AdminPanel() {
       if (nt) setNotas(JSON.parse(nt));
     } catch {}
     fetch('/api/status').then((r) => r.json()).then(setStatus).catch(() => {});
+    return () => { mounted = false; };
   }, []);
 
-  function login(e) {
+  // Guarda en servidor (si está configurado) y localStorage tras cualquier cambio
+  useEffect(() => {
+    let t;
+    t = setTimeout(() => saveState(), 800);
+    return () => clearTimeout(t);
+  }, [estados, notas, busy, manual, overrides]);
+
+  async function saveState() {
+    // Guarda en el servidor si está configurado; siempre guarda en localStorage
+    try {
+      const payload = { manual, estados, notas, busy: [...busy], overrides };
+      await fetch('/api/admin/state', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+    } catch {}
+    try {
+      localStorage.setItem('hostal-manual', JSON.stringify(manual));
+      localStorage.setItem('hostal-estados', JSON.stringify(estados));
+      localStorage.setItem('hostal-notas', JSON.stringify(notas));
+      localStorage.setItem('hostal-busy', JSON.stringify([...busy]));
+      localStorage.setItem('hostal-overrides', JSON.stringify(overrides));
+    } catch {}
+  }
+
+  async function login(e) {
     e.preventDefault();
-    if (key === (process.env.NEXT_PUBLIC_ADMIN_KEY || 'hudson123')) {
+    const res = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ key }),
+    });
+    const d = await res.json().catch(() => ({ ok: false }));
+    if (d.ok) {
       setOpen(true);
       try { sessionStorage.setItem('hostal-admin', '1'); } catch {}
     } else alert('Clave incorrecta');
@@ -277,8 +332,8 @@ export default function AdminPanel() {
     w.document.write(`<html><head><title>Reporte ${repMonth} - Hostal Hudson</title></head><body style="font-family:sans-serif">
       <h1>Hostal Hudson — reporte ${repMonth}</h1>
       <p>Reservas: <strong>${list.length}</strong> · Noches: <strong>${noches}</strong> · Ingreso estimado: <strong>${fmt(ingreso)}</strong> · Canceladas: <strong>${canc}</strong></p>
-      <table border="1" cellpadding="6" cellspacing="0"><tr><th>Nombre</th><th>Llegada</th><th>Noches</th><th>Personas</th><th>Estado</th></tr>
-      ${list.map((r) => `<tr><td>${r.nombre}</td><td>${r.llegada}</td><td>${r.noches}</td><td>${r.personas}</td><td>${estadoDe(r)}</td></tr>`).join('')}
+      <table border="1" cellpadding="6" cellspacing="0"><tr><th>Nombre</th><th>Llegada</th><th>Noches</th><th>Personas</th><th>Estado</th><th>Nota</th></tr>
+      ${list.map((r) => `<tr><td>${r.nombre}</td><td>${r.llegada}</td><td>${r.noches}</td><td>${r.personas}</td><td>${estadoDe(r)}</td><td>${notaDe(r) || ''}</td></tr>`).join('')}
       </table><p><small>Tarifa referencial. Generado desde el panel.</small></p>
       <script>window.print()<\/script></body></html>`);
     w.document.close();
@@ -402,8 +457,9 @@ export default function AdminPanel() {
     e.target.value = '';
   }
 
-  function exportCSV() {    const head = 'nombre,llegada,noches,personas,telefono,estado';
-    const lines = filtered.map((r) => [r.nombre, r.llegada, r.noches, r.personas, r.telefono || '', estadoDe(r)].map((v) => `"${String(v ?? '').replace(/"/g, '""')}"`).join(','));
+  function exportCSV() {
+    const head = 'nombre,llegada,noches,personas,telefono,estado,nota';
+    const lines = filtered.map((r) => [r.nombre, r.llegada, r.noches, r.personas, r.telefono || '', estadoDe(r), notaDe(r)].map((v) => `"${String(v ?? '').replace(/"/g, '""')}"`).join(','));
     const blob = new Blob([[head, ...lines].join('\n')], { type: 'text/csv' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
