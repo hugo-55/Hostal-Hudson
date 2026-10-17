@@ -277,3 +277,7 @@ body[data-theme="dark"] input, body[data-theme="dark"] select { background: #292
 body[data-theme="dark"] .btn-outline { background: transparent; color: var(--ink); border-color: var(--ink); }
 body[data-theme="dark"] .lang-toggle button { background: transparent; }
 body[data-theme="dark"] .burger span { background: var(--ink); }
+
+/* Calendario por rango - admin */
+.cal-range { background: #fef3c7 !important; color: #92400e !important; }
+.cal-dragging { outline: 2px solid #2563eb; outline-offset: -2px; }

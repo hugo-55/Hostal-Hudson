@@ -120,15 +120,28 @@ function Occupancy({ rows, busy }) {
   );
 }
 
-function monthGrid(year, month, busy, toggle) {
+// Calendario mensual con soporte de selección por rango (click + drag).
+function monthGrid(year, month, busy, toggle, rangeStart, rangeEnd, dragging, onRangeStart, onRangeSelect, onDragEnd) {
   const startPad = (new Date(year, month, 1).getDay() + 6) % 7;
   const days = new Date(year, month + 1, 0).getDate();
   const cells = [];
   for (let k = 0; k < startPad; k++) cells.push(<span key={`p${k}`} />);
   for (let d = 1; d <= days; d++) {
     const iso = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+    const isBusy = busy.has(iso);
+    const inRange = rangeStart && rangeEnd
+      ? new Date(iso) >= new Date(rangeStart) && new Date(iso) <= new Date(rangeEnd)
+      : false;
     cells.push(
-      <button key={iso} className={busy.has(iso) ? 'cal-busy' : 'cal-free'} onClick={() => toggle(iso)} title={iso}>
+      <button
+        key={iso}
+        className={`cal-day ${isBusy ? 'cal-busy' : 'cal-free'} ${inRange ? 'cal-range' : ''} ${dragging && inRange ? 'cal-dragging' : ''}`}
+        onMouseDown={(e) => { e.preventDefault(); onRangeStart(iso); }}
+        onMouseEnter={() => { if (dragging) onRangeSelect(iso); }}
+        onMouseUp={onDragEnd}
+        onClick={() => toggle(iso)}
+        title={iso}
+      >
         {d}
       </button>
     );
@@ -136,8 +149,7 @@ function monthGrid(year, month, busy, toggle) {
   return cells;
 }
 
-// Panel privado del dueño. Solo español.
-// Límite honesto: los estados viven en este navegador (ideal 1 PC del hostal).
+// Panel privado del dueño.
 export default function AdminPanel() {
   const [key, setKey] = useState('');
   const [open, setOpen] = useState(false);
@@ -162,9 +174,22 @@ export default function AdminPanel() {
   const [saving, setSaving] = useState(false);
   const [repMonth, setRepMonth] = useState(() => { const t = new Date(); return `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}`; });
 
+  // Auditoría
+  const [auditLog, setAuditLog] = useState([]);
+  // Cambio de clave
+  const [showKeyChange, setShowKeyChange] = useState(false);
+  const [ckey, setCkey] = useState('');
+  const [nkey, setNkey] = useState('');
+  const [ckey2, setCkey2] = useState('');
+  const [keyMsg, setKeyMsg] = useState('');
+  // Calendario por rango
+  const [rangeStart, setRangeStart] = useState(null);
+  const [rangeEnd, setRangeEnd] = useState(null);
+  const [dragging, setDragging] = useState(false);
+
   useEffect(() => {
-    // Verificar sesión con el servidor antes de mostrar cualquier cosa
     let mounted = true;
+    // Verificar sesión con el servidor antes de mostrar cualquier cosa
     fetch('/api/auth/session')
       .then((r) => r.json())
       .then((d) => { if (mounted) setOpen(Boolean(d.ok)); })
@@ -181,6 +206,7 @@ export default function AdminPanel() {
         if (data.busy) { setBusy(new Set(data.busy)); try { localStorage.setItem('hostal-busy', JSON.stringify(data.busy)); } catch {} }
         if (data.overrides) { setOverrides(data.overrides); try { localStorage.setItem('hostal-overrides', JSON.stringify(data.overrides)); } catch {} }
         if (data.manual) { setManual(data.manual); try { localStorage.setItem('hostal-manual', JSON.stringify(data.manual)); } catch {} }
+        if (data.auditLog) { setAuditLog(data.auditLog); try { localStorage.setItem('hostal-audit', JSON.stringify(data.auditLog)); } catch {} }
       })
       .catch(() => {});
 
@@ -197,6 +223,8 @@ export default function AdminPanel() {
       if (ov) setOverrides(JSON.parse(ov));
       const nt = localStorage.getItem('hostal-notas');
       if (nt) setNotas(JSON.parse(nt));
+      const al = localStorage.getItem('hostal-audit');
+      if (al) setAuditLog(JSON.parse(al));
     } catch {}
     fetch('/api/status').then((r) => r.json()).then(setStatus).catch(() => {});
     return () => { mounted = false; };
@@ -207,12 +235,11 @@ export default function AdminPanel() {
     let t;
     t = setTimeout(() => saveState(), 800);
     return () => clearTimeout(t);
-  }, [estados, notas, busy, manual, overrides]);
+  }, [estados, notas, busy, manual, overrides, auditLog]);
 
   async function saveState() {
-    // Guarda en el servidor si está configurado; siempre guarda en localStorage
     try {
-      const payload = { manual, estados, notas, busy: [...busy], overrides };
+      const payload = { manual, estados, notas, busy: [...busy], overrides, auditLog };
       await fetch('/api/admin/state', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -225,6 +252,18 @@ export default function AdminPanel() {
       localStorage.setItem('hostal-notas', JSON.stringify(notas));
       localStorage.setItem('hostal-busy', JSON.stringify([...busy]));
       localStorage.setItem('hostal-overrides', JSON.stringify(overrides));
+      localStorage.setItem('hostal-audit', JSON.stringify(auditLog));
+    } catch {}
+  }
+
+  function audit(accion, objetivo, detalle = '') {
+    const entrada = { fecha: new Date().toISOString(), accion, objetivo: String(objetivo), detalle };
+    setAuditLog((prev) => [entrada, ...prev].slice(0, 200));
+    try {
+      const guardado = localStorage.getItem('hostal-audit');
+      const arr = guardado ? JSON.parse(guardado) : [];
+      arr.unshift(entrada);
+      localStorage.setItem('hostal-audit', JSON.stringify(arr.slice(0, 200)));
     } catch {}
   }
 
@@ -238,8 +277,32 @@ export default function AdminPanel() {
     const d = await res.json().catch(() => ({ ok: false }));
     if (d.ok) {
       setOpen(true);
+      audit('login', 'panel', 'Sesión iniciada');
       try { sessionStorage.setItem('hostal-admin', '1'); } catch {}
-    } else alert('Clave incorrecta');
+    } else {
+      audit('login_fallido', 'panel', 'Clave incorrecta');
+      alert('Clave incorrecta');
+    }
+  }
+
+  async function changeKey() {
+    if (!nkey || nkey.length < 4) return setKeyMsg('La clave nueva debe tener al menos 4 caracteres');
+    if (nkey !== ckey2) return setKeyMsg('Las claves nuevas no coinciden');
+    setKeyMsg('');
+    const res = await fetch('/api/admin/key', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ currentKey: ckey, newKey: nkey }),
+    });
+    const d = await res.json().catch(() => ({ ok: false }));
+    if (d.ok) {
+      audit('cambio_clave', 'panel', 'Clave de acceso cambiada');
+      setKeyMsg('Clave actualizada. Úsala la próxima vez que entres.');
+      setCkey(''); setNkey(''); setCkey2('');
+      setShowKeyChange(false);
+    } else {
+      setKeyMsg(d.error || 'No se pudo cambiar la clave');
+    }
   }
 
   function loadBookings() {
@@ -259,6 +322,7 @@ export default function AdminPanel() {
       try { localStorage.setItem('hostal-notas', JSON.stringify(next)); } catch {}
       return next;
     });
+    audit('nota', r.nombre, v ? `Nota agregada` : 'Nota borrada');
   }
   function setEstado(r, v) {
     setEstados((prev) => {
@@ -266,6 +330,7 @@ export default function AdminPanel() {
       try { localStorage.setItem('hostal-estados', JSON.stringify(next)); } catch {}
       return next;
     });
+    audit('estado', r.nombre, `${estadoDe(r)} → ${v}`);
   }
 
   // Filas visibles: planilla (+ correcciones locales) + manuales.
@@ -360,7 +425,6 @@ export default function AdminPanel() {
           return next;
         });
       } else {
-        // Reserva de la web: corrección local (la planilla original no cambia).
         const okey = editingKey || editingId;
         setOverrides((prev) => {
           const next = { ...prev, [okey]: patch };
@@ -370,6 +434,7 @@ export default function AdminPanel() {
       }
       const target = { id: editingKey || editingId, nombre: patch.nombre, llegada: patch.llegada };
       if (f.nota.trim()) setNota(target, f.nota.trim());
+      audit('edicion', patch.nombre, isManual ? 'Reserva manual editada' : 'Reserva web corregida localmente');
       setEditingId(null);
       setEditingKey(null);
       setForm({ nombre: '', llegada: '', noches: 1, personas: 2, telefono: '', nota: '' });
@@ -400,6 +465,7 @@ export default function AdminPanel() {
     });
     if (f.nota.trim()) setNota(entry, f.nota.trim());
     setEstado(entry, 'confirmada');
+    audit('nueva_reserva', entry.nombre, 'Reserva directa creada desde el panel');
     setForm({ nombre: '', llegada: '', noches: 1, personas: 2, telefono: '', nota: '' });
     setSaving(false);
     setShowNew(false);
@@ -421,6 +487,7 @@ export default function AdminPanel() {
     });
     setEstados((prev) => { const n = { ...prev }; delete n[rowKey(r)]; try { localStorage.setItem('hostal-estados', JSON.stringify(n)); } catch {} return n; });
     setNotas((prev) => { const n = { ...prev }; delete n[rowKey(r)]; try { localStorage.setItem('hostal-notas', JSON.stringify(n)); } catch {} return n; });
+    audit('eliminar_reserva', r.nombre, 'Reserva manual eliminada');
   }
   function shiftSummary() {
     const L = [`🏠 Turno Hostal Hudson — ${fmtDate(todayISO())}`, ''];
@@ -432,12 +499,13 @@ export default function AdminPanel() {
     return `https://wa.me/?text=${encodeURIComponent(L.join('\n'))}`;
   }
   function backup() {
-    const data = { manual, estados, notas, busy: [...busy], fecha: new Date().toISOString() };
+    const data = { manual, estados, notas, busy: [...busy], overrides, auditLog, fecha: new Date().toISOString() };
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
     a.download = `respaldo-hostal-${todayISO()}.json`;
     a.click();
+    audit('respaldo', 'panel', 'Backup descargado');
   }
   function restore(e) {
     const f = e.target.files[0];
@@ -450,7 +518,10 @@ export default function AdminPanel() {
         if (d.estados) { setEstados(d.estados); localStorage.setItem('hostal-estados', JSON.stringify(d.estados)); }
         if (d.notas) { setNotas(d.notas); localStorage.setItem('hostal-notas', JSON.stringify(d.notas)); }
         if (d.busy) { setBusy(new Set(d.busy)); localStorage.setItem('hostal-busy', JSON.stringify(d.busy)); }
+        if (d.overrides) { setOverrides(d.overrides); localStorage.setItem('hostal-overrides', JSON.stringify(d.overrides)); }
+        if (d.auditLog) { setAuditLog(d.auditLog); localStorage.setItem('hostal-audit', JSON.stringify(d.auditLog)); }
         alert('Respaldo restaurado');
+        audit('restaurar', 'panel', 'Backup restaurado');
       } catch { alert('Archivo inválido'); }
     };
     rd.readAsText(f);
@@ -465,16 +536,40 @@ export default function AdminPanel() {
     a.href = URL.createObjectURL(blob);
     a.download = 'reservas.csv';
     a.click();
+    audit('exportar_csv', 'panel', `${filtered.length} filas exportadas`);
   }
 
   function toggle(iso) {
+    const antes = busy.has(iso);
     setBusy((prev) => {
       const next = new Set(prev);
       if (next.has(iso)) next.delete(iso);
       else next.add(iso);
-      try { localStorage.setItem('hostal-busy', JSON.stringify([...next])); } catch {}
+      try { localStorage.setItem('hostal-busy', JSON.stringify([next])); } catch {}
       return next;
     });
+    audit('toggle_ocupado', iso, antes ? 'Liberado' : 'Marcado como ocupado');
+  }
+  // toggle con rango
+  function toggleRange(startIso, endIso) {
+    const start = new Date(startIso);
+    const end = new Date(endIso);
+    const days = [];
+    for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+      days.push(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`);
+    }
+    setBusy((prev) => {
+      const next = new Set(prev);
+      let added = 0, removed = 0;
+      days.forEach((iso) => {
+        if (next.has(iso)) { next.delete(iso); removed++; }
+        else { next.add(iso); added++; }
+      });
+      try { localStorage.setItem('hostal-busy', JSON.stringify([...next])); } catch {}
+      audit('toggle_rango', `${startIso} al ${endIso}`, `${added} días ocupados, ${removed} liberados`);
+      return next;
+    });
+    setRangeStart(null); setRangeEnd(null); setDragging(false);
   }
 
   function copyCSV() {
@@ -509,7 +604,9 @@ export default function AdminPanel() {
       <p>
         <button className={`btn ${tab === 'bookings' ? '' : 'btn-outline'}`} onClick={() => setTab('bookings')}>Reservas</button>{' '}
         <button className={`btn ${tab === 'avail' ? '' : 'btn-outline'}`} onClick={() => setTab('avail')}>Disponibilidad</button>{' '}
-        <button className={`btn ${tab === 'state' ? '' : 'btn-outline'}`} onClick={() => setTab('state')}>Conexiones</button>
+        <button className={`btn ${tab === 'state' ? '' : 'btn-outline'}`} onClick={() => setTab('state')}>Conexiones</button>{' '}
+        <button className={`btn ${tab === 'historial' ? '' : 'btn-outline'}`} onClick={() => setTab('historial')}>Historial</button>{' '}
+        <button className={`btn ${tab === 'clave' ? '' : 'btn-outline'}`} onClick={() => setTab('clave')}>Clave</button>
       </p>
 
       {tab === 'bookings' && (
@@ -711,7 +808,7 @@ export default function AdminPanel() {
 
       {tab === 'avail' && (
         <div className="card">
-          <h3>Marca tus días ocupados (clic para cambiar)</h3>
+          <h3>Marca tus días ocupados (clic individual, o click + arrastre para rango)</h3>
           <div className="grid-2">
             {months.map((m) => (
               <div key={m.toISOString()}>
@@ -720,8 +817,17 @@ export default function AdminPanel() {
                 </strong>
                 <div className="mini-cal">
                   {['L', 'M', 'X', 'J', 'V', 'S', 'D'].map((d) => <span key={d} className="cal-head">{d}</span>)}
-                  {monthGrid(m.getFullYear(), m.getMonth(), busy, toggle)}
+                  {monthGrid(m.getFullYear(), m.getMonth(), busy, toggle, rangeStart, rangeEnd, dragging, setRangeStart, (iso) => setRangeEnd(iso), () => setDragging(false))}
                 </div>
+                <p className="muted" style={{ marginTop: 6 }}>
+                  {rangeStart && rangeEnd ? `Rango seleccionado: ${rangeStart} → ${rangeEnd}` : ''}
+                  <button className="btn btn-green" style={{ padding: '4px 10px', fontSize: 12, marginLeft: 8 }} onClick={() => toggleRange(rangeStart, rangeEnd)} disabled={!rangeStart || !rangeEnd}>
+                    Aplicar rango
+                  </button>
+                  <button className="btn btn-outline" style={{ padding: '4px 10px', fontSize: 12, marginLeft: 6 }} onClick={() => { setRangeStart(null); setRangeEnd(null); setDragging(false); }}>
+                    Cancelar
+                  </button>
+                </p>
               </div>
             ))}
           </div>
@@ -734,6 +840,56 @@ export default function AdminPanel() {
 
       {tab === 'state' && (
         <Connections status={status} />
+      )}
+
+      {tab === 'historial' && (
+        <div className="card">
+          <h3>📜 Historial de cambios (auditoría)</h3>
+          <p className="muted">Últimas 200 acciones guardadas en este navegador y sincronizadas si configuraste ADMIN_STATE_URL.</p>
+          {auditLog.length === 0 ? (
+            <p className="muted">Sin registros aún.</p>
+          ) : (
+            <div style={{ maxHeight: 500, overflowY: 'auto', border: '1px solid #e5e7eb', borderRadius: 8, padding: 12, background: '#f9fafb' }}>
+              {auditLog.map((e, i) => (
+                <div key={i} style={{ padding: '6px 0', borderBottom: '1px solid #eee', fontSize: 13, display: 'flex', gap: 8 }}>
+                  <span style={{ color: '#6b7280', whiteSpace: 'nowrap' }}>{new Date(e.fecha).toLocaleString('es-CL')}</span>
+                  <span style={{ fontWeight: 600, color: '#1f2937' }}>{e.accion}</span>
+                  <span style={{ color: '#4b5563' }}>{e.objetivo}</span>
+                  {e.detalle && <span style={{ color: '#6b7280' }}>· {e.detalle}</span>}
+                </div>
+              ))}
+            </div>
+          )}
+          <p style={{ marginTop: 10 }}>
+            <button className="btn btn-outline" onClick={() => { setAuditLog([]); localStorage.removeItem('hostal-audit'); audit('limpiar_historial', 'panel', 'Historial borrado'); }}>🗑️ Vaciar historial</button>
+          </p>
+        </div>
+      )}
+
+      {tab === 'clave' && (
+        <div className="card">
+          <h3>🔑 Cambiar clave de acceso del admin</h3>
+          <p className="muted">La clave se guarda en el servidor (no en el código). Si olvidas la clave, tendrás que redeployar con una nueva ADMIN_KEY.</p>
+          {keyMsg && <p style={{ color: keyMsg.startsWith('Clave actualizada') ? '#16a34a' : '#dc2626', marginBottom: 10 }}>{keyMsg}</p>}
+          <form onChange={(e) => {}} className="grid-2" style={{ gap: 12 }}>
+            <div>
+              <label>Clave actual</label>
+              <input type="password" value={ckey} onChange={(e) => setCkey(e.target.value)} placeholder="Clave actual" />
+            </div>
+            <div>
+              <label>Clave nueva</label>
+              <input type="password" value={nkey} onChange={(e) => setNkey(e.target.value)} placeholder="Mínimo 4 caracteres" />
+            </div>
+            <div style={{ gridColumn: 'span 2' }}>
+              <label>Confirmar clave nueva</label>
+              <input type="password" value={ckey2} onChange={(e) => setCkey2(e.target.value)} placeholder="Repite la clave nueva" />
+            </div>
+          </form>
+          <p style={{ marginTop: 10 }}>
+            <button className="btn btn-green" onClick={changeKey} disabled={!ckey || !nkey || !ckey2}>✓ Cambiar clave</button>{' '}
+            <button className="btn btn-outline" onClick={() => { setShowKeyChange(false); setCkey(''); setNkey(''); setCkey2(''); setKeyMsg(''); }}>Cancelar</button>
+          </p>
+        </div>
       )}
     </div>
   );
