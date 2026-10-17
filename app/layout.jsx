@@ -4,6 +4,7 @@ import { Analytics } from '@vercel/analytics/react';
 import { NavBar } from '../components/NavBar';
 import { StickyBook } from '../components/Widgets';
 import { LangProvider } from '../lib/i18n';
+import { CookieConsent } from '../components/CookieConsent';
 import { SITE_URL } from '../lib/site';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-body' });
@@ -18,7 +19,11 @@ export const metadata = {
   description:
     'Hostal familiar en pleno centro de Puerto Aysén, frente al río y a 2 cuadras de la plaza. Wi-Fi gratis, desayuno incluido, recepción 24 h. Reserva por WhatsApp.',
   keywords: ['hostal puerto aysén', 'alojamiento aysén', 'hospedaje patagonia', 'hostal hudson'],
-  robots: 'index, follow',  openGraph: {
+  authors: [{ name: 'Hostal Hudson' }],
+  creator: 'Hostal Hudson',
+  publisher: 'Hostal Hudson',
+  robots: 'index, follow',
+  openGraph: {
     type: 'website',
     locale: 'es_CL',
     url: SITE_URL,
@@ -37,6 +42,8 @@ export const metadata = {
 
 export const viewport = {
   themeColor: '#164e63',
+  width: 'device-width',
+  initialScale: 1,
 };
 
 export default function RootLayout({ children }) {
@@ -72,6 +79,14 @@ export default function RootLayout({ children }) {
   };
   return (
     <html lang="es-CL" className={`${inter.variable} ${fraunces.variable}`}>
+      <head>
+        <link rel="manifest" href="/manifest.webmanifest" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-title" content="Hostal Hudson" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="#164e63" />
+        <link rel="apple-touch-icon" href="/img/logo.png" />
+      </head>
       <body>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
@@ -79,8 +94,25 @@ export default function RootLayout({ children }) {
           <NavBar />
           {children}
           <StickyBook />
+          <CookieConsent />
         </LangProvider>
         <Analytics />
+        <script
+          id="sw-register"
+          dangerouslySetInnerHTML={{
+            __html: `
+              if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                  navigator.serviceWorker.register('/sw.js').then((reg) => {
+                    console.log('SW registered:', reg.scope);
+                  }).catch((err) => {
+                    console.log('SW registration failed:', err);
+                  });
+                });
+              }
+            `,
+          }}
+        />
       </body>
     </html>
   );

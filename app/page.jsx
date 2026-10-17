@@ -1,4 +1,5 @@
 'use client';
+import { useEffect } from 'react';
 import WhatsAppButton, { Footer } from '../components/Chrome';
 import Slideshow from '../components/Slideshow';
 import BookingBar from '../components/BookingBar';
@@ -6,6 +7,7 @@ import ReservaCTA from '../components/ReservaCTA';
 import Weather from '../components/Weather';
 import SmartImg from '../components/SmartImg';
 import { TestimonialCarousel, CountUp, Reveal, ReviewsLive } from '../components/Widgets';
+import { Schema } from '../components/Schema';
 import { useLang } from '../lib/i18n';
 import { SERVICES, TESTIMONIALS, waLink, MAPS_URL, REVIEW_URL, HOSTAL_PHONE_DISPLAY, PAGESPEED_URL } from '../lib/site';
 
@@ -27,6 +29,36 @@ const ROOM_IMGS = ['/img/gal-hostal-interior1.jpg', '/img/gal-hostal-interior2.j
 
 export default function Home() {
   const { t, lang } = useLang();
+
+  useEffect(() => {
+    document.title = 'Hostal Hudson — Alojamiento en Puerto Aysén';
+    const meta = document.querySelector('meta[name="description"]');
+    if (meta) meta.setAttribute('content', 'Hostal familiar en Puerto Aysén, frente al río y a 2 cuadras de la plaza. Wi-Fi gratis, desayuno incluido, recepción 24 h. Reserva por WhatsApp.');
+  }, []);
+
+  const HOME_LD = {
+    '@context': 'https://schema.org',
+    '@type': 'Hotel',
+    name: 'Hostal Hudson',
+    description: 'Hostal familiar en Puerto Aysén, frente al río Aysén y a 2 cuadras de la plaza de armas.',
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: 'Teniente Merino 1080',
+      addressLocality: 'Puerto Aysén',
+      addressRegion: 'Aysén',
+      addressCountry: 'CL',
+    },
+    telephone: '+56994391571',
+    url: 'https://hostal-hudson.vercel.app',
+    priceRange: '$$',
+    amenityFeature: [
+      { '@type': 'LocationFeatureSpecification', name: 'Wi-Fi gratis' },
+      { '@type': 'LocationFeatureSpecification', name: 'Desayuno incluido' },
+      { '@type': 'LocationFeatureSpecification', name: 'Estacionamiento' },
+      { '@type': 'LocationFeatureSpecification', name: 'Recepción 24 h' },
+    ],
+    hasMap: 'https://www.google.com/maps/search/?api=1&query=Teniente+Merino+1080+Puerto+Aysen',
+  };
   return (
     <div>
       <div className="hero-full">
@@ -148,6 +180,7 @@ export default function Home() {
 
         <Footer />
       </div>
+      <Schema type="Hotel" data={HOME_LD} />
       <WhatsAppButton />
     </div>
   );

@@ -165,6 +165,8 @@ export default function AdminPanel() {
   const [q, setQ] = useState('');
   const [fEstado, setFEstado] = useState('todas');
   const [fOrigen, setFOrigen] = useState('todos');
+  const [fechaDesde, setFechaDesde] = useState('');
+  const [fechaHasta, setFechaHasta] = useState('');
   const [showNew, setShowNew] = useState(false);
   const [manual, setManual] = useState([]);
   const [overrides, setOverrides] = useState({});
@@ -374,10 +376,11 @@ export default function AdminPanel() {
       const okQ = !q || `${r.nombre} ${r.llegada}`.toLowerCase().includes(q.toLowerCase());
       const okE = fEstado === 'todas' || estadoDe(r) === fEstado;
       const okO = fOrigen === 'todos' || (r.origen || 'web') === fOrigen;
-      return okQ && okE && okO;
+      const okF = !fechaDesde || !fechaHasta || (new Date(String(r.llegada).slice(0, 10)) >= new Date(fechaDesde) && new Date(String(r.llegada).slice(0, 10)) <= new Date(fechaHasta));
+      return okQ && okE && okO && okF;
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [allRows, estados, q, fEstado, fOrigen]);
+  }, [allRows, estados, q, fEstado, fOrigen, fechaDesde, fechaHasta]);
 
   function waTo(r, text) {
     if (!r.telefono) return null;
@@ -699,6 +702,16 @@ export default function AdminPanel() {
                   <option value="web">🌐 Web</option>
                   <option value="manual">📞 Directa</option>
                 </select>
+              </div>
+            </div>
+            <div className="grid-2">
+              <div>
+                <label>Desde</label>
+                <input type="date" value={fechaDesde} onChange={(e) => setFechaDesde(e.target.value)} />
+              </div>
+              <div>
+                <label>Hasta</label>
+                <input type="date" value={fechaHasta} onChange={(e) => setFechaHasta(e.target.value)} />
               </div>
             </div>
             <p className="no-print">

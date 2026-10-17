@@ -1,0 +1,27 @@
+{
+  "name": "Hostal Hudson — Puerto Aysén",
+  "short_name": "Hostal Hudson",
+  "description": "Reserva tu estadía en Puerto Aysén por WhatsApp. Desayuno incluido, recepción 24 h, frente al río Aysén.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#fafaf9",
+  "theme_color": "#164e63",
+  "lang": "es-CL",
+  "dir": "ltr",
+  "categories": ["lodging", "travel", "hotel"],
+  "icons": [
+    { "src": "/img/logo.png", "sizes": "any", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/img/slide1.jpg", "sizes": "192x192", "type": "image/jpg", "purpose": "any" },
+    { "src": "/img/slide1.jpg", "sizes": "512x512", "type": "image/jpg", "purpose": "any" }
+  ],
+  "screenshots": [
+    { "src": "/img/slide1.jpg", "sizes": "1200x800", "type": "image/jpg", "label": "Hostal Hudson frente al río Aysén", "form_factor": "wide" },
+    { "src": "/img/slide1.jpg", "sizes": "750x1334", "type": "image/jpg", "label": "Hostal Hudson en móvil", "form_factor": "narrow" }
+  ],
+  "shortcuts": [
+    { "name": "Reservar", "url": "/reservas", "description": "Reserva por WhatsApp en 1 minuto", "icons": [{ "src": "/img/logo.png", "sizes": "any" }] },
+    { "name": "Habitaciones", "url": "/habitaciones", "description": "Ver habitaciones disponibles", "icons": [{ "src": "/img/logo.png", "sizes": "any" }] },
+    { "name": "Tarifas", "url": "/tarifas", "description": "Tarifas y formas de pago", "icons": [{ "src": "/img/logo.png", "sizes": "any" }] }
+  ]
+}

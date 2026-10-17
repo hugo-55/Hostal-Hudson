@@ -1,9 +1,11 @@
 'use client';
+import { useEffect } from 'react';
 import WhatsAppButton, { Footer } from '../../components/Chrome';
 import ReservaCTA from '../../components/ReservaCTA';
 import Weather from '../../components/Weather';
 import SmartImg from '../../components/SmartImg';
 import { PageTitle, Breadcrumb } from '../../components/Widgets';
+import { Schema } from '../../components/Schema';
 import { useLang } from '../../lib/i18n';
 import { waLink } from '../../lib/site';
 
@@ -17,8 +19,31 @@ const SPOTS = [
 ];
 
 export default function Visitar() {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const v = t.visitar;
+
+  useEffect(() => {
+    document.title = lang === 'es' ? 'Qué visitar — Hostal Hudson' : 'What to visit — Hostal Hudson';
+    const meta = document.querySelector('meta[name="description"]');
+    if (meta) meta.setAttribute('content', lang === 'es'
+      ? 'Qué visitar desde Hostal Hudson en Puerto Aysén: puente Ibáñez, caletas, cascadas, Carretera Austral y más.'
+      : 'What to visit from Hostal Hudson in Puerto Aysén: Ibáñez bridge, fishing coves, waterfalls, Carretera Austral and more.');
+  }, []);
+
+  const VISITAR_LD = {
+    '@context': 'https://schema.org',
+    '@type': 'TouristAttraction',
+    name: 'Hostal Hudson — Qué visitar',
+    description: 'Lugares para visitar desde Hostal Hudson en Puerto Aysén, Patagonia chilena.',
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: 'Teniente Merino 1080',
+      addressLocality: 'Puerto Aysén',
+      addressRegion: 'Aysén',
+      addressCountry: 'CL',
+    },
+    url: 'https://hostal-hudson.vercel.app/visitar',
+  };
   return (
     <div className="container">
       <PageTitle title={t.nav.visit} />
@@ -54,6 +79,7 @@ export default function Visitar() {
 
       <ReservaCTA />
       <Footer />
+      <Schema type="TouristAttraction" data={VISITAR_LD} />
       <WhatsAppButton />
     </div>
   );

@@ -1,13 +1,49 @@
 'use client';
+import { useEffect } from 'react';
 import WhatsAppButton, { Footer } from '../../components/Chrome';
 import Estimator from '../../components/Estimator';
 import Availability from '../../components/Availability';
 import { PageTitle, Breadcrumb } from '../../components/Widgets';
+import { Schema } from '../../components/Schema';
 import { useLang } from '../../lib/i18n';
-import { waLink, HOSTAL_PHONE_DISPLAY } from '../../lib/site';
+import { waLink, HOSTAL_PHONE_DISPLAY, RATE_PER_PERSON_NIGHT } from '../../lib/site';
 
 export default function Tarifas() {
-  const { t } = useLang();
+  const { t, lang } = useLang();
+
+  useEffect(() => {
+    document.title = lang === 'es' ? 'Tarifas — Hostal Hudson' : 'Rates — Hostal Hudson';
+    const meta = document.querySelector('meta[name="description"]');
+    if (meta) meta.setAttribute('content', lang === 'es'
+      ? 'Tarifas y formas de pago en Hostal Hudson, Puerto Aysén. Reserva directo por WhatsApp, paga por transferencia.'
+      : 'Rates and payment methods at Hostal Hudson, Puerto Aysén. Book directly via WhatsApp, pay by bank transfer.');
+  }, []);
+
+  const TARIFAS_LD = {
+    '@context': 'https://schema.org',
+    '@type': 'LodgingBusiness',
+    name: 'Hostal Hudson',
+    description: 'Tarifas y formas de pago en Hostal Hudson, Puerto Aysén.',
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: 'Teniente Merino 1080',
+      addressLocality: 'Puerto Aysén',
+      addressRegion: 'Aysén',
+      addressCountry: 'CL',
+    },
+    telephone: '+56994391571',
+    url: 'https://hostal-hudson.vercel.app/tarifas',
+    priceRange: '$$',
+    makesOffer: [
+      {
+        '@type': 'Offer',
+        itemOffered: { '@type': 'LodgingBusiness', name: 'Habitación doble' },
+        price: RATE_PER_PERSON_NIGHT,
+        priceCurrency: 'CLP',
+        availability: 'https://schema.org/InStock',
+      },
+    ],
+  };
   return (
     <div className="container">
       <PageTitle title={t.nav.rates} />
@@ -38,6 +74,7 @@ export default function Tarifas() {
       <Availability />
 
       <Footer />
+      <Schema type="LodgingBusiness" data={TARIFAS_LD} />
       <WhatsAppButton />
     </div>
   );

@@ -1,7 +1,9 @@
 'use client';
+import { useEffect } from 'react';
 import WhatsAppButton, { Footer } from '../../components/Chrome';
 import LightboxGallery from '../../components/Lightbox';
 import { PageTitle, Breadcrumb } from '../../components/Widgets';
+import { Schema } from '../../components/Schema';
 import { useLang } from '../../lib/i18n';
 
 const HOSTAL = [
@@ -24,7 +26,27 @@ const ZONA = [
 ];
 
 export default function Galeria() {
-  const { t } = useLang();
+  const { t, lang } = useLang();
+
+  useEffect(() => {
+    document.title = lang === 'es' ? 'Galería — Hostal Hudson' : 'Gallery — Hostal Hudson';
+    const meta = document.querySelector('meta[name="description"]');
+    if (meta) meta.setAttribute('content', lang === 'es'
+      ? 'Fotos reales de Hostal Hudson y de la zona de Puerto Aysén. Habitaciones, exterior, paisajes y más.'
+      : 'Real photos of Hostal Hudson and the Puerto Aysén area. Rooms, exterior, landscapes and more.');
+  }, []);
+
+  const GALERIA_LD = {
+    '@context': 'https://schema.org',
+    '@type': 'ImageGallery',
+    name: 'Galería Hostal Hudson',
+    description: 'Fotos reales de Hostal Hudson y de la zona de Puerto Aysén.',
+    publisher: {
+      '@type': 'Organization',
+      name: 'Hostal Hudson',
+      url: 'https://hostal-hudson.vercel.app',
+    },
+  };
   return (
     <div className="container">
       <PageTitle title={t.galleryTitle} />
@@ -36,6 +58,7 @@ export default function Galeria() {
       <h2 className="section-title">{t.galleryZone}</h2>
       <LightboxGallery photos={ZONA} />
       <Footer />
+      <Schema type="ImageGallery" data={GALERIA_LD} />
       <WhatsAppButton />
     </div>
   );

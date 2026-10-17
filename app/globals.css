@@ -281,3 +281,38 @@ body[data-theme="dark"] .burger span { background: var(--ink); }
 /* Calendario por rango - admin */
 .cal-range { background: #fef3c7 !important; color: #92400e !important; }
 .cal-dragging { outline: 2px solid #2563eb; outline-offset: -2px; }
+
+/* Cookie consent banner */
+.cookie-consent {
+  position: fixed;
+  inset: 0;
+  background: rgba(28, 25, 23, 0.85);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.cookie-consent-content {
+  background: #fff;
+  border-radius: 16px;
+  padding: 28px 32px;
+  max-width: 560px;
+  width: 100%;
+  box-shadow: 0 20px 60px rgba(0,0,0,.3);
+}
+.cookie-title { font-size: 18px; font-weight: 800; margin: 0 0 8px; color: var(--ink); }
+.cookie-text { font-size: 14.5px; color: var(--muted); margin: 0 0 18px; line-height: 1.6; }
+.cookie-actions { display: flex; gap: 10px; }
+.cookie-actions .btn { flex: 1; }
+
+/* Admin: mejoras para móvil */
+@media (max-width: 640px) {
+  .admin-table-wrap { overflow-x: auto; }
+  .admin-table { font-size: 13px; }
+  .admin-table th, .admin-table td { padding: 8px 10px; white-space: nowrap; }
+  .admin-table td.name-cell { min-width: auto; }
+  .note-btn { padding: 2px 6px !important; font-size: 11px !important; }
+  .msg-cell .btn { padding: 4px 6px !important; font-size: 12px !important; }
+  .grid-2 { grid-template-columns: 1fr; }
+}

@@ -29,11 +29,11 @@ export function NavBar() {
             <button className={lang === 'es' ? 'on' : ''} onClick={() => setLang('es')}>ES</button>
             <button className={lang === 'en' ? 'on' : ''} onClick={() => setLang('en')}>EN</button>
           </div>
-          <button className={`burger ${open ? 'open' : ''}`} onClick={() => setOpen(!open)} aria-label="Menú">
+          <button className={`burger ${open ? 'open' : ''}`} onClick={() => setOpen(!open)} aria-label="Menú" aria-expanded={open} aria-controls="mobile-nav">
             <span /><span /><span />
           </button>
         </div>
-        <nav className={`nav ${open ? 'open' : ''}`}>
+        <nav id="mobile-nav" className={`nav ${open ? 'open' : ''}`}>
           <a href="/" onClick={() => setOpen(false)}>{t.nav.home}</a>
           <a href="/habitaciones" onClick={() => setOpen(false)}>{t.nav.rooms}</a>
           <a href="/tarifas" onClick={() => setOpen(false)}>{t.nav.rates}</a>
