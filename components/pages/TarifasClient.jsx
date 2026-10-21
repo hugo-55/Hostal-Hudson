@@ -6,12 +6,16 @@ import { Breadcrumb } from '../Widgets';
 import { useLang } from '../../lib/i18n';
 import { useSeo } from '../../lib/useSeo';
 import { SEO } from '../../lib/seo';
-import { waLink, HOSTAL_PHONE_DISPLAY } from '../../lib/site';
+import { waLink, HOSTAL_PHONE_DISPLAY, RATE_PER_PERSON_NIGHT } from '../../lib/site';
 
 export default function TarifasClient() {
-  const { t } = useLang();
+  const { t, lang } = useLang();
 
   useSeo(SEO.tarifas.es, SEO.tarifas.en);
+
+  // El precio del dato estructurado (Offer) tiene que estar visible en la
+  // página: si no, Google lo descarta como rich result.
+  const monto = RATE_PER_PERSON_NIGHT.toLocaleString(lang === 'en' ? 'en-US' : 'es-CL');
 
   return (
     <div className="container">
@@ -22,6 +26,10 @@ export default function TarifasClient() {
       <div className="card">
         <h3>{t.quoteTitle}</h3>
         <p>{t.quoteText}</p>
+        <p>
+          {t.rateRef} <strong>{monto} CLP</strong>
+        </p>
+        <p className="muted">{t.estimator.note}</p>
         <a className="btn btn-green" href={waLink('Hola, quiero cotizar una estadía. Llegada: ..., noches: ..., personas: ...')} target="_blank">
           {t.quoteBtn} ({HOSTAL_PHONE_DISPLAY})
         </a>

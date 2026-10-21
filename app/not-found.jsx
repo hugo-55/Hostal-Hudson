@@ -3,6 +3,13 @@ import Link from 'next/link';
 // Next ya marca la 404 con noindex automáticamente.
 export const metadata = {
   title: 'Página no encontrada',
+  // openGraph propio: sin esto heredaría el de la portada y el enlace
+  // parecería la home del hostal al previsualizarlo.
+  openGraph: {
+    type: 'website',
+    title: 'Página no encontrada — Hostal Hudson',
+    description: 'La página que buscas no existe o cambió de lugar.',
+  },
 };
 
 export default function NotFound() {
