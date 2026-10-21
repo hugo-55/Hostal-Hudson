@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://hostal-hudson.vercel.app/sitemap.xml
+Sitemap: https://www.hostalhudson.cl/sitemap.xml

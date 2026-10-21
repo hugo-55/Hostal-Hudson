@@ -41,11 +41,12 @@ function doGet() {
 }
 ```
 2. Nueva implementación del script (misma URL base sirve GET y POST) → pégala en `lib/site.js → RESERVAS_READ_URL`
-3. Clave del panel: en Vercel → Settings → Env Vars agrega `ADMIN_KEY=tu-clave-segura`
+3. Clave del panel: ya está escrita en tu `.env.local` (no se sube a git).
+   Para que funcione **en producción**, copia ese mismo valor a Vercel:
+   Settings → Env Vars → nombre `ADMIN_KEY`, valor = el de tu `.env.local` → Redeploy.
    (OJO: **sin** `NEXT_PUBLIC_`; con ese prefijo la clave viaja al navegador y queda
    publicada. Sin `ADMIN_KEY`, en producción el login falla cerrado con error 503 y
-   el panel queda inutilizable hasta que la definas. En desarrollo local la clave
-   por defecto es `hudson123`.)
+   el panel queda inutilizable hasta que la definas.)
 4. Abre `/admin`: reservas reales, editor de disponibilidad y estado de integraciones.
 5. Para poder **cambiar la clave desde el panel** hace falta `ADMIN_STATE_URL` (paso 6):
    es donde se guarda la clave nueva para que sobreviva a los redeploys. Sin esa

@@ -1,6 +1,6 @@
 # Hostal Hudson — versión renovada (demo con permiso de los dueños)
 
-Vivo en: https://hostal-hudson.vercel.app/ — Repo: https://github.com/hugo-55/Hostal-Hudson
+Vivo en: https://www.hostalhudson.cl/ — Repo: https://github.com/hugo-55/Hostal-Hudson
 
 Rebuild rápido del sitio 2016 (Joomla) en Next.js estático.
 
@@ -18,8 +18,11 @@ Rebuild rápido del sitio 2016 (Joomla) en Next.js estático.
 npm install / npm run dev — igual que tienda-demo (Vercel, sin env vars).
 
 ### Env vars (solo para el panel del dueño `/admin` y las reservas reales)
-- `ADMIN_KEY` — clave del panel. **Obligatoria en producción**: sin ella el login
-  falla cerrado (503). En local la clave por defecto es `hudson123`.
+- `ADMIN_KEY` — clave (contraseña) del panel. Ya está definida en tu `.env.local`
+  (archivo que no se sube a git). **Para que funcione en producción hay que copiarla
+  a Vercel**: Settings → Environment Variables → `ADMIN_KEY` → Redeploy. Sin ella el
+  login falla cerrado (503) y `/admin` no abre: es a propósito, antes la contraseña
+  `hudson123` estaba escrita en el código y cualquiera que viera el repo entraba.
 - `ADMIN_STATE_URL` — URL del Apps Script que guarda reservas/notas/estados y la
   clave nueva del panel. Vacío = el estado se guarda solo en el navegador.
 - Detalle paso a paso en [RESERVAS-SETUP.md](./RESERVAS-SETUP.md).

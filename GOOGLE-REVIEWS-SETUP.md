@@ -11,7 +11,7 @@ Sin API key muestra las 4 locales de `lib/site.js` (fallback). Con API key muest
 
 ## 2. Crear API key (2 min, requiere facturación en Google Cloud)
 1. https://console.cloud.google.com → proyecto nuevo o existente → Habilitar `Places API (New)` y `Places API` legacy.
-2. Credenciales → Crear clave de API → restringe por HTTP referrer a tu dominio (`hostal-hudson.vercel.app/*`, `localhost:3000/*`).
+2. Credenciales → Crear clave de API → restringe por HTTP referrer a tu dominio (`www.hostalhudson.cl/*`, `localhost:3000/*`).
 3. En local crea `.env.local`:
    ```
    GOOGLE_PLACES_API_KEY=AIza...
