@@ -1,6 +1,7 @@
 'use client';
 import { HOSTAL_PHONE, HOSTAL_PHONE_DISPLAY, ADDRESS, MAPS_URL } from '../lib/site';
 import { useLang } from '../lib/i18n';
+import { PREFS_EVENT } from './CookieConsent';
 
 export default function WhatsAppButton({ text } = {}) {
   const { lang } = useLang();
@@ -31,6 +32,15 @@ export function Footer() {
       <div>
         <strong>{t.footerBook}</strong>
         <p className="muted">{t.footerTag} <a href={MAPS_URL} target="_blank">{t.directions}</a></p>
+        <p className="muted">
+          <button
+            type="button"
+            className="link-btn"
+            onClick={() => window.dispatchEvent(new CustomEvent(PREFS_EVENT))}
+          >
+            {t.cookies.prefs}
+          </button>
+        </p>
       </div>
     </div>
   );

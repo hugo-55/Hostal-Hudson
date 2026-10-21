@@ -30,7 +30,7 @@ export const metadata = {
     siteName: 'Hostal Hudson',
     title: 'Hostal Hudson — Descansa frente al río Aysén',
     description: 'Alojamiento familiar en Puerto Aysén. Reserva por WhatsApp en 1 minuto.',
-    images: [{ url: `${SITE_URL}/img/slide1.jpg`, width: 1200, height: 800 }],
+    images: [{ url: `${SITE_URL}/img/slide1.jpg`, width: 1920, height: 850 }],
   },
   twitter: {
     card: 'summary_large_image',
@@ -47,6 +47,8 @@ export const viewport = {
 };
 
 export default function RootLayout({ children }) {
+  // El service worker solo en producción: en dev sirve contenido viejo y rompe el hot reload.
+  const isProd = process.env.NODE_ENV === 'production';
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'LodgingBusiness',
@@ -80,12 +82,11 @@ export default function RootLayout({ children }) {
   return (
     <html lang="es-CL" className={`${inter.variable} ${fraunces.variable}`}>
       <head>
-        <link rel="manifest" href="/manifest.webmanifest" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-title" content="Hostal Hudson" />
         <meta name="apple-mobile-web-app-status-bar-style" content="#164e63" />
-        <link rel="apple-touch-icon" href="/img/logo.png" />
+        <link rel="apple-touch-icon" href="/img/icon-192.png" />
       </head>
       <body>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
@@ -97,22 +98,24 @@ export default function RootLayout({ children }) {
           <CookieConsent />
         </LangProvider>
         <Analytics />
-        <script
-          id="sw-register"
-          dangerouslySetInnerHTML={{
-            __html: `
-              if ('serviceWorker' in navigator) {
-                window.addEventListener('load', () => {
-                  navigator.serviceWorker.register('/sw.js').then((reg) => {
-                    console.log('SW registered:', reg.scope);
-                  }).catch((err) => {
-                    console.log('SW registration failed:', err);
+        {isProd && (
+          <script
+            id="sw-register"
+            dangerouslySetInnerHTML={{
+              __html: `
+                if ('serviceWorker' in navigator) {
+                  window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('/sw.js').then((reg) => {
+                      console.log('SW registered:', reg.scope);
+                    }).catch((err) => {
+                      console.log('SW registration failed:', err);
+                    });
                   });
-                });
-              }
-            `,
-          }}
-        />
+                }
+              `,
+            }}
+          />
+        )}
       </body>
     </html>
   );

@@ -306,6 +306,18 @@ body[data-theme="dark"] .burger span { background: var(--ink); }
 .cookie-actions { display: flex; gap: 10px; }
 .cookie-actions .btn { flex: 1; }
 
+/* Botón con apariencia de enlace (preferencias de cookies) */
+.link-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: var(--teal-700);
+  cursor: pointer;
+  text-decoration: underline;
+}
+.link-btn:hover { color: var(--teal-900); }
+
 /* Admin: mejoras para móvil */
 @media (max-width: 640px) {
   .admin-table-wrap { overflow-x: auto; }
