@@ -1,0 +1,46 @@
+'use client';
+import WhatsAppButton, { Footer } from '../Chrome';
+import LightboxGallery from '../Lightbox';
+import { Breadcrumb } from '../Widgets';
+import { useLang } from '../../lib/i18n';
+import { useSeo } from '../../lib/useSeo';
+import { SEO } from '../../lib/seo';
+
+const HOSTAL = [
+  { src: '/img/gal-hostal-exterior1.jpg', alt: 'Exterior de Hostal Hudson' },
+  { src: '/img/gal-hostal-interior1.jpg', alt: 'Interior acogedor del hostal' },
+  { src: '/img/gal-hostal-interior2.jpg', alt: 'Habitación cómoda' },
+  { src: '/img/gal-hostal-interior3.jpg', alt: 'Espacios del hostal' },
+  { src: '/img/gal-hostal-interior4.jpg', alt: 'Detalle de habitación' },
+  { src: '/img/gal-hostal-interior5.jpg', alt: 'Ambiente familiar' },
+];
+
+const ZONA = [
+  { src: '/img/gal-quevisitar-caleta.jpg', alt: 'Caleta de pescadores' },
+  { src: '/img/gal-quevisitar-camino.jpg', alt: 'Carretera Austral' },
+  { src: '/img/gal-quevisitar-cascada.jpg', alt: 'Cascada de la región' },
+  { src: '/img/gal-quevisitar-pan.jpg', alt: 'Vista panorámica de Aysén' },
+  { src: '/img/gal-quevisitar-plaza1.jpg', alt: 'Plaza de Puerto Aysén' },
+  { src: '/img/gal-quevisitar-plaza2.jpg', alt: 'Centro de Puerto Aysén' },
+  { src: '/img/gal-quevisitar-puente.jpg', alt: 'Puente Presidente Ibáñez' },
+];
+
+export default function GaleriaClient() {
+  const { t } = useLang();
+
+  useSeo(SEO.galeria.es, SEO.galeria.en);
+
+  return (
+    <div className="container">
+      <Breadcrumb trail={[t.galleryTitle]} />
+      <h1>{t.galleryTitle}</h1>
+      <p className="muted">{t.gallerySub}</p>
+      <h2 className="section-title">{t.galleryHostal}</h2>
+      <LightboxGallery photos={HOSTAL} />
+      <h2 className="section-title">{t.galleryZone}</h2>
+      <LightboxGallery photos={ZONA} />
+      <Footer />
+      <WhatsAppButton />
+    </div>
+  );
+}

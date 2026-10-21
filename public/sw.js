@@ -5,7 +5,7 @@
 // - Navegaciones: red primero, con página offline como respaldo.
 // - /_next/static/*: cache-first (archivos con hash, inmutables).
 // - /api/*: nunca se cachea (reservas, reseñas, panel admin).
-const CACHE_NAME = 'hostal-hudson-v2';
+const CACHE_NAME = 'hostal-hudson-v3';
 const OFFLINE_URL = '/offline.html';
 const PRECACHE = [
   OFFLINE_URL,

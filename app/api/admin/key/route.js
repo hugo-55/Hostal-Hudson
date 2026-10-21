@@ -1,49 +1,53 @@
-import { ADMIN_KEY } from '../../../../lib/site';
+import { cookies } from 'next/headers';
+import { ADMIN_KEY, ADMIN_STATE_URL, ADMIN_DISPONIBLE } from '../../../../lib/admin-config';
+import { leerEstadoAdmin, guardarEstadoAdmin } from '../../../../lib/admin-state';
+import { tokenSesionValido, clavesIguales } from '../../../../lib/session';
 
 // GET  /api/admin/key → { hasOverride: boolean }
 // POST /api/admin/key  { currentKey, newKey } → cambia la clave de acceso del admin
-// Guarda la override en /api/admin/state para que persista entre redeploys.
+// La clave nueva se guarda como override en la hoja de estado para que
+// sobreviva a los redeploys.
+
+function autorizado() {
+  if (!ADMIN_DISPONIBLE) return false;
+  const token = cookies().get('hostal-session')?.value;
+  return tokenSesionValido(token);
+}
+
 export async function GET() {
-  try {
-    const r = await fetch(`${process.env.VERCEL_URL ? 'https://' + process.env.VERCEL_URL : ''}/api/admin/state`, { next: { revalidate: 0 } });
-    const d = await r.json();
-    return Response.json({ hasOverride: Boolean(d.data?.adminKeyOverride) });
-  } catch {
-    return Response.json({ hasOverride: false });
-  }
+  if (!autorizado()) return Response.json({ ok: false, error: 'no autorizado' }, { status: 401 });
+  const d = await leerEstadoAdmin();
+  return Response.json({ hasOverride: Boolean(d.adminKeyOverride) });
 }
 
 export async function POST(req) {
+  // Sin clave del servidor no se puede autenticar el cambio: cerrado.
+  if (!ADMIN_DISPONIBLE) {
+    return Response.json({ ok: false, error: 'ADMIN_KEY no está configurada en el servidor' }, { status: 503 });
+  }
   let body;
   try { body = await req.json(); } catch { return Response.json({ ok: false, error: 'JSON inválido' }, { status: 400 }); }
-  const { currentKey, newKey } = body;
+  const { currentKey, newKey } = body || {};
   if (!currentKey || !newKey || newKey.length < 4) {
     return Response.json({ ok: false, error: 'Claves inválidas' }, { status: 400 });
   }
 
-  // Verificar currentKey contra la env o la override guardada
-  let valid = false;
-  if (currentKey === ADMIN_KEY) valid = true;
-  else {
-    try {
-      const r = await fetch(`${process.env.VERCEL_URL ? 'https://' + process.env.VERCEL_URL : ''}/api/admin/state`, { next: { revalidate: 0 } });
-      const d = await r.json();
-      if (d.data?.adminKeyOverride === currentKey) valid = true;
-    } catch {}
-  }
-
+  // Verificar currentKey contra la env o el override guardado
+  const estado = await leerEstadoAdmin();
+  const valid = clavesIguales(currentKey, ADMIN_KEY) || clavesIguales(currentKey, estado.adminKeyOverride);
   if (!valid) return Response.json({ ok: false, error: 'Clave actual incorrecta' }, { status: 401 });
 
-  // Guardar nueva clave como override
-  try {
-    const payload = { adminKeyOverride: newKey };
-    await fetch(`${process.env.VERCEL_URL ? 'https://' + process.env.VERCEL_URL : ''}/api/admin/state`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    });
-  } catch {
-    // Si falla el servidor, seguimos (se guarda en localStorage del cliente)
+  // Sin dónde persistir la nueva clave, el cambio se perdería: lo decimos claro.
+  if (!ADMIN_STATE_URL) {
+    return Response.json(
+      { ok: false, error: 'No hay dónde guardar la clave nueva: configura ADMIN_STATE_URL o redeploy con otra ADMIN_KEY.' },
+      { status: 400 }
+    );
+  }
+
+  const guardado = await guardarEstadoAdmin({ adminKeyOverride: newKey });
+  if (!guardado) {
+    return Response.json({ ok: false, error: 'No se pudo guardar la clave nueva' }, { status: 500 });
   }
 
   return Response.json({ ok: true });

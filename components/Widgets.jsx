@@ -80,14 +80,6 @@ export function CountUp({ to, suffix = '' }) {
   return <b ref={ref}>{val}{suffix}</b>;
 }
 
-// Título único por página (las páginas son client, esto actualiza document.title).
-export function PageTitle({ title }) {
-  useEffect(() => {
-    document.title = `${title} | Hostal Hudson`;
-  }, [title]);
-  return null;
-}
-
 // Migas de pan Home › Página.
 export function Breadcrumb({ trail }) {
   const { t } = useLang();

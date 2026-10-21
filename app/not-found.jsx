@@ -1,5 +1,10 @@
 import Link from 'next/link';
 
+// Next ya marca la 404 con noindex automáticamente.
+export const metadata = {
+  title: 'Página no encontrada',
+};
+
 export default function NotFound() {
   return (
     <div className="container" style={{ textAlign: 'center', paddingTop: 60 }}>

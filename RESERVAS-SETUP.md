@@ -41,5 +41,23 @@ function doGet() {
 }
 ```
 2. Nueva implementación del script (misma URL base sirve GET y POST) → pégala en `lib/site.js → RESERVAS_READ_URL`
-3. Clave del panel: en Vercel agrega `NEXT_PUBLIC_ADMIN_KEY=tu-clave` (o usa `hudson123` temporal y cámbiala ya)
+3. Clave del panel: en Vercel → Settings → Env Vars agrega `ADMIN_KEY=tu-clave-segura`
+   (OJO: **sin** `NEXT_PUBLIC_`; con ese prefijo la clave viaja al navegador y queda
+   publicada. Sin `ADMIN_KEY`, en producción el login falla cerrado con error 503 y
+   el panel queda inutilizable hasta que la definas. En desarrollo local la clave
+   por defecto es `hudson123`.)
 4. Abre `/admin`: reservas reales, editor de disponibilidad y estado de integraciones.
+5. Para poder **cambiar la clave desde el panel** hace falta `ADMIN_STATE_URL` (paso 6):
+   es donde se guarda la clave nueva para que sobreviva a los redeploys. Sin esa
+   variable, el panel avisa que no hay dónde guardarla.
+6. Estado del panel (notas, estados, clave nueva): en Vercel → Env Vars agrega
+   `ADMIN_STATE_URL=https://script.google.com/macros/s/TU_ID/exec` (el mismo script
+   del paso 5, con `doGet` y `doPost`). Vacío = el estado se guarda solo en el
+   navegador del dueño (localStorage) y `/api/admin/state` queda vacío.
+
+### Seguridad del panel
+- La sesión se guarda en una cookie `HttpOnly` con un token firmado (HMAC) y
+  expires a 8 h: no se puede falsificar poniendo `hostal-session=1` a mano.
+- `/api/admin/state` (lectura y escritura de reservas/notas) exige esa sesión.
+- `ADMIN_KEY` vive en `lib/admin-config.js` (módulo solo-servidor) para que el
+  código de la clave no viaje al bundle del navegador.

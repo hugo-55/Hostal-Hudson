@@ -188,6 +188,34 @@ export default function AdminPanel() {
   const [rangeStart, setRangeStart] = useState(null);
   const [rangeEnd, setRangeEnd] = useState(null);
   const [dragging, setDragging] = useState(false);
+  // ¿Ya se leyó el estado del servidor? Hasta que no, no se guarda nada:
+  // si no, al entrar al panel se pisaba el estado del servidor con el local vacío.
+  const [cargado, setCargado] = useState(false);
+
+  // Carga el estado guardado en el servidor (notas, estados, ocupados, auditoría).
+  // Se llama al montar y otra vez al entrar al panel: antes el fetch salía sin
+  // sesión (401) y el panel terminaba guardando su estado local encima del bueno.
+  async function loadState() {
+    setCargado(false);
+    try {
+      const r = await fetch('/api/admin/state', { cache: 'no-store' });
+      if (!r.ok) return false;
+      const d = await r.json();
+      if (!d.ok || !d.data) return false;
+      const data = d.data;
+      if (data.estados) { setEstados(data.estados); try { localStorage.setItem('hostal-estados', JSON.stringify(data.estados)); } catch {} }
+      if (data.notas) { setNotas(data.notas); try { localStorage.setItem('hostal-notas', JSON.stringify(data.notas)); } catch {} }
+      if (data.busy) { setBusy(new Set(data.busy)); try { localStorage.setItem('hostal-busy', JSON.stringify(data.busy)); } catch {} }
+      if (data.overrides) { setOverrides(data.overrides); try { localStorage.setItem('hostal-overrides', JSON.stringify(data.overrides)); } catch {} }
+      if (data.manual) { setManual(data.manual); try { localStorage.setItem('hostal-manual', JSON.stringify(data.manual)); } catch {} }
+      if (data.auditLog) { setAuditLog(data.auditLog); try { localStorage.setItem('hostal-audit', JSON.stringify(data.auditLog)); } catch {} }
+      return true;
+    } catch {
+      return false;
+    } finally {
+      setCargado(true);
+    }
+  }
 
   useEffect(() => {
     let mounted = true;
@@ -197,20 +225,9 @@ export default function AdminPanel() {
       .then((d) => { if (mounted) setOpen(Boolean(d.ok)); })
       .catch(() => { if (mounted) setOpen(false); });
 
-    // Cargar estado guardado en el servidor (si hay URL configurada)
-    fetch('/api/admin/state')
-      .then((r) => r.json())
-      .then((d) => {
-        if (!mounted || !d.ok || !d.data) return;
-        const data = d.data;
-        if (data.estados) { setEstados(data.estados); try { localStorage.setItem('hostal-estados', JSON.stringify(data.estados)); } catch {} }
-        if (data.notas) { setNotas(data.notas); try { localStorage.setItem('hostal-notas', JSON.stringify(data.notas)); } catch {} }
-        if (data.busy) { setBusy(new Set(data.busy)); try { localStorage.setItem('hostal-busy', JSON.stringify(data.busy)); } catch {} }
-        if (data.overrides) { setOverrides(data.overrides); try { localStorage.setItem('hostal-overrides', JSON.stringify(data.overrides)); } catch {} }
-        if (data.manual) { setManual(data.manual); try { localStorage.setItem('hostal-manual', JSON.stringify(data.manual)); } catch {} }
-        if (data.auditLog) { setAuditLog(data.auditLog); try { localStorage.setItem('hostal-audit', JSON.stringify(data.auditLog)); } catch {} }
-      })
-      .catch(() => {});
+    // Estado del servidor (si hay URL configurada). Puede fallar con 401 si
+    // todavía no hay sesión: en ese caso se vuelve a pedir al entrar.
+    loadState();
 
     // Cargar del navegador (fallback / primera vez)
     try {
@@ -232,21 +249,25 @@ export default function AdminPanel() {
     return () => { mounted = false; };
   }, []);
 
-  // Guarda en servidor (si está configurado) y localStorage tras cualquier cambio
+  // Guarda en servidor (si está configurado) y localStorage tras cualquier cambio.
+  // No guarda nada hasta haber leído el estado del servidor (cargado): si no,
+  // el primer guardado pisaba las notas/estados que estaban en el servidor.
   useEffect(() => {
+    if (!cargado || !open) return undefined;
     let t;
     t = setTimeout(() => saveState(), 800);
     return () => clearTimeout(t);
-  }, [estados, notas, busy, manual, overrides, auditLog]);
+  }, [estados, notas, busy, manual, overrides, auditLog, cargado, open]);
 
   async function saveState() {
     try {
       const payload = { manual, estados, notas, busy: [...busy], overrides, auditLog };
-      await fetch('/api/admin/state', {
+      const r = await fetch('/api/admin/state', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
+      if (!r.ok) console.warn('No se pudo guardar el estado en el servidor:', r.status);
     } catch {}
     try {
       localStorage.setItem('hostal-manual', JSON.stringify(manual));
@@ -281,6 +302,8 @@ export default function AdminPanel() {
       setOpen(true);
       audit('login', 'panel', 'Sesión iniciada');
       try { sessionStorage.setItem('hostal-admin', '1'); } catch {}
+      // Ahora sí hay sesión: se baja el estado real del servidor.
+      loadState();
     } else {
       audit('login_fallido', 'panel', 'Clave incorrecta');
       alert('Clave incorrecta');
@@ -370,17 +393,24 @@ export default function AdminPanel() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allRows, estados]);
 
+  // Si el rango viene invertido se toma el más reciente como "Desde" para no devolver una lista vacía.
+  const rangoInvertido = Boolean(fechaDesde && fechaHasta && fechaDesde > fechaHasta);
+  const desde = rangoInvertido ? fechaHasta : fechaDesde;
+  const hasta = rangoInvertido ? fechaDesde : fechaHasta;
+
   const filtered = useMemo(() => {
     const list = allRows;
     return list.filter((r) => {
       const okQ = !q || `${r.nombre} ${r.llegada}`.toLowerCase().includes(q.toLowerCase());
       const okE = fEstado === 'todas' || estadoDe(r) === fEstado;
       const okO = fOrigen === 'todos' || (r.origen || 'web') === fOrigen;
-      const okF = !fechaDesde || !fechaHasta || (new Date(String(r.llegada).slice(0, 10)) >= new Date(fechaDesde) && new Date(String(r.llegada).slice(0, 10)) <= new Date(fechaHasta));
+      // Cada límite se aplica por separado: con solo una fecha el filtro igual funciona.
+      const d = String(r.llegada || '').slice(0, 10);
+      const okF = (!desde || d >= desde) && (!hasta || d <= hasta);
       return okQ && okE && okO && okF;
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [allRows, estados, q, fEstado, fOrigen, fechaDesde, fechaHasta]);
+  }, [allRows, estados, q, fEstado, fOrigen, desde, hasta]);
 
   function waTo(r, text) {
     if (!r.telefono) return null;
@@ -714,6 +744,11 @@ export default function AdminPanel() {
                 <input type="date" value={fechaHasta} onChange={(e) => setFechaHasta(e.target.value)} />
               </div>
             </div>
+            {rangoInvertido && (
+              <p className="muted" style={{ fontSize: 13, marginTop: -8 }}>
+                Rango invertido: se filtró del {hasta} al {desde}.
+              </p>
+            )}
             <p className="no-print">
               <button className="btn btn-green" onClick={() => { setEditingId(null); setEditingKey(null); setForm({ nombre: '', llegada: '', noches: 1, personas: 2, telefono: '', nota: '' }); setShowNew(!showNew); }}>＋ Nueva reserva directa</button>{' '}
               <button className="btn btn-outline" onClick={loadBookings}>↻ Actualizar</button>{' '}

@@ -17,6 +17,13 @@ Rebuild rápido del sitio 2016 (Joomla) en Next.js estático.
 ## Correr / deploy
 npm install / npm run dev — igual que tienda-demo (Vercel, sin env vars).
 
+### Env vars (solo para el panel del dueño `/admin` y las reservas reales)
+- `ADMIN_KEY` — clave del panel. **Obligatoria en producción**: sin ella el login
+  falla cerrado (503). En local la clave por defecto es `hudson123`.
+- `ADMIN_STATE_URL` — URL del Apps Script que guarda reservas/notas/estados y la
+  clave nueva del panel. Vacío = el estado se guarda solo en el navegador.
+- Detalle paso a paso en [RESERVAS-SETUP.md](./RESERVAS-SETUP.md).
+
 ## Contenido
 Textos, fotos, testimonios y datos de transferencia: reales del sitio original, usados con permiso de los dueños.
 WhatsApp reservas: +56 9 9439 1571 (número real del hostal).

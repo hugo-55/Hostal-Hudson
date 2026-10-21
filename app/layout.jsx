@@ -5,7 +5,7 @@ import { NavBar } from '../components/NavBar';
 import { StickyBook } from '../components/Widgets';
 import { LangProvider } from '../lib/i18n';
 import { CookieConsent } from '../components/CookieConsent';
-import { SITE_URL } from '../lib/site';
+import { SITE_URL, BUSINESS_ID, MAPS_URL, OG_IMAGE } from '../lib/site';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-body' });
 const fraunces = Fraunces({ subsets: ['latin'], variable: '--font-display', weight: ['600', '700'] });
@@ -22,7 +22,6 @@ export const metadata = {
   authors: [{ name: 'Hostal Hudson' }],
   creator: 'Hostal Hudson',
   publisher: 'Hostal Hudson',
-  robots: 'index, follow',
   openGraph: {
     type: 'website',
     locale: 'es_CL',
@@ -30,14 +29,10 @@ export const metadata = {
     siteName: 'Hostal Hudson',
     title: 'Hostal Hudson — Descansa frente al río Aysén',
     description: 'Alojamiento familiar en Puerto Aysén. Reserva por WhatsApp en 1 minuto.',
-    images: [{ url: `${SITE_URL}/img/slide1.jpg`, width: 1920, height: 850 }],
+    images: [OG_IMAGE],
   },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Hostal Hudson — Descansa frente al río Aysén',
-    description: 'Alojamiento familiar en Puerto Aysén. Reserva por WhatsApp en 1 minuto.',
-    images: [`${SITE_URL}/img/slide1.jpg`],
-  },
+  // Sin bloque "twitter": Next lo arma solo con el openGraph de cada página
+  // (si lo definiéramos acá, se copiaría el título de la portada a todas).
 };
 
 export const viewport = {
@@ -49,9 +44,12 @@ export const viewport = {
 export default function RootLayout({ children }) {
   // El service worker solo en producción: en dev sirve contenido viejo y rompe el hot reload.
   const isProd = process.env.NODE_ENV === 'production';
+  // Entidad canónica del negocio: las páginas la referencian con {"@id": BUSINESS_ID}
+  // en vez de volver a declararla (Google ignoraba los datos duplicados).
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'LodgingBusiness',
+    '@id': BUSINESS_ID,
     name: 'Hostal Hudson',
     description: 'Hostal familiar en Puerto Aysén frente al río, con desayuno incluido y recepción 24 h.',
     address: {
@@ -63,22 +61,18 @@ export default function RootLayout({ children }) {
     },
     telephone: '+56994391571',
     url: SITE_URL,
+    hasMap: MAPS_URL,
     priceRange: '$$',
+    sameAs: ['https://www.hostalhudson.cl'],
     amenityFeature: [
       { '@type': 'LocationFeatureSpecification', name: 'Wi-Fi gratis' },
       { '@type': 'LocationFeatureSpecification', name: 'Desayuno incluido' },
       { '@type': 'LocationFeatureSpecification', name: 'Estacionamiento' },
+      { '@type': 'LocationFeatureSpecification', name: 'Recepción 24 h' },
     ],
   };
-  const faqLd = {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: [
-      { '@type': 'Question', name: '¿A qué hora puedo llegar?', acceptedAnswer: { '@type': 'Answer', text: 'Recepción 24 h con entrega de llaves, sin restricción de horario.' } },
-      { '@type': 'Question', name: '¿Cómo confirmo mi reserva?', acceptedAnswer: { '@type': 'Answer', text: 'Por WhatsApp y transferencia al Banco BCI con comprobante.' } },
-      { '@type': 'Question', name: '¿Incluye desayuno y estacionamiento?', acceptedAnswer: { '@type': 'Answer', text: 'Sí, ambos incluidos sin costo adicional.' } },
-    ],
-  };
+  // El FAQPage se emite en app/reservas/page.jsx: Google exige que el texto
+  // marcado esté visible en la misma página.
   return (
     <html lang="es-CL" className={`${inter.variable} ${fraunces.variable}`}>
       <head>
@@ -90,7 +84,6 @@ export default function RootLayout({ children }) {
       </head>
       <body>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
         <LangProvider>
           <NavBar />
           {children}
