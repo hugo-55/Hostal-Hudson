@@ -33,6 +33,13 @@ export const metadata = {
   },
   // Sin bloque "twitter": Next lo arma solo con el openGraph de cada página
   // (si lo definiéramos acá, se copiaría el título de la portada a todas).
+  // Mientras el sitio anterior siga publicado en el dominio, el sitio nuevo
+  // queda en noindex (SITE_PREVIEW=1). Se quita el día del cutover.
+  // Ojo: /admin define su propio robots y no se ve afectado.
+  robots:
+    process.env.SITE_PREVIEW === '1'
+      ? { index: false, follow: false }
+      : { index: true, follow: true },
 };
 
 export const viewport = {
