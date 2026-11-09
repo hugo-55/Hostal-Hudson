@@ -60,13 +60,14 @@ export async function GET() {
       mapsUrl: result.url || REVIEW_URL || MAPS_URL,
     });
   } catch (e) {
+    console.warn('[/api/reviews] fallback a reseñas demo:', e?.message || e);
     return Response.json({
       live: false,
       rating: 5,
       total: TESTIMONIALS.length,
       reviews: TESTIMONIALS,
       mapsUrl: REVIEW_URL || MAPS_URL,
-      reason: `demo-fallback (${e.message})`,
+      reason: 'demo-fallback',
     });
   }
 }

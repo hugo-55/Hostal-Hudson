@@ -25,7 +25,7 @@ export default function HabitacionesClient() {
             <SmartImg src={ROOM_CARDS_ES[k].img} alt={r.name} height={210} />
             <strong>{r.name}</strong>
             <p className="muted">{r.desc}</p>
-            <a className="btn btn-green" href={waLink(`Hola, consulto disponibilidad: ${r.name}`)} target="_blank">{t.askRoom}</a>
+            <a className="btn btn-green" href={waLink(`Hola, consulto disponibilidad: ${r.name}`)} target="_blank" rel="noopener noreferrer">{t.askRoom}</a>
           </div>
         ))}
       </div>

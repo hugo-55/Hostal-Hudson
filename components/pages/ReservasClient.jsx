@@ -21,7 +21,7 @@ export default function ReservasClient() {
       <div className="card">
         <h3>📞 {t.contactTitle}</h3>
         <p>{ADDRESS}<br />Tel/WhatsApp: {HOSTAL_PHONE_DISPLAY}<br />Email: <a href={`mailto:${EMAIL}`}>{EMAIL}</a></p>
-        <p><a className="btn btn-outline" href={MAPS_URL} target="_blank">{t.viewMap}</a></p>
+        <p><a className="btn btn-outline" href={MAPS_URL} target="_blank" rel="noopener noreferrer">{t.viewMap}</a></p>
       </div>
       <div className="card faq">
         <h3>{t.faqTitle}</h3>

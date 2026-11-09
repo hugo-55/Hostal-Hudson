@@ -8,7 +8,7 @@ export default function WhatsAppButton({ text } = {}) {
   const msg = text || (lang === 'es' ? 'Hola, quiero reservar en Hostal Hudson' : 'Hi, I would like to book at Hostal Hudson');
   const href = `https://wa.me/${HOSTAL_PHONE}?text=${encodeURIComponent(msg)}`;
   return (
-    <a className="wa-float" href={href} target="_blank" rel="noreferrer" aria-label="WhatsApp">
+    <a className="wa-float" href={href} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
       ✆
     </a>
   );

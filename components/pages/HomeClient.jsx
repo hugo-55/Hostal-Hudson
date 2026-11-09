@@ -93,20 +93,20 @@ export default function HomeClient() {
           <h2>{t.reviewsTitle}</h2>
           <ReviewsLive fallback={TESTIMONIALS} />
           <p style={{ marginTop: 18 }}>
-            <a className="btn btn-green" href={waLink('Hola Hostal Hudson, quiero reservar')} target="_blank">{t.wantBook}</a>
+            <a className="btn btn-green" href={waLink('Hola Hostal Hudson, quiero reservar')} target="_blank" rel="noopener noreferrer">{t.wantBook}</a>
           </p>
         </div>
 
         <div className="card">
           <h3>{t.review.title}</h3>
           <p className="muted">{t.review.text}</p>
-          <a className="btn btn-outline" href={REVIEW_URL || waLink('Hola, me alojé en el hostal y quiero dejar una opinión en Google')} target="_blank">{t.review.btn}</a>
+          <a className="btn btn-outline" href={REVIEW_URL || waLink('Hola, me alojé en el hostal y quiero dejar una opinión en Google')} target="_blank" rel="noopener noreferrer">{t.review.btn}</a>
         </div>
 
         <div className="card">
           <h3>{t.share.title}</h3>
           <p className="muted">{t.share.text}</p>
-          <a className="btn btn-outline" href={waLink('Hola, les comparto mis fotos de la estadía para la galería')} target="_blank">{t.share.btn}</a>
+          <a className="btn btn-outline" href={waLink('Hola, les comparto mis fotos de la estadía para la galería')} target="_blank" rel="noopener noreferrer">{t.share.btn}</a>
         </div>
 
         <h2 className="section-title">{t.visitTitle}</h2>
@@ -125,7 +125,7 @@ export default function HomeClient() {
             <h3>📍 {t.locationTitle}</h3>
             <p><Weather /></p>
             <p>{t.locationText}</p>
-            <p><a className="btn btn-outline" href={MAPS_URL} target="_blank">{t.directions}</a></p>
+            <p><a className="btn btn-outline" href={MAPS_URL} target="_blank" rel="noopener noreferrer">{t.directions}</a></p>
           </div>
           <div className="card" style={{ padding: 10 }}>
             <iframe
@@ -150,7 +150,7 @@ export default function HomeClient() {
               <tr><td><strong>{lang === 'es' ? 'Idiomas' : 'Languages'}</strong></td><td>{lang === 'es' ? 'Solo español' : 'Spanish only'}</td><td>ES/EN {lang === 'es' ? 'completo' : 'full'}</td></tr>
             </tbody>
           </table>
-          <p><a href={PAGESPEED_URL} target="_blank">{t.compareSpeed}</a></p>
+          <p><a href={PAGESPEED_URL} target="_blank" rel="noopener noreferrer">{t.compareSpeed}</a></p>
         </div>
 
         <Footer />

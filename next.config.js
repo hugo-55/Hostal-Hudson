@@ -58,8 +58,11 @@ const REDIRECTS_JOOMLA = [
 // script-src responde al JSON-LD inline (app/layout.jsx y páginas, script
 // type="application/ld+json") y al registro del service worker, que Next
 // mantiene inline. https://va.vercel-scripts.com es el script de Vercel
-// Analytics (app/layout.jsx). Se valida visualmente en staging antes del cutover.
-const CSP = "default-src 'self'; script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://api.open-meteo.com https://docs.google.com https://script.google.com https://script.googleusercontent.com; object-src 'none'; frame-ancestors 'none'; upgrade-insecure-requests";
+// Analytics (app/layout.jsx); ese script envía sus beacons a
+// https://va.vercel-insights.com (por eso va en connect-src). base-uri y
+// form-action quedan limitados al origen propio. Se valida visualmente en
+// staging antes del cutover.
+const CSP = "default-src 'self'; script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://api.open-meteo.com https://docs.google.com https://script.google.com https://script.googleusercontent.com https://va.vercel-insights.com; object-src 'none'; frame-ancestors 'none'; upgrade-insecure-requests; base-uri 'self'; form-action 'self'";
 
 const nextConfig = {
   experimental: {
@@ -68,12 +71,13 @@ const nextConfig = {
   async redirects() {
     // Primero el canónico (.vercel.app → dominio real, solo el día del corte)
     // y luego el mapeo del sitio viejo, con los específicos antes del catch-all.
+    // /api y /admin quedan excluidos del redirect canónico.
     const base = [...REDIRECTS_JOOMLA];
     if (process.env.CANONICAL_REDIRECT !== '1') return base;
     return [
       {
-        source: '/:path*',
-        destination: `${CANONICAL}/:path*`,
+        source: '/:path((?!api(?:/|$)|admin(?:/|$)).*)',
+        destination: `${CANONICAL}/:path`,
         permanent: true, // 308
         has: [{ type: 'host', value: VERCEL_HOST }],
       },

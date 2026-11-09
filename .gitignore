@@ -4,3 +4,4 @@ out
 .env*
 !.env.example
 next.config.tablet.js
+.opencode/

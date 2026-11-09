@@ -433,6 +433,10 @@ export default function AdminPanel() {
     const ingreso = list.reduce((a, r) => a + (Number(r.noches) || 0) * (Number(r.personas) || 0) * RATE_PER_PERSON_NIGHT, 0);
     const fmt = (n) => `$${Number(n).toLocaleString('es-CL')}`;
     const w = window.open('', '_blank');
+    if (!w) {
+      alert('Permite ventanas emergentes para abrir el reporte imprimible');
+      return;
+    }
     w.document.write(`<html><head><title>Reporte ${esc(repMonth)} - Hostal Hudson</title></head><body style="font-family:sans-serif">
       <h1>Hostal Hudson — reporte ${esc(repMonth)}</h1>
       <p>Reservas: <strong>${esc(list.length)}</strong> · Noches: <strong>${esc(noches)}</strong> · Ingreso estimado: <strong>${esc(fmt(ingreso))}</strong> · Canceladas: <strong>${esc(canc)}</strong></p>
@@ -569,11 +573,12 @@ export default function AdminPanel() {
 
   function exportCSV() {
     const head = 'nombre,llegada,noches,personas,telefono,estado,nota';
-    // CSV injection: si un valor empieza con = + - @ Excel/Sheets lo puede
-    // interpretar como fórmula. Se antepone un apóstrofe para neutralizarlo.
+    // CSV injection: si un valor empieza (aun con espacios, tab o CR previos)
+    // con = + - @ o tab, Excel/Sheets lo puede interpretar como fórmula. Se
+    // antepone un apóstrofe para neutralizarlo.
     const csvValor = (v) => {
       const s = String(v ?? '').replace(/"/g, '""');
-      return /^[=+\-@]/.test(s) ? `'${s}` : s;
+      return /^\s*[=+\-@\t\r]/.test(s) ? `'${s}` : s;
     };
     const lines = filtered.map((r) => [r.nombre, r.llegada, r.noches, r.personas, r.telefono || '', estadoDe(r), notaDe(r)].map((v) => `"${csvValor(v)}"`).join(','));
     const blob = new Blob([[head, ...lines].join('\n')], { type: 'text/csv' });

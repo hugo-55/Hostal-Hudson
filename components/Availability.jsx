@@ -39,7 +39,7 @@ export default function Availability() {
       <div className="card">
         <h3>{a.title}</h3>
         <p className="muted">{a.setup}</p>
-        <a className="btn btn-green" href={waLink('Hola, consulto disponibilidad para estas fechas: ...')} target="_blank">{a.ask}</a>
+        <a className="btn btn-green" href={waLink('Hola, consulto disponibilidad para estas fechas: ...')} target="_blank" rel="noopener noreferrer">{a.ask}</a>
       </div>
     );
   }

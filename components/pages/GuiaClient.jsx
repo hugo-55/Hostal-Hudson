@@ -32,7 +32,7 @@ export default function GuiaClient() {
             {open === k && (
               <div style={{ marginTop: 10 }}>
                 {p.body.map((par, j) => <p key={j}>{par}</p>)}
-                <a className="btn btn-green" href={waLink('Hola Hostal Hudson, leí su guía y quiero reservar')} target="_blank">{g.cta}</a>
+                <a className="btn btn-green" href={waLink('Hola Hostal Hudson, leí su guía y quiero reservar')} target="_blank" rel="noopener noreferrer">{g.cta}</a>
               </div>
             )}
           </div>

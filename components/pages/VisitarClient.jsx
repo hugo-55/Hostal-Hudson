@@ -30,7 +30,7 @@ export default function VisitarClient() {
             <SmartImg src={s.src} alt={v.spots[s.key].name} height={200} />
             <strong>{v.spots[s.key].name}</strong>
             <p className="muted">{v.spots[s.key].desc}</p>
-            <a className="btn btn-outline" href={waLink(`Hola, me interesa visitar: ${v.spots[s.key].name}. ¿Cómo llego desde el hostal?`)} target="_blank">{v.ask}</a>
+            <a className="btn btn-outline" href={waLink(`Hola, me interesa visitar: ${v.spots[s.key].name}. ¿Cómo llego desde el hostal?`)} target="_blank" rel="noopener noreferrer">{v.ask}</a>
           </div>
         ))}
       </div>
@@ -43,7 +43,7 @@ export default function VisitarClient() {
             <div style={{ fontSize: 32 }}>{['🎣', '🛣️', '📸'][k]}</div>
             <strong>{e.name}</strong>
             <p className="muted">{e.desc}</p>
-            <a className="btn btn-green" href={waLink(`Hola Hostal Hudson, me interesa la experiencia: ${e.name}`)} target="_blank">{t.exp.cta}</a>
+            <a className="btn btn-green" href={waLink(`Hola Hostal Hudson, me interesa la experiencia: ${e.name}`)} target="_blank" rel="noopener noreferrer">{t.exp.cta}</a>
           </div>
         ))}
       </div>

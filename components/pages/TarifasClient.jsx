@@ -30,7 +30,7 @@ export default function TarifasClient() {
           {t.rateRef} <strong>{monto} CLP</strong>
         </p>
         <p className="muted">{t.estimator.note}</p>
-        <a className="btn btn-green" href={waLink('Hola, quiero cotizar una estadía. Llegada: ..., noches: ..., personas: ...')} target="_blank">
+        <a className="btn btn-green" href={waLink('Hola, quiero cotizar una estadía. Llegada: ..., noches: ..., personas: ...')} target="_blank" rel="noopener noreferrer">
           {t.quoteBtn} ({HOSTAL_PHONE_DISPLAY})
         </a>
       </div>

@@ -31,7 +31,7 @@ export function TestimonialCarousel({ items, rating, total, mapsUrl, live }) {
       {typeof rating === 'number' && (
         <p className="muted" style={{ marginTop: 8, fontSize: 13 }}>
           {live ? '★' : '☆'} {rating} en Google{total ? ` · ${total} reseñas` : ''}{' '}
-          {mapsUrl && <a href={mapsUrl} target="_blank">Ver todas →</a>}
+          {mapsUrl && <a href={mapsUrl} target="_blank" rel="noopener noreferrer">Ver todas →</a>}
         </p>
       )}
     </div>
@@ -116,7 +116,7 @@ export function ShareBar({ text }) {
   const msg = `${text || (lang === 'es' ? 'Mira esto de Hostal Hudson' : 'Look at this from Hostal Hudson')}: ${url}`;
   return (
     <p>
-      <a className="btn btn-outline" href={`https://wa.me/?text=${encodeURIComponent(msg)}`} target="_blank">
+      <a className="btn btn-outline" href={`https://wa.me/?text=${encodeURIComponent(msg)}`} target="_blank" rel="noopener noreferrer">
         ↗ {lang === 'es' ? 'Compartir por WhatsApp' : 'Share via WhatsApp'}
       </a>
     </p>
@@ -128,7 +128,7 @@ export function StickyBook() {
   return (
     <div className="sticky-book">
       <a href={`tel:+${HOSTAL_PHONE}`}>📞 {HOSTAL_PHONE_DISPLAY}</a>
-      <a className="btn btn-green" href={waLink('Hola Hostal Hudson, quiero reservar')} target="_blank">{t.nav.book}</a>
+      <a className="btn btn-green" href={waLink('Hola Hostal Hudson, quiero reservar')} target="_blank" rel="noopener noreferrer">{t.nav.book}</a>
     </div>
   );
 }

@@ -52,8 +52,10 @@ plataforma. Para que funcione localmente se usa el fallback WASM:
 - `components/` — UI reutilizable (NavBar, BookingBar, AdminPanel,
   Availability, CookieConsent, Schema, SmartImg, Widgets, etc.).
 - `lib/site.js` — **fuente de datos del sitio**: teléfono, dirección, email,
-  tarifa referencial, servicios, testimonios, endpoints de reservas/estado y
-  `ADMIN_KEY`.
+  tarifa referencial, servicios, testimonios y endpoints de reservas.
+  `ADMIN_KEY` y `ADMIN_STATE_URL` NO viven acá: van en variables de entorno
+  (`lib/admin-config.js`, módulo `server-only`). Las URLs de Sheets/estado
+  se configuran por entorno y nunca en código.
 - `lib/i18n.js` — diccionario ES/EN y `LangProvider`.
 - `public/` — imágenes y assets.
 - Documentos de setup: `AVAILABILITY-SETUP.md`, `RESERVAS-SETUP.md`,
