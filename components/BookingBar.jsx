@@ -4,6 +4,8 @@ import { waLink } from '../lib/site';
 import { useLang } from '../lib/i18n';
 
 // Booking bar with language support. Computes nights automatically.
+// Cada input va dentro de su label (label envolvente): así el campo tiene
+// nombre accesible sin depender de ids con riesgo de duplicarse.
 export default function BookingBar() {
   const { t } = useLang();
   const b = t.booking;
@@ -24,25 +26,33 @@ export default function BookingBar() {
   return (
     <div className="booking-bar">
       <div className="bb-field">
-        <label>{b.name}</label>
-        <input value={name} onChange={(e) => setName(e.target.value)} placeholder={b.namePh} />
+        <label>
+          {b.name}
+          <input value={name} onChange={(e) => setName(e.target.value)} placeholder={b.namePh} />
+        </label>
       </div>
       <div className="bb-field">
-        <label>{b.arrival}</label>
-        <input type="date" min={today} value={llegada} onChange={(e) => setLlegada(e.target.value)} />
+        <label>
+          {b.arrival}
+          <input type="date" min={today} value={llegada} onChange={(e) => setLlegada(e.target.value)} />
+        </label>
       </div>
       <div className="bb-field">
-        <label>{b.departure}</label>
-        <input type="date" min={llegada || today} value={salida} onChange={(e) => setSalida(e.target.value)} />
+        <label>
+          {b.departure}
+          <input type="date" min={llegada || today} value={salida} onChange={(e) => setSalida(e.target.value)} />
+        </label>
       </div>
       <div className="bb-field">
-        <label>{b.people}</label>
-        <input type="number" min="1" max="20" value={personas} onChange={(e) => setPersonas(Number(e.target.value))} />
+        <label>
+          {b.people}
+          <input type="number" min="1" max="20" value={personas} onChange={(e) => setPersonas(Number(e.target.value))} />
+        </label>
       </div>
       <div className="bb-action">
         {nights > 0 && <span className="bb-nights">{nights} {nights > 1 ? b.nights : b.night}</span>}
         {valid ? (
-          <a className="btn btn-green" href={waLink(msg)} target="_blank">{b.submit}</a>
+          <a className="btn btn-green" href={waLink(msg)} target="_blank" rel="noopener noreferrer" aria-label={`${b.submit} vía WhatsApp`}>{b.submit}</a>
         ) : (
           <span className="btn btn-disabled">{b.fill}</span>
         )}

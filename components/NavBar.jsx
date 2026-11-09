@@ -26,8 +26,8 @@ export function NavBar() {
             {dark ? '☀️' : '🌙'}
           </button>
           <div className="lang-toggle" role="group" aria-label="Idioma / Language">
-            <button className={lang === 'es' ? 'on' : ''} onClick={() => setLang('es')}>ES</button>
-            <button className={lang === 'en' ? 'on' : ''} onClick={() => setLang('en')}>EN</button>
+            <button className={lang === 'es' ? 'on' : ''} onClick={() => setLang('es')} aria-pressed={lang === 'es'}>ES</button>
+            <button className={lang === 'en' ? 'on' : ''} onClick={() => setLang('en')} aria-pressed={lang === 'en'}>EN</button>
           </div>
           <button className={`burger ${open ? 'open' : ''}`} onClick={() => setOpen(!open)} aria-label="Menú" aria-expanded={open} aria-controls="mobile-nav">
             <span /><span /><span />

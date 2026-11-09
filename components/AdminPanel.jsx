@@ -10,6 +10,12 @@ const DEMO_ROWS = [
 const ESTADOS = ['pendiente', 'confirmada', 'check-in', 'check-out', 'cancelada'];
 const ESTADO_COLOR = { pendiente: 'badge-warn', confirmada: 'ok-pill', 'check-in': 'ok-pill', 'check-out': '', cancelada: 'low-pill' };
 
+// Escapa texto para el HTML que se genera al vuelo en printReport(): los
+// datos vienen de la planilla (nombres, notas) y podrían llevar etiquetas.
+const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ({
+  '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+}[c]));
+
 function fmtDate(iso) {
   try { return new Date(iso).toLocaleDateString('es-CL'); } catch { return String(iso).slice(0, 10); }
 }
@@ -80,10 +86,10 @@ function Connections({ status }) {
         <p className="muted">Mientras algo esté apagado, esa parte funciona en <strong>modo demo</strong>: la web anda igual, pero ese paso lo haces tú a mano.</p>
       )}
       {items.map((i) => (
-        <div key={i.name} className="card" style={{ margin: '10px 0', borderLeft: `5px solid ${i.on ? '#16a34a' : '#d97706'}` }}>
+        <div key={i.name} className="card" style={{ margin: '10px 0', borderLeft: `5px solid ${i.on ? 'var(--green)' : '#d97706'}` }}>
           <p><strong>{i.on ? '🟢' : '🟡'} {i.name}</strong></p>
           <p className="muted">{i.on ? i.ok : i.off}</p>
-          {!i.on && i.guide && <p><a className="btn btn-outline" href={i.guide} target="_blank">Ver guía paso a paso →</a></p>}
+          {!i.on && i.guide && <p><a className="btn btn-outline" href={i.guide} target="_blank" rel="noopener noreferrer">Ver guía paso a paso →</a></p>}
         </div>
       ))}
     </div>
@@ -311,7 +317,7 @@ export default function AdminPanel() {
   }
 
   async function changeKey() {
-    if (!nkey || nkey.length < 4) return setKeyMsg('La clave nueva debe tener al menos 4 caracteres');
+    if (!nkey || nkey.length < 12) return setKeyMsg('La clave nueva debe tener al menos 12 caracteres');
     if (nkey !== ckey2) return setKeyMsg('Las claves nuevas no coinciden');
     setKeyMsg('');
     const res = await fetch('/api/admin/key', {
@@ -427,11 +433,11 @@ export default function AdminPanel() {
     const ingreso = list.reduce((a, r) => a + (Number(r.noches) || 0) * (Number(r.personas) || 0) * RATE_PER_PERSON_NIGHT, 0);
     const fmt = (n) => `$${Number(n).toLocaleString('es-CL')}`;
     const w = window.open('', '_blank');
-    w.document.write(`<html><head><title>Reporte ${repMonth} - Hostal Hudson</title></head><body style="font-family:sans-serif">
-      <h1>Hostal Hudson — reporte ${repMonth}</h1>
-      <p>Reservas: <strong>${list.length}</strong> · Noches: <strong>${noches}</strong> · Ingreso estimado: <strong>${fmt(ingreso)}</strong> · Canceladas: <strong>${canc}</strong></p>
+    w.document.write(`<html><head><title>Reporte ${esc(repMonth)} - Hostal Hudson</title></head><body style="font-family:sans-serif">
+      <h1>Hostal Hudson — reporte ${esc(repMonth)}</h1>
+      <p>Reservas: <strong>${esc(list.length)}</strong> · Noches: <strong>${esc(noches)}</strong> · Ingreso estimado: <strong>${esc(fmt(ingreso))}</strong> · Canceladas: <strong>${esc(canc)}</strong></p>
       <table border="1" cellpadding="6" cellspacing="0"><tr><th>Nombre</th><th>Llegada</th><th>Noches</th><th>Personas</th><th>Estado</th><th>Nota</th></tr>
-      ${list.map((r) => `<tr><td>${r.nombre}</td><td>${r.llegada}</td><td>${r.noches}</td><td>${r.personas}</td><td>${estadoDe(r)}</td><td>${notaDe(r) || ''}</td></tr>`).join('')}
+      ${list.map((r) => `<tr><td>${esc(r.nombre)}</td><td>${esc(r.llegada)}</td><td>${esc(r.noches)}</td><td>${esc(r.personas)}</td><td>${esc(estadoDe(r))}</td><td>${esc(notaDe(r))}</td></tr>`).join('')}
       </table><p><small>Tarifa referencial. Generado desde el panel.</small></p>
       <script>window.print()<\/script></body></html>`);
     w.document.close();
@@ -563,7 +569,13 @@ export default function AdminPanel() {
 
   function exportCSV() {
     const head = 'nombre,llegada,noches,personas,telefono,estado,nota';
-    const lines = filtered.map((r) => [r.nombre, r.llegada, r.noches, r.personas, r.telefono || '', estadoDe(r), notaDe(r)].map((v) => `"${String(v ?? '').replace(/"/g, '""')}"`).join(','));
+    // CSV injection: si un valor empieza con = + - @ Excel/Sheets lo puede
+    // interpretar como fórmula. Se antepone un apóstrofe para neutralizarlo.
+    const csvValor = (v) => {
+      const s = String(v ?? '').replace(/"/g, '""');
+      return /^[=+\-@]/.test(s) ? `'${s}` : s;
+    };
+    const lines = filtered.map((r) => [r.nombre, r.llegada, r.noches, r.personas, r.telefono || '', estadoDe(r), notaDe(r)].map((v) => `"${csvValor(v)}"`).join(','));
     const blob = new Blob([[head, ...lines].join('\n')], { type: 'text/csv' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
@@ -619,8 +631,8 @@ export default function AdminPanel() {
         <h1>🔒 Panel del dueño</h1>
         <p className="muted">Zona privada de Hostal Hudson. Si eres pasajero, <a href="/reservas">reserva aquí</a>.</p>
         <form onSubmit={login}>
-          <label>Clave</label>
-          <input type="password" value={key} onChange={(e) => setKey(e.target.value)} placeholder="Clave del panel" />
+          <label htmlFor="admin-clave">Clave</label>
+          <input id="admin-clave" type="password" autoComplete="current-password" value={key} onChange={(e) => setKey(e.target.value)} placeholder="Clave del panel" />
           <button className="btn" type="submit">Entrar</button>
         </form>
       </div>
@@ -674,7 +686,7 @@ export default function AdminPanel() {
               <div>
                 <strong>🛏️ En casa ({kpis.enCasa.length})</strong>
                 <p className="muted">{kpis.enCasa.length ? kpis.enCasa.map((r) => r.nombre).join(' · ') : 'Vacío hoy.'}</p>
-                <p><a className="btn btn-green" style={{ padding: '8px 14px' }} href={shiftSummary()} target="_blank">📤 Resumen de turno</a></p>
+                <p><a className="btn btn-green" style={{ padding: '8px 14px' }} href={shiftSummary()} target="_blank" rel="noopener noreferrer">📤 Resumen de turno</a></p>
               </div>
             </div>
           </div>
@@ -697,8 +709,8 @@ export default function AdminPanel() {
                 </div>
               ))}
               <p className="no-print">
-                <label>Reporte del mes</label>
-                <input type="month" value={repMonth} onChange={(e) => setRepMonth(e.target.value)} style={{ maxWidth: 220 }} />
+                <label htmlFor="reporte-mes">Reporte del mes</label>
+                <input id="reporte-mes" type="month" value={repMonth} onChange={(e) => setRepMonth(e.target.value)} style={{ maxWidth: 220 }} />
                 {' '}<button className="btn" onClick={printReport}>🖨 Imprimir reporte</button>
               </p>
             </div>
@@ -713,12 +725,12 @@ export default function AdminPanel() {
           <div className="card">
             <div className="grid-2">
               <div>
-                <label>Buscar</label>
-                <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Nombre o fecha..." />
+                <label htmlFor="filtro-buscar">Buscar</label>
+                <input id="filtro-buscar" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Nombre o fecha..." />
               </div>
               <div>
-                <label>Estado</label>
-                <select value={fEstado} onChange={(e) => setFEstado(e.target.value)}>
+                <label htmlFor="filtro-estado">Estado</label>
+                <select id="filtro-estado" value={fEstado} onChange={(e) => setFEstado(e.target.value)}>
                   <option value="todas">Todas</option>
                   {ESTADOS.map((s) => <option key={s} value={s}>{s}</option>)}
                 </select>
@@ -726,8 +738,8 @@ export default function AdminPanel() {
             </div>
             <div className="grid-2">
               <div>
-                <label>Origen</label>
-                <select value={fOrigen} onChange={(e) => setFOrigen(e.target.value)}>
+                <label htmlFor="filtro-origen">Origen</label>
+                <select id="filtro-origen" value={fOrigen} onChange={(e) => setFOrigen(e.target.value)}>
                   <option value="todos">Todos</option>
                   <option value="web">🌐 Web</option>
                   <option value="manual">📞 Directa</option>
@@ -736,12 +748,12 @@ export default function AdminPanel() {
             </div>
             <div className="grid-2">
               <div>
-                <label>Desde</label>
-                <input type="date" value={fechaDesde} onChange={(e) => setFechaDesde(e.target.value)} />
+                <label htmlFor="filtro-desde">Desde</label>
+                <input id="filtro-desde" type="date" value={fechaDesde} onChange={(e) => setFechaDesde(e.target.value)} />
               </div>
               <div>
-                <label>Hasta</label>
-                <input type="date" value={fechaHasta} onChange={(e) => setFechaHasta(e.target.value)} />
+                <label htmlFor="filtro-hasta">Hasta</label>
+                <input id="filtro-hasta" type="date" value={fechaHasta} onChange={(e) => setFechaHasta(e.target.value)} />
               </div>
             </div>
             {rangoInvertido && (
@@ -758,32 +770,32 @@ export default function AdminPanel() {
               <label className="btn btn-outline" style={{ cursor: 'pointer' }}>📥 Restaurar<input type="file" accept=".json" onChange={restore} style={{ display: 'none' }} /></label>
             </p>
             {showNew && (
-              <form onSubmit={saveManual} className="card" style={{ border: '2px solid #16a34a', background: '#f0fdf4' }}>
+              <form onSubmit={saveManual} className="card" style={{ border: '2px solid var(--green)', background: '#f0fdf4' }}>
                 <h3>{editingId ? '✏️ Editar reserva' : '📞 Nueva reserva directa'}</h3>
                 {!editingId && <p className="muted">Para pasajeros que reservaron por teléfono, WhatsApp o presencial. Queda en estado <strong>confirmada</strong>.</p>}
                 {editingId && !String(editingId).startsWith('m') && <p className="muted">Corrección local de una reserva web: la planilla original no cambia.</p>}
                 <div className="grid-2">
                   <div>
-                    <label>Nombre *</label>
-                    <input value={form.nombre} onChange={(e) => setForm({ ...form, nombre: e.target.value })} placeholder="Nombre del pasajero" />
+                    <label htmlFor="res-nombre">Nombre *</label>
+                    <input id="res-nombre" value={form.nombre} onChange={(e) => setForm({ ...form, nombre: e.target.value })} placeholder="Nombre del pasajero" />
                   </div>
                   <div>
-                    <label>WhatsApp</label>
-                    <input value={form.telefono} onChange={(e) => setForm({ ...form, telefono: e.target.value })} placeholder="+56 9 ..." inputMode="tel" />
+                    <label htmlFor="res-telefono">WhatsApp</label>
+                    <input id="res-telefono" value={form.telefono} onChange={(e) => setForm({ ...form, telefono: e.target.value })} placeholder="+56 9 ..." inputMode="tel" />
                   </div>
                   <div>
-                    <label>Llegada *</label>
-                    <input type="date" min={todayISO()} value={form.llegada} onChange={(e) => setForm({ ...form, llegada: e.target.value })} />
+                    <label htmlFor="res-llegada">Llegada *</label>
+                    <input id="res-llegada" type="date" min={todayISO()} value={form.llegada} onChange={(e) => setForm({ ...form, llegada: e.target.value })} />
                   </div>
                   <div>
-                    <label>Noches</label>
-                    <input type="number" min="1" max="60" value={form.noches} onChange={(e) => setForm({ ...form, noches: Number(e.target.value) })} />
+                    <label htmlFor="res-noches">Noches</label>
+                    <input id="res-noches" type="number" min="1" max="60" value={form.noches} onChange={(e) => setForm({ ...form, noches: Number(e.target.value) })} />
                   </div>
                 </div>
-                <label>Personas</label>
-                <input type="number" min="1" max="20" value={form.personas} onChange={(e) => setForm({ ...form, personas: Number(e.target.value) })} style={{ maxWidth: 200 }} />
-                <label>Nota (opcional)</label>
-                <input value={form.nota} onChange={(e) => setForm({ ...form, nota: e.target.value })} placeholder="Ej. paga al llegar..." />
+                <label htmlFor="res-personas">Personas</label>
+                <input id="res-personas" type="number" min="1" max="20" value={form.personas} onChange={(e) => setForm({ ...form, personas: Number(e.target.value) })} style={{ maxWidth: 200 }} />
+                <label htmlFor="res-nota">Nota (opcional)</label>
+                <input id="res-nota" value={form.nota} onChange={(e) => setForm({ ...form, nota: e.target.value })} placeholder="Ej. paga al llegar..." />
                 <p>
                   <button className="btn btn-green" type="submit" disabled={saving}>{saving ? 'Guardando...' : '✓ Guardar reserva'}</button>{' '}
                   <button className="btn btn-outline" type="button" onClick={() => { setShowNew(false); setEditingId(null); setEditingKey(null); }}>Cancelar</button>
@@ -813,7 +825,7 @@ export default function AdminPanel() {
                           </td>
                           <td>{fmtDate(r.llegada)}<br /><span className="muted">{r.noches}n · {r.personas}p</span></td>
                           <td>
-                            <select value={estadoDe(r)} onChange={(e) => setEstado(r, e.target.value)} style={{ margin: 0, padding: '6px' }}>
+                            <select value={estadoDe(r)} onChange={(e) => setEstado(r, e.target.value)} aria-label="Estado de la reserva" style={{ margin: 0, padding: '6px' }}>
                               {ESTADOS.map((s) => <option key={s} value={s}>{s}</option>)}
                             </select>
                           </td>
@@ -824,8 +836,8 @@ export default function AdminPanel() {
                             )}{' '}
                             {wa1 ? (
                               <>
-                                <a className="btn btn-green" style={{ padding: '6px 10px' }} href={wa1} target="_blank" title="Te esperamos mañana">🛬</a>{' '}
-                                <a className="btn btn-outline" style={{ padding: '6px 10px' }} href={wa2} target="_blank" title="Gracias + pide opinión">👋</a>
+                                <a className="btn btn-green" style={{ padding: '6px 10px' }} href={wa1} target="_blank" rel="noopener noreferrer" title="Te esperamos mañana">🛬</a>{' '}
+                                <a className="btn btn-outline" style={{ padding: '6px 10px' }} href={wa2} target="_blank" rel="noopener noreferrer" title="Gracias + pide opinión">👋</a>
                               </>
                             ) : <span className="muted" title="Sin teléfono registrado">—</span>}
                           </td>
@@ -833,8 +845,10 @@ export default function AdminPanel() {
                         {noteOpen === rk && (
                           <tr key={`${rk}-n`} className="note-row">
                             <td colSpan={4}>
-                              <label>📝 Nota privada <span className="muted">— solo visible en este navegador</span></label>
-                              <textarea rows={2} value={notaDe(r)} onChange={(e) => setNota(r, e.target.value)} placeholder="Ej. viene con mascota, paga al llegar, alérgico al polvo..." style={{ marginBottom: 4 }} />
+                              <label>
+                                📝 Nota privada <span className="muted">— solo visible en este navegador</span>
+                                <textarea rows={2} value={notaDe(r)} onChange={(e) => setNota(r, e.target.value)} placeholder="Ej. viene con mascota, paga al llegar, alérgico al polvo..." style={{ marginBottom: 4 }} />
+                              </label>
                               <div>
                                 <button className="btn btn-green" style={{ padding: '8px 16px' }} onClick={() => setNoteOpen(null)}>✓ Guardar y cerrar</button>{' '}
                                 {notaDe(r) && <button className="btn btn-outline" style={{ padding: '8px 16px' }} onClick={() => { setNota(r, ''); setNoteOpen(null); }}>Borrar</button>}
@@ -918,19 +932,19 @@ export default function AdminPanel() {
         <div className="card">
           <h3>🔑 Cambiar clave de acceso del admin</h3>
           <p className="muted">La clave se guarda en el servidor (no en el código). Si olvidas la clave, tendrás que redeployar con una nueva ADMIN_KEY.</p>
-          {keyMsg && <p style={{ color: keyMsg.startsWith('Clave actualizada') ? '#16a34a' : '#dc2626', marginBottom: 10 }}>{keyMsg}</p>}
+          {keyMsg && <p style={{ color: keyMsg.startsWith('Clave actualizada') ? 'var(--green)' : '#dc2626', marginBottom: 10 }}>{keyMsg}</p>}
           <form onChange={(e) => {}} className="grid-2" style={{ gap: 12 }}>
             <div>
-              <label>Clave actual</label>
-              <input type="password" value={ckey} onChange={(e) => setCkey(e.target.value)} placeholder="Clave actual" />
+              <label htmlFor="clave-actual">Clave actual</label>
+              <input id="clave-actual" type="password" autoComplete="off" value={ckey} onChange={(e) => setCkey(e.target.value)} placeholder="Clave actual" />
             </div>
             <div>
-              <label>Clave nueva</label>
-              <input type="password" value={nkey} onChange={(e) => setNkey(e.target.value)} placeholder="Mínimo 4 caracteres" />
+              <label htmlFor="clave-nueva">Clave nueva</label>
+              <input id="clave-nueva" type="password" autoComplete="new-password" value={nkey} onChange={(e) => setNkey(e.target.value)} placeholder="Mínimo 12 caracteres" />
             </div>
             <div style={{ gridColumn: 'span 2' }}>
-              <label>Confirmar clave nueva</label>
-              <input type="password" value={ckey2} onChange={(e) => setCkey2(e.target.value)} placeholder="Repite la clave nueva" />
+              <label htmlFor="clave-confirmar">Confirmar clave nueva</label>
+              <input id="clave-confirmar" type="password" autoComplete="new-password" value={ckey2} onChange={(e) => setCkey2(e.target.value)} placeholder="Repite la clave nueva" />
             </div>
           </form>
           <p style={{ marginTop: 10 }}>

@@ -28,8 +28,14 @@ export async function POST(req) {
   let body;
   try { body = await req.json(); } catch { return Response.json({ ok: false, error: 'JSON inválido' }, { status: 400 }); }
   const { currentKey, newKey } = body || {};
-  if (!currentKey || !newKey || newKey.length < 4) {
+  // Política de contraseñas del panel: mínimo 12 caracteres y no se acepta la
+  // clave vieja pública del demo de desarrollo. Mensaje genérico para no dar
+  // pistas a un atacante sobre qué probó. (Nunca se imprimen claves reales.)
+  if (typeof currentKey !== 'string' || typeof newKey !== 'string') {
     return Response.json({ ok: false, error: 'Claves inválidas' }, { status: 400 });
+  }
+  if (newKey.length < 12 || newKey === 'hudson123') {
+    return Response.json({ ok: false, error: 'clave muy corta o insegura' }, { status: 400 });
   }
 
   // Verificar currentKey contra la env o el override guardado

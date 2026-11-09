@@ -23,6 +23,9 @@ export default function ReservaCTA({ title } = {}) {
   const [state, setState] = useState('idle');
   const [live, setLive] = useState(false);
   const [waOpened, setWaOpened] = useState(false);
+  // Honeypot antispam: vive en el textarea oculto del formulario más abajo.
+  // Si un robot lo rellena, la API descarta la reserva en silencio.
+  const [empresa, setEmpresa] = useState('');
 
   const tel = telefono.trim();
   const msg =
@@ -48,7 +51,7 @@ export default function ReservaCTA({ title } = {}) {
       const r = await fetch('/api/reserva', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, llegada, noches, personas, telefono }),
+        body: JSON.stringify({ name, llegada, noches, personas, telefono, empresa }),
       });
       const data = await r.json();
       if (!data.ok) throw new Error(data.error || 'Error');
@@ -68,11 +71,12 @@ export default function ReservaCTA({ title } = {}) {
     setState('idle');
     setLive(false);
     setWaOpened(false);
+    setEmpresa('');
   }
 
   if (state === 'done') {
     return (
-      <div className="card" style={{ border: '2px solid #16a34a' }}>
+      <div className="card" style={{ border: '2px solid var(--green)' }}>
         <h3>✅ {t.sentTitle}</h3>
         <p>{t.sentSub}</p>
         {!waOpened && (
@@ -99,10 +103,22 @@ export default function ReservaCTA({ title } = {}) {
   }
 
   return (
-    <div className="card" style={{ border: '2px solid #16a34a' }}>
+    <div className="card" style={{ border: '2px solid var(--green)' }}>
       <h3>{title || t.reserveTitle}</h3>
       <p className="muted">{t.reserveText} ({HOSTAL_PHONE_DISPLAY}).</p>
       <form onSubmit={handleSubmit}>
+        {/* Honeypot antispam: oculto para humanos (aria-hidden, fuera de la
+            tabulación y sin estilo); si llega con contenido, la API lo
+            descarta en silencio. */}
+        <textarea
+          name="empresa"
+          value={empresa}
+          onChange={(e) => setEmpresa(e.target.value)}
+          aria-hidden="true"
+          tabIndex={-1}
+          autoComplete="off"
+          style={{ position: 'absolute', left: '-9999px', top: 0, height: 0, width: 0, border: 0, padding: 0, margin: 0, overflow: 'hidden' }}
+        />
         <label>{t.fName}</label>
         <input value={name} onChange={(e) => setName(e.target.value)} placeholder="María" />
         <label>{t.fPhone}</label>

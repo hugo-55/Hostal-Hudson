@@ -6,6 +6,7 @@ import { useLang } from '../lib/i18n';
 const fmt = (n) => `$${Number(n).toLocaleString('es-CL')}`;
 
 // Estimador honesto: usa tarifa referencial configurable y obliga a confirmar por WhatsApp.
+// Labels envolventes para que cada campo tenga nombre accesible.
 export default function Estimator() {
   const { t } = useLang();
   const e = t.estimator;
@@ -27,21 +28,27 @@ export default function Estimator() {
       <p className="muted">{e.text}</p>
       <div className="grid-2">
         <div>
-          <label>{e.arrival}</label>
-          <input type="date" min={today} value={llegada} onChange={(e2) => setLlegada(e2.target.value)} />
+          <label>
+            {e.arrival}
+            <input type="date" min={today} value={llegada} onChange={(e2) => setLlegada(e2.target.value)} />
+          </label>
         </div>
         <div>
-          <label>{e.departure}</label>
-          <input type="date" min={llegada || today} value={salida} onChange={(e2) => setSalida(e2.target.value)} />
+          <label>
+            {e.departure}
+            <input type="date" min={llegada || today} value={salida} onChange={(e2) => setSalida(e2.target.value)} />
+          </label>
         </div>
       </div>
-      <label>{e.people}</label>
-      <input type="number" min="1" max="20" value={personas} onChange={(ev) => setPersonas(Number(ev.target.value))} />
+      <label>
+        {e.people}
+        <input type="number" min="1" max="20" value={personas} onChange={(ev) => setPersonas(Number(ev.target.value))} />
+      </label>
       {total > 0 ? (
         <>
           <p className="price">{e.total}: {fmt(total)}</p>
           <p className="muted">{e.note}</p>
-          <a className="btn btn-green" href={waLink(msg)} target="_blank">{e.confirm}</a>
+          <a className="btn btn-green" href={waLink(msg)} target="_blank" rel="noopener noreferrer" aria-label={`${e.confirm} vía WhatsApp`}>{e.confirm}</a>
         </>
       ) : (
         <p className="muted">{e.pick}</p>
