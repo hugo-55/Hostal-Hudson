@@ -3,27 +3,36 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Habitaciones | Hostal Hudson (Ruta A: Editorial Sobrio)</title>
+  <title>Habitaciones | Hostal Hudson — Puerto Aysén</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <div class="page-wrap">
     <div class="masthead-meta">
-      <span>CUADERNO DE AYSÉN · CATÁLOGO DE DORMITORIOS</span>
-      <span>TENIENTE MERINO 1080 · TEL. +56 9 9439 1571</span>
+      <span>TENIENTE MERINO 1080, PUERTO AYSÉN · HABITACIONES</span>
+      <span>RECEPCIÓN 24 H · WHATSAPP +56 9 9439 1571</span>
     </div>
 
-    <header class="site-header">
+    <header class="site-header" id="site-header">
       <div class="brand-block">
         <a class="brand-name" href="index.html">Hostal Hudson</a>
         <span class="brand-sub">CASA DE HUÉSPEDES EN PUERTO AYSÉN · CHILE</span>
       </div>
-      <nav class="site-nav" aria-label="Navegación principal">
+      <button type="button" class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="primary-nav" aria-label="Abrir menú de navegación">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <line x1="3" y1="6" x2="21" y2="6" />
+          <line x1="3" y1="12" x2="21" y2="12" />
+          <line x1="3" y1="18" x2="21" y2="18" />
+        </svg>
+        <span>MENÚ</span>
+      </button>
+      <nav class="site-nav" id="primary-nav" aria-label="Navegación principal">
         <a href="index.html">Inicio</a>
         <a href="habitaciones.html" aria-current="page">Habitaciones</a>
+        <a href="index.html#la-casa">La casa</a>
         <a href="index.html#servicios">Servicios</a>
         <a href="index.html#resenas">Huéspedes</a>
         <a href="index.html#ubicacion">Ubicación</a>
@@ -34,16 +43,16 @@
     <main>
       <section class="page-lead-band" aria-labelledby="rooms-heading">
         <div>
-          <span class="folio-label">SECCIÓN HABITACIONES · INVENTARIO VERIFICADO</span>
+          <span class="folio-label">NUESTRAS HABITACIONES · PUERTO AYSÉN</span>
           <h1 id="rooms-heading" class="hero-title" style="margin-bottom: 14px;">Dormitorios calefaccionados para un descanso reparador.</h1>
           <p class="hero-lead" style="margin-bottom: 0;">
-            Todas las habitaciones incluyen desayuno continental servido en el comedor, conexión Wi-Fi gratuita, televisión por cable, mucama diaria antes del mediodía y recepción las 24 horas.
+            En nuestra casa todas las habitaciones incluyen desayuno continental servido en el comedor de madera, conexión Wi-Fi gratuita, televisión por cable, limpieza diaria antes del mediodía y recepción las 24 horas.
           </p>
         </div>
         <div class="coord-box">
-          <span class="folio-label">NOTA SOBRE TARIFAS Y RESERVAS</span>
+          <span class="folio-label">TARIFAS Y RESERVA DIRECTA</span>
           <p style="font-size: 0.925rem; margin-bottom: 14px;">
-            Las tarifas varían según tipo de habitación, temporada y número de huéspedes. No publicamos valores cerrados sin verificar disponibilidad real para tus fechas.
+            Las tarifas varían según temporada, tipo de pieza y número de huéspedes. Te confirmamos disponibilidad y valor exacto por WhatsApp, y aseguras tu reserva con transferencia directa al Banco BCI.
           </p>
           <a class="btn-primary" href="https://wa.me/56994391571?text=Hola%20Hostal%20Hudson%2C%20quisiera%20cotizar%20una%20habitaci%C3%B3n">Cotizar fechas por WhatsApp</a>
         </div>
@@ -52,7 +61,7 @@
       <!-- FICHA 01 -->
       <article class="room-dossier" aria-labelledby="hab-01-title">
         <div class="dossier-meta">
-          <span class="section-num">FICHA 01 / 03</span>
+          <span class="section-num">HABITACIÓN 01</span>
           <h2 id="hab-01-title" class="section-title">Habitación Individual</h2>
           <p class="section-note">Para viajeros individuales o estadías de trabajo en Puerto Aysén.</p>
         </div>
@@ -72,11 +81,11 @@
               </tr>
               <tr>
                 <th>RECEPCIÓN</th>
-                <td>24 horas (entrega de llaves)</td>
+                <td>24 horas (entrega de llaves en mano)</td>
               </tr>
               <tr>
                 <th>BAÑO / DETALLE</th>
-                <td>[Por confirmar con el hostal según pieza]</td>
+                <td>Consultar según habitación disponible</td>
               </tr>
               <tr>
                 <th>TARIFA</th>
@@ -95,8 +104,8 @@
               alt="Habitación individual en Hostal Hudson con cama azul, respaldo de madera y cortina traslúcida"
             />
             <figcaption class="doc-caption">
-              <span>ARCHIVO HH-INT3 · HABITACIÓN INDIVIDUAL</span>
-              <span>TOMA REAL · 800×500 PX</span>
+              <span>HABITACIÓN INDIVIDUAL</span>
+              <span>CAMA DE 1 PLAZA Y LUZ NATURAL</span>
             </figcaption>
           </figure>
         </div>
@@ -105,7 +114,7 @@
       <!-- FICHA 02 -->
       <article class="room-dossier" aria-labelledby="hab-02-title">
         <div class="dossier-meta">
-          <span class="section-num">FICHA 02 / 03</span>
+          <span class="section-num">HABITACIÓN 02</span>
           <h2 id="hab-02-title" class="section-title">Habitación Doble (Dos camas)</h2>
           <p class="section-note">Para dos personas que viajan juntas por la Carretera Austral o por trabajo.</p>
         </div>
@@ -125,11 +134,11 @@
               </tr>
               <tr>
                 <th>RECEPCIÓN</th>
-                <td>24 horas (entrega de llaves)</td>
+                <td>24 horas (entrega de llaves en mano)</td>
               </tr>
               <tr>
                 <th>BAÑO / DETALLE</th>
-                <td>[Por confirmar con el hostal según pieza]</td>
+                <td>Consultar según habitación disponible</td>
               </tr>
               <tr>
                 <th>TARIFA</th>
@@ -149,8 +158,8 @@
               alt="Habitación doble con dos camas individuales y ventana iluminada en Hostal Hudson"
             />
             <figcaption class="doc-caption">
-              <span>ARCHIVO HH-INT4 · HABITACIÓN DOS CAMAS</span>
-              <span>TOMA REAL · 800×500 PX</span>
+              <span>HABITACIÓN DOBLE (DOS CAMAS)</span>
+              <span>CALEFACCIÓN Y SILENCIO NOCTURNO</span>
             </figcaption>
           </figure>
         </div>
@@ -159,19 +168,19 @@
       <!-- FICHA 03 -->
       <article class="room-dossier" aria-labelledby="hab-03-title">
         <div class="dossier-meta">
-          <span class="section-num">FICHA 03 / 03</span>
-          <h2 id="hab-03-title" class="section-title">Habitación Familiar / Vista al Río</h2>
-          <p class="section-note">Para grupos familiares o parejas que priorizan amplitud y vista al río Aysén.</p>
+          <span class="section-num">CONSULTA / FAMILIAS Y GRUPOS</span>
+          <h2 id="hab-03-title" class="section-title">¿Viajas en familia o buscas vista al río?</h2>
+          <p class="section-note">Cada familia necesita una distribución distinta de camas. Te contamos qué hay disponible para tus fechas.</p>
         </div>
         <div class="dossier-content">
           <p>
-            El hostal dispone de habitaciones con orientación hacia el río Aysén y capacidad familiar. Escríbenos indicando cuántas personas viajan para asignarte la pieza adecuada.
+            Escríbenos indicando cuántas personas viajan y tus fechas. Te confirmamos qué pieza hay disponible, cómo se reparten las camas y te enviamos fotografías actuales del dormitorio antes de reservar.
           </p>
           <table class="spec-table">
             <tbody>
               <tr>
                 <th>CAPACIDAD</th>
-                <td>Familiar / Matrimonial [según disponibilidad]</td>
+                <td>Se confirma según la pieza disponible para tus fechas</td>
               </tr>
               <tr>
                 <th>INCLUYE</th>
@@ -182,8 +191,8 @@
                 <td>Sin costo (hasta completar capacidad)</td>
               </tr>
               <tr>
-                <th>HORARIOS CHECK-IN/OUT</th>
-                <td>[Recepción 24 h · horario de salida a confirmar]</td>
+                <th>CONFIRMACIÓN</th>
+                <td>Directa por WhatsApp con transferencia BCI</td>
               </tr>
               <tr>
                 <th>TARIFA</th>
@@ -191,26 +200,29 @@
               </tr>
             </tbody>
           </table>
-          <a class="btn-primary" href="https://wa.me/56994391571?text=Hola%20Hostal%20Hudson%2C%20consulto%20disponibilidad%20para%20Habitaci%C3%B3n%20Familiar">Consultar esta habitación</a>
+          <a class="btn-primary" href="https://wa.me/56994391571?text=Hola%20Hostal%20Hudson%2C%20consulto%20por%20opciones%20familiares">Consultar opciones familiares</a>
         </div>
         <div class="dossier-photo">
-          <div class="doc-missing" role="note" aria-label="Fotografía pendiente de toma">
-            <span class="doc-missing-tag">[HUECO DOCUMENTAL · FOTOGRAFÍA EN PREPARACIÓN]</span>
-            <p class="doc-missing-text">
-              Las fotos actuales de archivo (<code>interior1.jpg</code> e <code>interior2.jpg</code>) corresponden a la sala de estar y comedor común. Este espacio queda reservado para la fotografía real del dormitorio familiar.
+          <div class="family-inquiry-box" style="height: 100%;">
+            <span class="family-inquiry-tag">ATENCIÓN PERSONALIZADA PARA FAMILIAS</span>
+            <h3 class="family-inquiry-title">¿Viajas con niños o en grupo por la Carretera Austral?</h3>
+            <p class="family-inquiry-text">
+              Cada familia necesita una distribución distinta de camas. Escríbenos directamente a nuestro WhatsApp y te enviamos fotografías del dormitorio disponible para tus fechas junto con las opciones de ubicación frente al río.
             </p>
-            <span class="catalog-code">PUEDES PEDIR FOTOS DEL DÍA POR WHATSAPP AL +56 9 9439 1571</span>
+            <div>
+              <a class="btn-secondary" href="https://wa.me/56994391571?text=Hola%20Hostal%20Hudson%2C%20quisiera%20pedir%20fotos%20y%20disponibilidad%20para%20una%20habitaci%C3%B3n%20familiar">Pedir fotos y disponibilidad por WhatsApp →</a>
+            </div>
           </div>
         </div>
       </article>
 
-      <!-- ÁREAS COMUNES COMPLEMENTARIAS -->
+      <!-- ANEXO / ESPACIOS COMUNES -->
       <section class="editorial-section" aria-labelledby="common-heading">
         <div class="section-index">
-          <span class="section-num">ANEXO / ESPACIOS COMUNES</span>
-          <h2 id="common-heading" class="section-title">Salón, comedor y cocina compartida.</h2>
+          <span class="section-num">ESPACIOS COMUNES</span>
+          <h2 id="common-heading" class="section-title">Salón a leña, comedor y cocina compartida.</h2>
           <p class="section-note">
-            Además de tu dormitorio, tienes acceso al estar con combustión lenta y a la cocina equipada del hostal.
+            Además de tu dormitorio, en nuestra casa puedes sentarte junto a la combustión lenta, tomar desayuno en el comedor de madera o usar la cocina equipada.
           </p>
         </div>
         <div class="section-body">
@@ -225,7 +237,7 @@
               />
               <figcaption class="doc-caption">
                 <span>ESTAR COMÚN CON CALEFACCIÓN A LEÑA</span>
-                <span>800×500 PX</span>
+                <span>PRIMER PISO</span>
               </figcaption>
             </figure>
             <figure class="doc-figure">
@@ -238,7 +250,7 @@
               />
               <figcaption class="doc-caption">
                 <span>RINCÓN DE DESCANSO EN SALA COMÚN</span>
-                <span>800×500 PX</span>
+                <span>USO DE HUÉSPEDES</span>
               </figcaption>
             </figure>
           </div>
@@ -265,10 +277,34 @@
         <ul class="footer-links">
           <li><a href="index.html">Inicio</a></li>
           <li><a href="habitaciones.html">Habitaciones</a></li>
-          <li><a href="../index.html">Comparador de rutas visuales</a></li>
+          <li><a href="index.html#servicios">Servicios incluidos</a></li>
+          <li><a href="index.html#reservas">Reservas directas</a></li>
         </ul>
       </div>
     </footer>
   </div>
+
+  <script>
+    (function () {
+      var header = document.getElementById('site-header');
+      var toggle = document.getElementById('nav-toggle');
+      var nav = document.getElementById('primary-nav');
+      if (!header || !toggle || !nav) return;
+
+      toggle.addEventListener('click', function () {
+        var isOpen = header.classList.toggle('nav-open');
+        toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        toggle.setAttribute('aria-label', isOpen ? 'Cerrar menú de navegación' : 'Abrir menú de navegación');
+      });
+
+      nav.querySelectorAll('a').forEach(function (link) {
+        link.addEventListener('click', function () {
+          header.classList.remove('nav-open');
+          toggle.setAttribute('aria-expanded', 'false');
+          toggle.setAttribute('aria-label', 'Abrir menú de navegación');
+        });
+      });
+    })();
+  </script>
 </body>
 </html>

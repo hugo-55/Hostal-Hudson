@@ -1,98 +1,98 @@
-# Reporte de handoff — Exploración visual (Tres rutas de diseño)
+# Reporte de handoff — Refinamiento de Ruta A (Base seleccionada)
 
 Fecha: 2026-11-16  
 Rama: `rediseno/2026-11`  
-Autor: Antigravity (exploración visual para decisión con el hostal)
+Base anterior en rama: `92f0538`  
+Autor: Antigravity (exploración visual y refinamiento sobre Ruta A)
 
 ---
 
-## 1. Qué se hizo
+## 1. Qué cambió
 
-Se diseñaron y construyeron tres direcciones visuales completas e independientes (**Home** y **Habitaciones**) en HTML + CSS plano, sin tocar `app/` ni `components/`, y un comparador interactivo en `docs/diseno/rutas/index.html`.
+Se tomó la **Ruta A (`docs/diseno/rutas/a-editorial-sobrio/`)** como base definitiva manteniendo intacta su dirección general (sistema editorial sobrio, paleta `#F7F4EE` / `#191714` / `#6B655D` / `#24413C` / `#9A3B26`, reglas finas de `1 px`, retícula de 12 columnas y láminas en paspartú) y se aplicaron los siete ajustes solicitados:
 
-Se respetaron todas las reglas de `AGENTS.md`, `docs/handoff/spec.md` y `.agents/skills/direccion-de-arte/SKILL.md`:
-- **Cero uso de `slide1.jpg` como el hostal**: la única fotografía exterior del hostal empleada es `gal-hostal-exterior1.jpg` (entrada de madera con el cartel tallado en Teniente Merino 1080).
-- **Separación honesta entre dormitorios y áreas comunes**: `gal-hostal-interior1.jpg`, `interior2.jpg` e `interior5.jpg` se presentan como lo que realmente son (sala de estar con combustión lenta y comedor revestido en madera). Para dormitorios se usan `gal-hostal-interior3.jpg` (Individual) y `gal-hostal-interior4.jpg` (Doble dos camas), mientras que la tercera ficha (Habitación Familiar / Vista al río) declara un **hueco fotográfico explícito** (`[HUECO FOTOGRÁFICO · TOMA PENDIENTE]`) en lugar de engañar con fotos del living.
-- **Fotos contenidas en su resolución real (`800×500 px`)**: ninguna imagen se estira a sangre completa ni supera su ancho nativo. La estructura CSS deja preparado el contenedor del hero para pasar a mayor escala cuando el hostal entregue fotografías de alta resolución.
-- **Datos verificados únicamente**: teléfono `+56 9 9439 1571`, dirección `Teniente Merino 1080`, correo `hostalhudson@gmail.com`, los 6 servicios confirmados y las 6 reseñas reales de Google. Las tarifas no se muestran como precios cerrados sino con consulta directa por WhatsApp.
-- **Higiene visual (Checklist anti-plantilla / anti-IA)**: cero emojis como iconos (reemplazados por trazos vectoriales SVG monocromáticos), cero contadores animados (`count-up`), cero comparativas viejo/nuevo, cero gradientes, cero glassmorphism y cero sombras (`box-shadow` / `text-shadow`).
+1. **Limpieza total de textos internos en todas las rutas (`A`, `B`, `C` y `docs/diseno/rutas/index.html`)**:
+   - Eliminadas todas las menciones a `"800×500 PX"`, `"TOMA REAL"`, `"FOTO REAL"`, `"FIG."` y el enlace `"Comparador de rutas visuales"` / `"Comparador de las 3 rutas"` de todos los pies de foto, barras y footers.
+2. **Reemplazo de placeholders técnicos por copy orientado a huéspedes**:
+   - En la tercera ficha (*Habitación Familiar y Vista al Río*) se reemplazaron los rótulos `[HUECO FOTOGRÁFICO · TOMA PENDIENTE]` y `[HUECO DOCUMENTAL · FOTOGRAFÍA EN PREPARACIÓN]` en todas las rutas por una invitación directa al huésped para consultar disponibilidad, distribución de camas y solicitar fotografías actuales por WhatsApp.
+3. **Eliminación de `IBM Plex Mono`**:
+   - Se removió `IBM Plex Mono` de `a-editorial-sobrio/index.html`, `a-editorial-sobrio/habitaciones.html`, `a-editorial-sobrio/styles.css` y `docs/diseno/rutas/index.html`.
+   - Todos los rótulos, encabezados de tabla, pies de foto y etiquetas de sección en Ruta A usan ahora `Inter` en mayúsculas (`0.78rem`, `font-weight: 600`, sin tracking decorativo).
+4. **Incorporación del tono cercano de Ruta B y cita de reseña en el Hero**:
+   - El hero de Ruta A adopta voz en primera persona (*"Te recibimos en nuestra casa..."*) e incluye la cita real de **Rodrigo Valenzuela** (reseña de Google sobre calefacción, vista al río y desayuno) inmediatamente debajo de las acciones principales.
+   - La sección `01 / LA CASA Y EL DESAYUNO` incorpora la voz en primera persona y los tres momentos clave traídos de la Ruta B (*Llegar a cualquier hora sin apuro*, *El desayuno de la mañana y la cocina* y *Piezas limpias antes del mediodía*).
+5. **Menú móvil con botón burger**:
+   - En `<= 768 px` (cubre tanto `768 px` como `360 px`), la cabecera de la Ruta A muestra el botón **MENÚ** (`min-height: 44px`, SVG lineal propio de tres barras y atributos `aria-expanded` / `aria-controls`) que despliega verticalmente los enlaces de navegación y el CTA principal de WhatsApp sin desbordamiento horizontal.
+   - En `1440 px`, la cabecera (`span 4` marca + `span 8` navegación) mantiene todos los enlaces y el botón `Reservar por WhatsApp` en una sola línea horizontal.
+6. **Reubicación de "Transferencia Banco BCI" fuera del hero**:
+   - El ledger del hero muestra únicamente `UBICACIÓN` (Teniente Merino 1080), `RECEPCIÓN` (24 h, llaves en mano) e `INCLUIDO` (desayuno continental, Wi-Fi y estacionamiento).
+   - La confirmación mediante **Transferencia Banco BCI** pasó a la zona de reservas (`06 / RESERVA DIRECTA SIN INTERMEDIARIOS` en Home, con los pasos `PASO 01 · WHATSAPP DIRECTO` y `PASO 02 · CONFIRMACIÓN`, y al bloque de tarifas/reservas de `habitaciones.html`).
+7. **Re-captura completa en `360`, `768` y `1440 px`**:
+   - Regeneradas las 18 capturas de Home y Habitaciones de las tres rutas, recortadas exactamente al alto real del documento.
 
----
-
-## 2. En qué se diferencian las tres rutas
-
-| Dimensión | Ruta A — Editorial Sobrio (*"Cuaderno de Patagonia"*) | Ruta B — Casa de Familia (*"Mesa Puesta en Aysén"*) | Ruta C — Refugio Patagónico (*"Orilla del Río Aysén"*) |
-|---|---|---|---|
-| **Idea rectora** | Crónica impresa de viaje y archivo documental: rigor informativo, blancos amplios y filetes de `1px`. | Hospitalidad doméstica: foco en quién abre la puerta a las 24 h, el calor de la combustión lenta y el desayuno casero. | Base serena frente al clima patagónico: diálogo entre la lluvia/río exterior y el refugio templado interior, con gran silencio visual. |
-| **Tipografía** | **Fraunces** (600/700, alto contraste) + **Inter** (texto) + **IBM Plex Mono** (folios, códigos y tablas técnicas). | **Lora** (500/600 con cursivas expresivas para la voz de los dueños) + **Plus Jakarta Sans** (lectura cálida y abierta). | **Instrument Serif** (400, vertical, fina y silenciosa a gran escala) + **Inter** (geométrica con coordenadas geográficas). |
-| **Grilla y arquitectura** | **12 columnas con filetes visibles de `1px`**. Hero 7/5; secciones interiores con columna fija de índice (`4 col`) + desarrollo (`8 col`). En `/habitaciones`: expedientes horizontales `3/4/5` con tabla técnica. | **Bandas cálidas 5/7 y bloques en zigzag alternado 6/6**. Pone el *Libro de visitas* (reseñas reales) y la rutina de la casa en el corazón de la página antes del catálogo. | **8 columnas con 35% de espacio libre (silencio visual)**. Apertura en bloque verde profundo (`5/3`), secciones `3/5` con margen de aire y módulos de dormitorio contenidos. |
-| **Paleta de color** | Papel `#F7F4EE`, ficha `#EFECE4`, tinta `#191714`, neutro `#6B655D`, verde `#24413C` y óxido `#9A3B26`. | Trigo cálido `#F4ECE1`, lino `#EAE0D0`, madera tostada `#382419`, tinta leña `#261A13`, terracota `#8F3923` y pino `#284A3B`. | Verde bosque `#1B322C`, niebla mineral `#EEF2EE`, piedra `#E1E8E2`, pizarra `#13231E` y acento óxido puente Ibáñez `#9A3B26`. |
-| **Tratamiento de foto** | **Documento de archivo**: paspartú de papel (`padding: 12px; border: 1px solid #191714`), esquinas a `0px` y pie catalogado (`FIG. 01 — 800×500 PX`). | **Álbum familiar enmarcado en lino**: marco cálido de `14px` (`#FAF5ED`), borde `#CBB9A3`, radios de `4px` y pie narrativo en cursiva en primera persona. | **Dípticos Exterior / Interior al ras**: pares comparativos (`EXTERIOR · RÍO AYSÉN` vs `REFUGIO · TENIENTE MERINO 1080`) con barra superior técnica y radio `2px`. |
-
----
-
-## 3. Recomendación y justificación
-
-**Recomendación técnica y editorial: Ruta A (*Editorial Sobrio*), integrando el enfoque humano de la sección "La casa y el desayuno" de la Ruta B.**
-
-### Por qué:
-1. **Resuelve mejor la limitación de las fotos actuales (`800×500 px`)**: al tratar cada fotografía como un *documento enmarcado en paspartú* con pie técnico, el tamaño contenido de `800×500 px` se percibe como una decisión de diseño deliberada (como una lámina en una revista o cuaderno de viaje) y no como una carencia técnica.
-2. **Alineación directa con la Spec ("Cuaderno de Patagonia")**: utiliza exactamente la dupla tipográfica ya instalada en el proyecto (`Fraunces` + `Inter` en `app/layout.jsx`) y los tokens propuestos en `docs/handoff/spec.md` (`#F7F4EE`, `#191714`, `#6B655D`, `#24413C`, `#9A3B26`), lo que permite pasar a implementación en Next.js sin cargar fuentes adicionales ni romper el presupuesto de performance.
-3. **Claridad de conversión y lectura rápida**: para el viajero que llega a Puerto Aysén buscando datos concretos desde el celular (dirección exacta, recepción 24 h, estacionamiento, desayuno y botón directo de WhatsApp), la estructura de fichas y tablas con filetes de `1px` en `360px` es inmediata de escanear.
-4. **Qué vale la pena tomar prestado de la Ruta B**: el tono cercano en primera persona al describir el estar con combustión lenta y el desayuno en el comedor de madera, que conecta directamente con lo que más elogian las 6 reseñas reales de Google.
-
-*(No obstante, las tres rutas están completas y listas para que el equipo y el hostal elijan cualquiera de las tres o una combinación).*
+*(No se modificó ningún archivo en `app/`, `components/` ni `lib/`, no se tocó `main` y no se realizó commit).*
 
 ---
 
-## 4. Decisiones pendientes de aprobación (con el hostal y opencode)
+## 2. Archivos tocados
 
-1. **Elección de la ruta visual definitiva (A, B o C)**: definir con el hostal cuál de las tres personalidades los representa mejor antes de pasar el diseño a `app/globals.css` y `components/`.
-2. **Confirmar datos faltantes de las habitaciones para completar las fichas**:
-   - ¿Las habitaciones Individual, Doble y Familiar tienen baño privado o compartido?
-   - ¿Cuáles son todas las tipologías reales que ofrece el hostal (matrimonial, triple, familiar) y cuántas camas tiene cada una?
-   - ¿Existe un horario referencial de check-out al mediodía (manteniendo la recepción 24 h para el ingreso)?
-3. **Fotografía real faltante**:
-   - Tomar al menos 1 foto horizontal (`>= 1600 px` idealmente, con luz de día sin flash) del dormitorio matrimonial/familiar y 1 foto exterior de la fachada completa desde la vereda para reemplazar el hueco documental.
-4. **Decisiones de producto listadas en la spec**:
-   - Aprobar la eliminación definitiva del **modo oscuro** (simplifica CSS y mantiene la identidad cálida/editorial).
-   - Aprobar el retiro del **cotizador automático basado en `$25.000`** hasta contar con tarifas reales por habitación/temporada, priorizando la consulta directa por WhatsApp.
-   - Aprobar el retiro o reubicación del **widget de clima** fuera del hero.
-   - Confirmar que se mantienen las **6 reseñas actuales de Google** con nombre completo y texto íntegro.
-
----
-
-## 5. Archivos creados
-
-- Comparador general:
-  - `docs/diseno/rutas/index.html`
-- **Ruta A — Editorial Sobrio**:
+- **Ruta A (Base seleccionada)**:
+  - `docs/diseno/rutas/a-editorial-sobrio/styles.css`
   - `docs/diseno/rutas/a-editorial-sobrio/index.html`
   - `docs/diseno/rutas/a-editorial-sobrio/habitaciones.html`
-  - `docs/diseno/rutas/a-editorial-sobrio/styles.css`
   - `docs/diseno/rutas/a-editorial-sobrio/notas.md`
-  - `docs/diseno/rutas/a-editorial-sobrio/capturas/` (`home-360.png`, `home-768.png`, `home-1440.png`, `habitaciones-360.png`, `habitaciones-768.png`, `habitaciones-1440.png`)
-- **Ruta B — Casa de Familia**:
+  - `docs/diseno/rutas/a-editorial-sobrio/capturas/{home,habitaciones}-{360,768,1440}.png`
+- **Limpieza de textos y re-capturas en Rutas B, C y comparador**:
   - `docs/diseno/rutas/b-casa-de-familia/index.html`
   - `docs/diseno/rutas/b-casa-de-familia/habitaciones.html`
-  - `docs/diseno/rutas/b-casa-de-familia/styles.css`
-  - `docs/diseno/rutas/b-casa-de-familia/notas.md`
-  - `docs/diseno/rutas/b-casa-de-familia/capturas/` (`home-360.png`, `home-768.png`, `home-1440.png`, `habitaciones-360.png`, `habitaciones-768.png`, `habitaciones-1440.png`)
-- **Ruta C — Refugio Patagónico**:
+  - `docs/diseno/rutas/b-casa-de-familia/capturas/{home,habitaciones}-{360,768,1440}.png`
   - `docs/diseno/rutas/c-refugio-patagonico/index.html`
   - `docs/diseno/rutas/c-refugio-patagonico/habitaciones.html`
-  - `docs/diseno/rutas/c-refugio-patagonico/styles.css`
-  - `docs/diseno/rutas/c-refugio-patagonico/notas.md`
-  - `docs/diseno/rutas/c-refugio-patagonico/capturas/` (`home-360.png`, `home-768.png`, `home-1440.png`, `habitaciones-360.png`, `habitaciones-768.png`, `habitaciones-1440.png`)
-
-*(No se modificó ningún archivo en `app/`, `components/` ni `lib/`, y no se realizó commit ni push).*
+  - `docs/diseno/rutas/c-refugio-patagonico/capturas/{home,habitaciones}-{360,768,1440}.png`
+  - `docs/diseno/rutas/index.html`
+- **Handoff**:
+  - `docs/handoff/reporte.md`
 
 ---
 
-## 6. Verificación ejecutada
+## 3. Verificación
 
-- **Auditoría estática de restricciones**:
-  - `Select-String -Path "docs\diseno\rutas\*\*.css", "docs\diseno\rutas\*\*.html", "docs\diseno\rutas\index.html" -Pattern "box-shadow|text-shadow|drop-shadow|gradient\(|backdrop-filter|slide1\.jpg"` → `0` usos de estilos prohibidos o de `slide1.jpg` como imagen.
-- **Capturas reales en Chrome Headless vía CDP (`360px`, `768px`, `1440px`)**:
-  - `node C:\Users\hugoc\.gemini\antigravity\brain\acda6d55-d6d8-4310-aae0-272cf74ffa71\scratch\capture-routes.mjs`
-  - 18 capturas PNG generadas a página completa (`scrollWidth === viewportWidth`, `0` desborde horizontal, `0` imágenes rotas).
+- **Auditoría estática de textos y estilos prohibidos**:
+  - `Select-String -Path "docs\diseno\rutas\*\*.html", "docs\diseno\rutas\*\*.css", "docs\diseno\rutas\index.html" -Pattern "800×500|800x500|TOMA REAL|FOTO REAL|FIG\.|HUECO|IBM Plex|Plex Mono|box-shadow|text-shadow|drop-shadow|gradient\(|backdrop-filter|slide1\.jpg"` y `Select-String -Path "docs\diseno\rutas\*\*.html" -Pattern "Comparador de"` → `0` coincidencias en todos los `.html` de las tres rutas.
+- **Capturas e interacción real vía Chrome Headless CDP (`capture-routes.mjs`)**:
+  - **Ruta A (`a-editorial-sobrio`)**:
+    - `home-360.png`: `360×10407`, `scrollWidth=360`, `broken=0` · Burger click test: `beforeOpen=0`, `afterOpen=333`, `expanded="true"`, `overflowOpen=360`, `afterClose=0`.
+    - `home-768.png`: `768×9018`, `scrollWidth=768`, `broken=0` · Burger click test: `beforeOpen=0`, `afterOpen=333`, `expanded="true"`, `overflowOpen=768`, `afterClose=0`.
+    - `home-1440.png`: `1440×5160`, `scrollWidth=1440`, `broken=0`.
+    - `habitaciones-360.png`: `360×5648`, `scrollWidth=360`, `broken=0` · Burger click test: `beforeOpen=0`, `afterOpen=333`, `expanded="true"`, `overflowOpen=360`, `afterClose=0`.
+    - `habitaciones-768.png`: `768×5455`, `scrollWidth=768`, `broken=0` · Burger click test: `beforeOpen=0`, `afterOpen=333`, `expanded="true"`, `overflowOpen=768`, `afterClose=0`.
+    - `habitaciones-1440.png`: `1440×2966`, `scrollWidth=1440`, `broken=0`.
+  - **Ruta B (`b-casa-de-familia`)**:
+    - `home-360` (`360×10417`), `home-768` (`768×7581`), `home-1440` (`1440×5293`), `habitaciones-360` (`360×5503`), `habitaciones-768` (`768×4924`), `habitaciones-1440` (`1440×2963`) · `scrollWidth === viewportWidth`, `broken=0`.
+  - **Ruta C (`c-refugio-patagonico`)**:
+    - `home-360` (`360×8716`), `home-768` (`768×7683`), `home-1440` (`1440×5735`), `habitaciones-360` (`360×4915`), `habitaciones-768` (`768×5355`), `habitaciones-1440` (`1440×3867`) · `scrollWidth === viewportWidth`, `broken=0`.
+
+---
+
+## 5. Revisión de opencode (2026-11-16)
+
+Después del refinamiento se corrigió lo que todavía afirmaba datos no confirmados. No se cambió la dirección de arte.
+
+- Tercera ficha: dejó de llamarse "Habitación Familiar y Vista al Río" y de declarar "configuración familiar". Ahora es `Familias y grupos`, una consulta que no promete una tipología inexistente. Se quitó también la fila "Familiar o matrimonial (según disponibilidad)".
+- Numeración: `DORMITORIO 01 / 03` y `02 / 03` afirmaban un inventario de tres habitaciones. Quedaron como `HABITACIÓN 01` y `HABITACIÓN 02`.
+- Pie de foto de `interior2`: decía "comedor" y en la foto se ve un estar con dos sillones, paneles de madera y TV. Corregido a "ESTAR EN MADERA NATIVA".
+- Servicio de recepción: prometía "libre horario de llegada y salida". El check-out no está confirmado; quedó "libre horario de ingreso y entrega de llaves".
+- Hero: la cita de Rodrigo Valenzuela se repetía completa en el bloque de huéspedes. El hero usa ahora un fragmento de Dedy Lincoqueo Soto; las seis reseñas siguen en `04 / HUÉSPEDES`.
+- Etiqueta de la banda de habitaciones: `TARIFAS Y RESERVA DIRECTA` en lugar de "por transferencia BCI", que queda en el cuerpo.
+- Capturas de la Ruta A regeneradas con Playwright sobre servidor local: `1440`, `768` y `360`, `broken=0`, `scrollWidth = viewportWidth`. Prueba de burger: `aria-expanded="true"`, menú de `331 px` de alto, sin desborde.
+
+## 6. Pendientes y pasos siguientes
+
+1. Aprobación del dueño del hostal para pasar el sistema visual de la **Ruta A refinada** a `app/globals.css`, `app/layout.jsx`, `components/` y páginas de Next.js (`/` y `/habitaciones`).
+2. Confirmar con el hostal antes de implementar en código productivo:
+   - Tipologías reales de habitación: cuántas son, cuántas camas tiene cada una y si el baño es privado o compartido.
+   - Si existe una pieza familiar o con vista al río, y su distribución de camas.
+   - Horario de check-out y política de cancelación.
+   - Tarifas por temporada.
+   - Foto horizontal real del dormitorio familiar cuando esté disponible.
+   - Decisiones de producto listadas en `docs/handoff/spec.md` (retiro del modo oscuro, retiro del cotizador referencial de `$25.000`, reubicación o retiro del widget de clima del hero y mantención de las 6 reseñas de Google).

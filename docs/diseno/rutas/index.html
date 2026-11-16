@@ -6,7 +6,7 @@
   <title>Mesa de Arte — Comparación de 3 Rutas Visuales | Hostal Hudson</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
   <style>
     :root {
       --bg: #F6F4EE;
@@ -20,7 +20,6 @@
       --rule-soft: #CFC8BA;
       --font-display: 'Fraunces', Georgia, serif;
       --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      --font-mono: 'IBM Plex Mono', Consolas, monospace;
     }
 
     *, *::before, *::after {
@@ -65,8 +64,9 @@
     }
 
     .kicker {
-      font-family: var(--font-mono);
+      font-family: var(--font-sans);
       font-size: 0.78rem;
+      font-weight: 600;
       color: var(--forest);
       text-transform: uppercase;
       display: block;
@@ -97,8 +97,9 @@
     }
 
     .route-badge {
-      font-family: var(--font-mono);
+      font-family: var(--font-sans);
       font-size: 0.75rem;
+      font-weight: 600;
       text-transform: uppercase;
       color: var(--accent);
       margin-bottom: 6px;
@@ -133,8 +134,10 @@
     }
 
     .spec-list span {
-      font-family: var(--font-mono);
+      font-family: var(--font-sans);
       font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
       color: var(--muted);
     }
 
@@ -202,16 +205,18 @@
     }
 
     .control-label {
-      font-family: var(--font-mono);
+      font-family: var(--font-sans);
       font-size: 0.78rem;
+      font-weight: 600;
       text-transform: uppercase;
       color: var(--muted);
       margin-right: 6px;
     }
 
     .filter-btn {
-      font-family: var(--font-mono);
+      font-family: var(--font-sans);
       font-size: 0.8rem;
+      font-weight: 500;
       padding: 8px 14px;
       min-height: 40px;
       background-color: var(--card);
@@ -246,8 +251,9 @@
       justify-content: space-between;
       align-items: center;
       background-color: var(--surface);
-      font-family: var(--font-mono);
+      font-family: var(--font-sans);
       font-size: 0.8rem;
+      font-weight: 600;
     }
 
     .screenshot-frame {
@@ -285,12 +291,12 @@
     <!-- RESUMEN DE LAS 3 RUTAS -->
     <section class="summary-grid" aria-label="Ficha técnica de las tres rutas">
       <!-- RUTA A -->
-      <article class="route-card">
+      <article class="route-card" style="border-width: 2px;">
         <div>
-          <span class="route-badge">Ruta A</span>
+          <span class="route-badge">Ruta A · Base seleccionada</span>
           <h2>Editorial Sobrio</h2>
           <p class="route-desc">
-            Crónica impresa ("Cuaderno de Patagonia"). Título grande en serif de alto contraste, reglas finas de 1 px, índice lateral de capítulos y foto tratada como documento de archivo en paspartú.
+            Crónica impresa ("Cuaderno de Patagonia") refinada con voz cercana en primera persona en "La casa y el desayuno", cita de reseña en el hero, menú burger móvil y transferencia BCI en reservas.
           </p>
           <div class="swatches" aria-label="Paleta Ruta A">
             <span class="swatch" style="background: #F7F4EE;" title="#F7F4EE Papel"></span>
@@ -300,9 +306,9 @@
             <span class="swatch" style="background: #9A3B26;" title="#9A3B26 Óxido"></span>
           </div>
           <ul class="spec-list">
-            <li><span>TIPOGRAFÍA</span><strong>Fraunces + Inter + Plex Mono</strong></li>
-            <li><span>GRILLA</span><strong>12 col · Asimetría 7/5 y 4/8 con reglas 1px</strong></li>
-            <li><span>FOTO</span><strong>Documento catalogado en paspartú (0px)</strong></li>
+            <li><span>TIPOGRAFÍA</span><strong>Fraunces + Inter (rótulos en mayúsculas)</strong></li>
+            <li><span>GRILLA</span><strong>12 col · Asimetría 7/5 y 4/8 · Burger en móvil</strong></li>
+            <li><span>FOTO</span><strong>Lámina en paspartú (0px)</strong></li>
           </ul>
         </div>
         <div class="route-links">
