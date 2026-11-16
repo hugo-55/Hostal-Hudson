@@ -19,6 +19,7 @@ Una crónica sobria y honesta del Hostal Hudson en Puerto Aysén: arquitectura e
 Sobre la base refinada por Antigravity se corrigió lo que todavía afirmaba datos no confirmados:
 
 - La tercera ficha dejó de llamarse "Habitación Familiar y Vista al Río" y de declarar "configuración familiar"; ahora es una consulta ("Familias y grupos") que no promete una pieza que no está verificada.
+- **Baño privado en todas las habitaciones** (dato confirmado por el dueño el 16-11): reemplaza el "Consultar según habitación disponible" en las fichas y se suma a la bajada de la home y de habitaciones.
 - Se quitó la numeración `DORMITORIO 02 / 03`, que afirmaba un inventario de tres habitaciones.
 - El pie de la foto de `interior2` ya no dice "comedor": en la imagen se ve un estar con dos sillones, paneles de madera y TV.
 - El servicio de recepción ya no promete "libre horario de salida"; el check-out no está confirmado.

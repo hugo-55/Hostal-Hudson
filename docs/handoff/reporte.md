@@ -90,7 +90,7 @@ Después del refinamiento se corrigió lo que todavía afirmaba datos no confirm
 
 1. Aprobación del dueño del hostal para pasar el sistema visual de la **Ruta A refinada** a `app/globals.css`, `app/layout.jsx`, `components/` y páginas de Next.js (`/` y `/habitaciones`).
 2. Confirmar con el hostal antes de implementar en código productivo:
-   - Tipologías reales de habitación: cuántas son, cuántas camas tiene cada una y si el baño es privado o compartido.
+   - Tipologías reales de habitación: cuántas son y cuántas camas tiene cada una. El baño privado ya está confirmado para todas.
    - Si existe una pieza familiar o con vista al río, y su distribución de camas.
    - Horario de check-out y política de cancelación.
    - Tarifas por temporada.

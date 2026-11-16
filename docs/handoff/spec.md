@@ -54,12 +54,17 @@ Problemas concretos:
 
 Datos confirmados: teléfono `+56 9 9439 1571`, dirección Teniente Merino 1080,
 correo `hostalhudson@gmail.com`, servicios (wifi, TV, estacionamiento,
-recepción 24 h, desayuno, limpieza) y seis reseñas de Google ya publicadas.
+recepción 24 h, desayuno, limpieza), **todas las habitaciones con baño
+privado** (confirmado por el usuario el 2026-11-16) y seis reseñas de Google ya
+publicadas.
 
 Datos **no** confirmados: tarifas reales por habitación y temporada, horarios de
 check-in/out, política de cancelación, abonos, nombres de los anfitriones,
 distancias y tiempos. `RATE_PER_PERSON_NIGHT = 25000` es referencial: no se
 muestra como precio cerrado.
+
+El resto de los datos del hostal llega más adelante; no se inventa nada para
+completar fichas.
 
 ## Dirección de arte propuesta
 
