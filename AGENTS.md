@@ -19,6 +19,10 @@ npm run start   # servir el build
 No hay lint ni test configurados. Verificá con `npm run build` o navegando las
 rutas en `npm run dev`.
 
+En este equipo Windows, PowerShell bloquea `npm.ps1`. Si el build falla con
+"no se puede cargar el archivo npm.ps1", usar `npm.cmd run build` y
+`npm.cmd run dev`.
+
 ## Entorno Android / Termux (tablet)
 
 El tablet corre Android arm64 y los binarios nativos de SWC no corren en esa
