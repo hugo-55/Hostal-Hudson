@@ -24,14 +24,24 @@ Sobre la base refinada por Antigravity se corrigió lo que todavía afirmaba dat
 - El pie de la foto de `interior2` ya no dice "comedor": en la imagen se ve un estar con dos sillones, paneles de madera y TV.
 - El servicio de recepción ya no promete "libre horario de salida"; el check-out no está confirmado.
 - El hero usa un fragmento de Dedy Lincoqueo Soto para no repetir la misma reseña completa del bloque de huéspedes (Rodrigo Valenzuela sigue ahí).
+- **Idioma**: se retiró la palabra "casa" de todo el sitio visible. El dueño la leyó como "casa de huéspedes", un downgrade frente a hostal. Ahora el relato dice hostal, piezas y estadía, y el hero abre con "Un hostal tranquilo a dos cuadras de la plaza".
+- **Color**: se eliminó el rojo óxido y se pasó a una paleta verde de Patagonia (papel `#EFF2E8`, verde profundo `#1F3B31`, verde medio `#2C5446`, musgo `#6C7A4B`). El verde profundo se usa en la barra superior, el CTA y la banda de reservas a sangre.
 
 ## Color
-- **Papel base**: `#F7F4EE`
-- **Papel secundario (fichas y citas)**: `#EFECE4`
-- **Paspartú de foto**: `#FAF8F4`
-- **Tinta principal**: `#191714`
-- **Tinta secundaria**: `#6B655D`
-- **Acentos**: Óxido `#9A3B26` (reservado para el CTA principal y filete de cita) y Verde profundo `#24413C` (rótulos de sección e iconografía lineal).
+
+Paleta verde de Patagonia, sin rojo. El rojo óxido de la primera versión se retiró porque el dueño lo leyó como una señal equivocada para un hostal familiar.
+
+- **Papel base**: `#EFF2E8` (blanco verdoso)
+- **Papel secundario (fichas, citas, cajas)**: `#E8ECE1`
+- **Paspartú de foto**: `#FAF8F0`
+- **Tinta principal**: `#16211C` (verde tinta)
+- **Tinta secundaria**: `#5B675E`
+- **Verde profundo (CTA, barra superior y banda de reservas)**: `#1F3B31`
+- **Verde medio (rótulos e iconos)**: `#2C5446`
+- **Musgo (filete de cita)**: `#6C7A4B`
+- **Filetes**: `#16211C` y `#C9D1C2`
+
+Los verdes no son decorativos: la barra superior de datos, el CTA principal y la banda de reservas usan el verde profundo como color de marca. El papel y las fichas llevan el verde en versión pálida.
 
 ## Tratamiento fotográfico
 - **Foto como lámina en paspartú**: contenida dentro de un marco de papel (`padding: 12px; border: 1px solid #191714`), esquinas rectas (`0px`), sin superar sus `800×500 px` nativos y con pies de foto limpios pensados para el huésped (sin rótulos internos ni metadatos técnicos).
