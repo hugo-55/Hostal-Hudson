@@ -1,0 +1,729 @@
+/* ==========================================================================
+   RUTA A — EDITORIAL SOBRIO ("Cuaderno de Patagonia")
+   HTML + CSS plano. Cero sombras, cero gradientes, cero glassmorphism.
+   ========================================================================== */
+
+@font-face {
+  font-family: 'FrauncesLocal';
+  font-style: normal;
+  font-weight: 600 700;
+  font-display: swap;
+  src: url('../../../../.next/static/media/af4bf8399d1aacdf-s.p.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'InterLocal';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('../../../../.next/static/media/e4af272ccee01ff0-s.p.woff2') format('woff2');
+}
+
+:root {
+  --bg-paper: #F7F4EE;
+  --bg-sheet: #EFECE4;
+  --bg-frame: #FAF8F4;
+  --ink: #191714;
+  --ink-muted: #6B655D;
+  --accent-oxide: #9A3B26;
+  --accent-forest: #24413C;
+  --rule-strong: #191714;
+  --rule-soft: #D5CFC3;
+
+  --font-display: 'Fraunces', 'FrauncesLocal', Georgia, 'Times New Roman', serif;
+  --font-body: 'Inter', 'InterLocal', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'IBM Plex Mono', 'Consolas', 'Courier New', monospace;
+
+  --size-display: clamp(2.15rem, 4.4vw, 3.85rem);
+  --size-h2: clamp(1.5rem, 2.5vw, 2.15rem);
+  --size-h3: 1.1875rem;
+  --size-body: 1rem;
+  --size-meta: 0.78rem;
+
+  --max-page: 1320px;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  background-color: var(--bg-paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  background-color: var(--bg-paper);
+  color: var(--ink);
+  overflow-x: hidden;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: opacity 160ms ease, background-color 160ms ease, color 160ms ease;
+}
+
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--accent-oxide);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+.page-wrap {
+  max-width: var(--max-page);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* Barra de edición / metadatos superiores */
+.masthead-meta {
+  border-bottom: 1px solid var(--rule-soft);
+  font-family: var(--font-mono);
+  font-size: var(--size-meta);
+  color: var(--ink-muted);
+  padding: 10px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* Cabecera editorial */
+.site-header {
+  border-bottom: 1px solid var(--rule-strong);
+  padding: 20px 0;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  align-items: baseline;
+  gap: 16px;
+}
+
+.brand-block {
+  grid-column: span 5;
+}
+
+.brand-name {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-decoration: none;
+  display: inline-block;
+  line-height: 1.1;
+}
+
+.brand-sub {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--size-meta);
+  color: var(--ink-muted);
+  margin-top: 4px;
+}
+
+.site-nav {
+  grid-column: span 7;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.site-nav a {
+  text-decoration: none;
+  font-size: 0.9375rem;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 2px;
+  border-bottom: 2px solid transparent;
+}
+
+.site-nav a[aria-current="page"] {
+  border-bottom-color: var(--ink);
+  font-weight: 600;
+}
+
+.site-nav a.nav-cta {
+  background-color: var(--ink);
+  color: var(--bg-paper);
+  padding: 10px 16px;
+  font-weight: 500;
+  border-bottom: none;
+}
+
+.site-nav a.nav-cta:hover {
+  background-color: var(--accent-oxide);
+}
+
+/* Hero editorial 7/5 con foto contenida como documento */
+.hero-editorial {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  border-bottom: 1px solid var(--rule-strong);
+}
+
+.hero-copy {
+  grid-column: span 7;
+  padding: 48px 40px 48px 0;
+  border-right: 1px solid var(--rule-soft);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.folio-label {
+  font-family: var(--font-mono);
+  font-size: var(--size-meta);
+  color: var(--accent-forest);
+  text-transform: uppercase;
+  margin-bottom: 18px;
+  display: block;
+}
+
+.hero-title {
+  font-family: var(--font-display);
+  font-size: var(--size-display);
+  font-weight: 600;
+  line-height: 1.06;
+  margin-bottom: 24px;
+  max-width: 16ch;
+}
+
+.hero-lead {
+  font-size: 1.0625rem;
+  color: var(--ink);
+  max-width: 60ch;
+  margin-bottom: 28px;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  padding: 12px 22px;
+  background-color: var(--accent-oxide);
+  color: var(--bg-paper);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border: 1px solid var(--accent-oxide);
+}
+
+.btn-primary:hover {
+  background-color: var(--ink);
+  border-color: var(--ink);
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  padding: 12px 20px;
+  background-color: transparent;
+  color: var(--ink);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.95rem;
+  border: 1px solid var(--rule-strong);
+}
+
+.btn-secondary:hover {
+  background-color: var(--bg-sheet);
+}
+
+.hero-ledger {
+  border-top: 1px solid var(--rule-soft);
+  padding-top: 18px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.ledger-item dt {
+  font-family: var(--font-mono);
+  font-size: var(--size-meta);
+  color: var(--ink-muted);
+}
+
+.ledger-item dd {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+.hero-doc {
+  grid-column: span 5;
+  padding: 48px 0 48px 36px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* Tratamiento de foto Ruta A: Documento catalogado en paspartú */
+.doc-figure {
+  background-color: var(--bg-frame);
+  border: 1px solid var(--rule-strong);
+  padding: 12px;
+  max-width: 760px;
+}
+
+.doc-figure img {
+  width: 100%;
+  max-width: 800px;
+  aspect-ratio: 8 / 5;
+  object-fit: cover;
+  border: 1px solid var(--rule-soft);
+}
+
+.doc-caption {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid var(--rule-soft);
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-family: var(--font-mono);
+  font-size: var(--size-meta);
+  color: var(--ink-muted);
+}
+
+/* Estructura de capítulos editoriales (4 columnas índice / 8 columnas contenido) */
+.editorial-section {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  border-bottom: 1px solid var(--rule-strong);
+}
+
+.section-index {
+  grid-column: span 4;
+  padding: 44px 28px 44px 0;
+  border-right: 1px solid var(--rule-soft);
+}
+
+.section-num {
+  font-family: var(--font-mono);
+  font-size: var(--size-meta);
+  color: var(--accent-forest);
+  display: block;
+  margin-bottom: 10px;
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: var(--size-h2);
+  font-weight: 600;
+  line-height: 1.15;
+  margin-bottom: 14px;
+}
+
+.section-note {
+  font-size: 0.9375rem;
+  color: var(--ink-muted);
+  max-width: 34ch;
+}
+
+.section-body {
+  grid-column: span 8;
+  padding: 44px 0 44px 36px;
+}
+
+.prose-measure {
+  max-width: 65ch;
+}
+
+.prose-measure p + p {
+  margin-top: 16px;
+}
+
+.dual-docs {
+  display: grid;
+  grid-template-columns: 7fr 5fr;
+  gap: 24px;
+  margin-top: 28px;
+  align-items: start;
+}
+
+/* Habitaciones en Home: tabla/catálogo editorial asimétrico */
+.catalog-list {
+  border-top: 1px solid var(--rule-strong);
+}
+
+.catalog-row {
+  display: grid;
+  grid-template-columns: 1fr 2.2fr 1.8fr;
+  gap: 24px;
+  padding: 28px 0;
+  border-bottom: 1px solid var(--rule-soft);
+  align-items: start;
+}
+
+.catalog-row:last-child {
+  border-bottom: none;
+}
+
+.catalog-code {
+  font-family: var(--font-mono);
+  font-size: var(--size-meta);
+  color: var(--ink-muted);
+}
+
+.catalog-name {
+  font-family: var(--font-display);
+  font-size: var(--size-h3);
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.catalog-desc {
+  color: var(--ink-muted);
+  font-size: 0.95rem;
+  max-width: 52ch;
+  margin-bottom: 12px;
+}
+
+.catalog-meta-list {
+  list-style: none;
+  font-family: var(--font-mono);
+  font-size: var(--size-meta);
+  color: var(--ink);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+}
+
+/* Placeholder honesto de foto faltante */
+.doc-missing {
+  background-color: var(--bg-sheet);
+  border: 1px solid var(--rule-strong);
+  padding: 20px;
+  aspect-ratio: 8 / 5;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.doc-missing-tag {
+  font-family: var(--font-mono);
+  font-size: var(--size-meta);
+  color: var(--accent-oxide);
+}
+
+.doc-missing-text {
+  font-size: 0.875rem;
+  color: var(--ink);
+  max-width: 38ch;
+}
+
+/* Servicios en tabla técnica de 2 columnas con reglas de 1px */
+.services-ledger {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  border-top: 1px solid var(--rule-strong);
+  border-left: 1px solid var(--rule-strong);
+}
+
+.service-cell {
+  padding: 22px 24px;
+  border-right: 1px solid var(--rule-strong);
+  border-bottom: 1px solid var(--rule-strong);
+  background-color: var(--bg-paper);
+}
+
+.service-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.service-head strong {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.service-icon-svg {
+  width: 18px;
+  height: 18px;
+  stroke: var(--accent-forest);
+  stroke-width: 1.6;
+  fill: none;
+}
+
+.service-cell p {
+  font-size: 0.925rem;
+  color: var(--ink-muted);
+}
+
+/* Reseñas reales como recortes de prensa / citas verificadas */
+.reviews-columns {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+
+.review-clip {
+  border-top: 1px solid var(--rule-strong);
+  padding-top: 16px;
+}
+
+.review-quote {
+  font-size: 0.95rem;
+  color: var(--ink);
+  margin-bottom: 10px;
+}
+
+.review-cite {
+  font-family: var(--font-mono);
+  font-size: var(--size-meta);
+  color: var(--ink-muted);
+  font-style: normal;
+  display: block;
+}
+
+/* Ubicación y coordenadas */
+.location-split {
+  display: grid;
+  grid-template-columns: 6fr 6fr;
+  gap: 28px;
+  align-items: start;
+}
+
+.coord-box {
+  background-color: var(--bg-sheet);
+  border: 1px solid var(--rule-strong);
+  padding: 24px;
+}
+
+.coord-list {
+  list-style: none;
+  margin: 16px 0 22px;
+  border-top: 1px solid var(--rule-soft);
+}
+
+.coord-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--rule-soft);
+  font-size: 0.925rem;
+}
+
+.coord-list span:first-child {
+  font-family: var(--font-mono);
+  font-size: var(--size-meta);
+  color: var(--ink-muted);
+}
+
+/* Cierre de reserva directa */
+.cta-strip {
+  padding: 44px 0;
+  border-bottom: 1px solid var(--rule-strong);
+  display: grid;
+  grid-template-columns: 7fr 5fr;
+  gap: 24px;
+  align-items: center;
+}
+
+/* Página interior /habitaciones */
+.page-lead-band {
+  padding: 44px 0;
+  border-bottom: 1px solid var(--rule-strong);
+  display: grid;
+  grid-template-columns: 7fr 5fr;
+  gap: 32px;
+  align-items: end;
+}
+
+.room-dossier {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  padding: 44px 0;
+  border-bottom: 1px solid var(--rule-strong);
+  gap: 24px;
+}
+
+.dossier-meta {
+  grid-column: span 3;
+  border-right: 1px solid var(--rule-soft);
+  padding-right: 20px;
+}
+
+.dossier-content {
+  grid-column: span 4;
+  padding-right: 16px;
+}
+
+.dossier-photo {
+  grid-column: span 5;
+}
+
+.spec-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 18px 0 22px;
+  font-size: 0.9rem;
+}
+
+.spec-table th,
+.spec-table td {
+  text-align: left;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--rule-soft);
+}
+
+.spec-table th {
+  font-family: var(--font-mono);
+  font-size: var(--size-meta);
+  color: var(--ink-muted);
+  font-weight: 400;
+  width: 42%;
+}
+
+/* Pie de página */
+.site-footer {
+  padding: 36px 0 52px;
+  display: grid;
+  grid-template-columns: 5fr 4fr 3fr;
+  gap: 24px;
+  font-size: 0.9rem;
+  color: var(--ink-muted);
+}
+
+.footer-col strong {
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: var(--size-meta);
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.footer-links {
+  list-style: none;
+}
+
+.footer-links li + li {
+  margin-top: 6px;
+}
+
+/* Responsive: Tablet (768px) y Móvil (360px) */
+@media (max-width: 960px) {
+  .site-header {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .brand-block,
+  .site-nav {
+    grid-column: span 1;
+    justify-content: flex-start;
+  }
+  .hero-editorial {
+    grid-template-columns: 1fr;
+  }
+  .hero-copy {
+    grid-column: span 1;
+    padding: 32px 0;
+    border-right: none;
+    border-bottom: 1px solid var(--rule-soft);
+  }
+  .hero-doc {
+    grid-column: span 1;
+    padding: 28px 0 36px;
+  }
+  .editorial-section {
+    grid-template-columns: 1fr;
+  }
+  .section-index {
+    grid-column: span 1;
+    border-right: none;
+    border-bottom: 1px solid var(--rule-soft);
+    padding: 28px 0 18px;
+  }
+  .section-body {
+    grid-column: span 1;
+    padding: 24px 0 36px;
+  }
+  .dual-docs,
+  .location-split,
+  .cta-strip,
+  .page-lead-band {
+    grid-template-columns: 1fr;
+  }
+  .catalog-row {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .room-dossier {
+    grid-template-columns: 1fr;
+  }
+  .dossier-meta,
+  .dossier-content,
+  .dossier-photo {
+    grid-column: span 1;
+    border-right: none;
+    padding-right: 0;
+  }
+  .site-footer {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .page-wrap {
+    padding: 0 16px;
+  }
+  .site-nav {
+    gap: 10px 14px;
+  }
+  .hero-ledger {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .services-ledger {
+    grid-template-columns: 1fr;
+  }
+  .reviews-columns {
+    grid-template-columns: 1fr;
+  }
+  .site-footer {
+    grid-template-columns: 1fr;
+  }
+  .doc-caption {
+    flex-direction: column;
+    gap: 4px;
+  }
+}

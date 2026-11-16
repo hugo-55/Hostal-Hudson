@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mesa de Arte — Comparación de 3 Rutas Visuales | Hostal Hudson</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #F6F4EE;
+      --surface: #ECE8DF;
+      --card: #FAF8F4;
+      --ink: #191714;
+      --muted: #655F57;
+      --accent: #9A3B26;
+      --forest: #24413C;
+      --rule: #191714;
+      --rule-soft: #CFC8BA;
+      --font-display: 'Fraunces', Georgia, serif;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --font-mono: 'IBM Plex Mono', Consolas, monospace;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--ink);
+      font-family: var(--font-sans);
+      line-height: 1.55;
+      padding-bottom: 64px;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    a:focus-visible,
+    button:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .top-header {
+      border-bottom: 1px solid var(--rule);
+      padding: 28px 0 24px;
+      margin-bottom: 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .kicker {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--forest);
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    h1 {
+      font-family: var(--font-display);
+      font-size: clamp(1.75rem, 3vw, 2.6rem);
+      font-weight: 600;
+      line-height: 1.1;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    .route-card {
+      background-color: var(--card);
+      border: 1px solid var(--rule);
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .route-badge {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .route-card h2 {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      margin-bottom: 10px;
+    }
+
+    .route-desc {
+      font-size: 0.925rem;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+
+    .spec-list {
+      list-style: none;
+      border-top: 1px solid var(--rule-soft);
+      margin-bottom: 18px;
+      font-size: 0.85rem;
+    }
+
+    .spec-list li {
+      padding: 7px 0;
+      border-bottom: 1px solid var(--rule-soft);
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .spec-list span {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    .swatches {
+      display: flex;
+      gap: 6px;
+      margin: 10px 0 16px;
+    }
+
+    .swatch {
+      width: 24px;
+      height: 24px;
+      border: 1px solid var(--rule);
+    }
+
+    .route-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .btn-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 40px;
+      padding: 8px 14px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-decoration: none;
+      border: 1px solid var(--rule);
+      background-color: var(--ink);
+      color: var(--bg);
+    }
+
+    .btn-link.secondary {
+      background-color: transparent;
+      color: var(--ink);
+    }
+
+    .btn-link:hover {
+      background-color: var(--accent);
+      border-color: var(--accent);
+      color: var(--bg);
+    }
+
+    /* Barra de control para comparar capturas */
+    .controls-bar {
+      background-color: var(--surface);
+      border: 1px solid var(--rule);
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .control-group {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .control-label {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-right: 6px;
+    }
+
+    .filter-btn {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      padding: 8px 14px;
+      min-height: 40px;
+      background-color: var(--card);
+      color: var(--ink);
+      border: 1px solid var(--rule);
+      cursor: pointer;
+    }
+
+    .filter-btn[aria-pressed="true"] {
+      background-color: var(--ink);
+      color: var(--bg);
+      font-weight: 500;
+    }
+
+    /* Grilla comparativa de capturas 3 columnas */
+    .comparison-board {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      align-items: start;
+    }
+
+    .board-column {
+      background-color: var(--card);
+      border: 1px solid var(--rule);
+    }
+
+    .board-col-header {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--rule);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: var(--surface);
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+    }
+
+    .screenshot-frame {
+      padding: 14px;
+    }
+
+    .screenshot-frame img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border: 1px solid var(--rule-soft);
+      margin: 0 auto;
+    }
+
+    @media (max-width: 1024px) {
+      .summary-grid,
+      .comparison-board {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="top-header">
+      <div>
+        <span class="kicker">HOSTAL HUDSON · EXPLORACIÓN VISUAL (PRIMER CORTE)</span>
+        <h1>Comparador de tres direcciones de arte</h1>
+      </div>
+      <p style="font-size: 0.9rem; color: var(--muted); max-width: 48ch;">
+        Mockups estáticos en HTML + CSS plano con datos verificados y fotografías reales contenidas (sin usar <code>slide1.jpg</code> ni ampliar a sangre completa).
+      </p>
+    </header>
+
+    <!-- RESUMEN DE LAS 3 RUTAS -->
+    <section class="summary-grid" aria-label="Ficha técnica de las tres rutas">
+      <!-- RUTA A -->
+      <article class="route-card">
+        <div>
+          <span class="route-badge">Ruta A</span>
+          <h2>Editorial Sobrio</h2>
+          <p class="route-desc">
+            Crónica impresa ("Cuaderno de Patagonia"). Título grande en serif de alto contraste, reglas finas de 1 px, índice lateral de capítulos y foto tratada como documento de archivo en paspartú.
+          </p>
+          <div class="swatches" aria-label="Paleta Ruta A">
+            <span class="swatch" style="background: #F7F4EE;" title="#F7F4EE Papel"></span>
+            <span class="swatch" style="background: #EFECE4;" title="#EFECE4 Ficha"></span>
+            <span class="swatch" style="background: #191714;" title="#191714 Tinta"></span>
+            <span class="swatch" style="background: #24413C;" title="#24413C Verde profundo"></span>
+            <span class="swatch" style="background: #9A3B26;" title="#9A3B26 Óxido"></span>
+          </div>
+          <ul class="spec-list">
+            <li><span>TIPOGRAFÍA</span><strong>Fraunces + Inter + Plex Mono</strong></li>
+            <li><span>GRILLA</span><strong>12 col · Asimetría 7/5 y 4/8 con reglas 1px</strong></li>
+            <li><span>FOTO</span><strong>Documento catalogado en paspartú (0px)</strong></li>
+          </ul>
+        </div>
+        <div class="route-links">
+          <a class="btn-link" href="a-editorial-sobrio/index.html">Abrir Home A</a>
+          <a class="btn-link secondary" href="a-editorial-sobrio/habitaciones.html">Abrir Habitaciones A</a>
+        </div>
+      </article>
+
+      <!-- RUTA B -->
+      <article class="route-card">
+        <div>
+          <span class="route-badge">Ruta B</span>
+          <h2>Casa de Familia</h2>
+          <p class="route-desc">
+            Hospitalidad doméstica ("Mesa Puesta en Aysén"). Foco en quién te recibe a cualquier hora, calor de combustión lenta, libro de visitas en el centro del relato y bloques alternados en tonos madera y lino.
+          </p>
+          <div class="swatches" aria-label="Paleta Ruta B">
+            <span class="swatch" style="background: #F4ECE1;" title="#F4ECE1 Trigo cálido"></span>
+            <span class="swatch" style="background: #EAE0D0;" title="#EAE0D0 Lino"></span>
+            <span class="swatch" style="background: #382419;" title="#382419 Madera tostada"></span>
+            <span class="swatch" style="background: #8F3923;" title="#8F3923 Terracota"></span>
+            <span class="swatch" style="background: #284A3B;" title="#284A3B Pino"></span>
+          </div>
+          <ul class="spec-list">
+            <li><span>TIPOGRAFÍA</span><strong>Lora (con cursivas) + Plus Jakarta Sans</strong></li>
+            <li><span>GRILLA</span><strong>Bandas cálidas 5/7 y zigzag doméstico 6/6</strong></li>
+            <li><span>FOTO</span><strong>Álbum familiar enmarcado en lino (4px)</strong></li>
+          </ul>
+        </div>
+        <div class="route-links">
+          <a class="btn-link" href="b-casa-de-familia/index.html">Abrir Home B</a>
+          <a class="btn-link secondary" href="b-casa-de-familia/habitaciones.html">Abrir Habitaciones B</a>
+        </div>
+      </article>
+
+      <!-- RUTA C -->
+      <article class="route-card">
+        <div>
+          <span class="route-badge">Ruta C</span>
+          <h2>Refugio Patagónico</h2>
+          <p class="route-desc">
+            Base serena frente al clima ("Orilla del Río Aysén"). Apertura en verde bosque profundo, amplios silencios visuales (35% de pausa espacial) y dípticos que dialogan entre el paisaje exterior y el refugio interior.
+          </p>
+          <div class="swatches" aria-label="Paleta Ruta C">
+            <span class="swatch" style="background: #1B322C;" title="#1B322C Verde profundo"></span>
+            <span class="swatch" style="background: #EEF2EE;" title="#EEF2EE Niebla"></span>
+            <span class="swatch" style="background: #E1E8E2;" title="#E1E8E2 Piedra"></span>
+            <span class="swatch" style="background: #13231E;" title="#13231E Pizarra"></span>
+            <span class="swatch" style="background: #9A3B26;" title="#9A3B26 Óxido Ibáñez"></span>
+          </div>
+          <ul class="spec-list">
+            <li><span>TIPOGRAFÍA</span><strong>Instrument Serif + Inter</strong></li>
+            <li><span>GRILLA</span><strong>8 col con silencio visual (5/3 y 3/5)</strong></li>
+            <li><span>FOTO</span><strong>Dípticos Exterior / Interior al ras (2px)</strong></li>
+          </ul>
+        </div>
+        <div class="route-links">
+          <a class="btn-link" href="c-refugio-patagonico/index.html">Abrir Home C</a>
+          <a class="btn-link secondary" href="c-refugio-patagonico/habitaciones.html">Abrir Habitaciones C</a>
+        </div>
+      </article>
+    </section>
+
+    <!-- CONTROLES DE COMPARACIÓN DE CAPTURAS -->
+    <section aria-labelledby="comp-heading">
+      <div class="controls-bar">
+        <div class="control-group" role="group" aria-label="Seleccionar página">
+          <span id="comp-heading" class="control-label">Página:</span>
+          <button type="button" class="filter-btn" data-page="home" aria-pressed="true">Home (Portada)</button>
+          <button type="button" class="filter-btn" data-page="habitaciones" aria-pressed="false">Habitaciones</button>
+        </div>
+
+        <div class="control-group" role="group" aria-label="Seleccionar ancho de pantalla">
+          <span class="control-label">Ancho (Viewport):</span>
+          <button type="button" class="filter-btn" data-vp="1440" aria-pressed="true">1440 px (Desktop)</button>
+          <button type="button" class="filter-btn" data-vp="768" aria-pressed="false">768 px (Tablet)</button>
+          <button type="button" class="filter-btn" data-vp="360" aria-pressed="false">360 px (Móvil)</button>
+        </div>
+      </div>
+
+      <div class="comparison-board">
+        <div class="board-column">
+          <div class="board-col-header">
+            <strong>RUTA A · EDITORIAL SOBRIO</strong>
+            <span id="label-a">home-1440.png</span>
+          </div>
+          <div class="screenshot-frame">
+            <a id="link-a" href="a-editorial-sobrio/capturas/home-1440.png" target="_blank">
+              <img id="img-a" src="a-editorial-sobrio/capturas/home-1440.png" alt="Captura Ruta A Editorial Sobrio" />
+            </a>
+          </div>
+        </div>
+
+        <div class="board-column">
+          <div class="board-col-header">
+            <strong>RUTA B · CASA DE FAMILIA</strong>
+            <span id="label-b">home-1440.png</span>
+          </div>
+          <div class="screenshot-frame">
+            <a id="link-b" href="b-casa-de-familia/capturas/home-1440.png" target="_blank">
+              <img id="img-b" src="b-casa-de-familia/capturas/home-1440.png" alt="Captura Ruta B Casa de Familia" />
+            </a>
+          </div>
+        </div>
+
+        <div class="board-column">
+          <div class="board-col-header">
+            <strong>RUTA C · REFUGIO PATAGÓNICO</strong>
+            <span id="label-c">home-1440.png</span>
+          </div>
+          <div class="screenshot-frame">
+            <a id="link-c" href="c-refugio-patagonico/capturas/home-1440.png" target="_blank">
+              <img id="img-c" src="c-refugio-patagonico/capturas/home-1440.png" alt="Captura Ruta C Refugio Patagónico" />
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    (function () {
+      var currentPage = 'home';
+      var currentVp = '1440';
+
+      function updateBoard() {
+        var file = currentPage + '-' + currentVp + '.png';
+        var routes = [
+          { key: 'a', folder: 'a-editorial-sobrio' },
+          { key: 'b', folder: 'b-casa-de-familia' },
+          { key: 'c', folder: 'c-refugio-patagonico' }
+        ];
+        routes.forEach(function (r) {
+          var path = r.folder + '/capturas/' + file;
+          var img = document.getElementById('img-' + r.key);
+          var link = document.getElementById('link-' + r.key);
+          var label = document.getElementById('label-' + r.key);
+          img.src = path;
+          link.href = path;
+          label.textContent = file;
+          if (currentVp === '360') {
+            img.style.maxWidth = '360px';
+          } else if (currentVp === '768') {
+            img.style.maxWidth = '100%';
+          } else {
+            img.style.maxWidth = '100%';
+          }
+        });
+      }
+
+      document.querySelectorAll('.filter-btn[data-page]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          document.querySelectorAll('.filter-btn[data-page]').forEach(function (b) {
+            b.setAttribute('aria-pressed', 'false');
+          });
+          btn.setAttribute('aria-pressed', 'true');
+          currentPage = btn.getAttribute('data-page');
+          updateBoard();
+        });
+      });
+
+      document.querySelectorAll('.filter-btn[data-vp]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          document.querySelectorAll('.filter-btn[data-vp]').forEach(function (b) {
+            b.setAttribute('aria-pressed', 'false');
+          });
+          btn.setAttribute('aria-pressed', 'true');
+          currentVp = btn.getAttribute('data-vp');
+          updateBoard();
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

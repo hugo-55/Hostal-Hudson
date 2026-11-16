@@ -1,0 +1,696 @@
+/* ==========================================================================
+   RUTA C — REFUGIO PATAGÓNICO ("Orilla del Río Aysén")
+   HTML + CSS plano. Cero sombras, cero gradientes, cero glassmorphism.
+   ========================================================================== */
+
+@font-face {
+  font-family: 'InterLocal';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('../../../../.next/static/media/e4af272ccee01ff0-s.p.woff2') format('woff2');
+}
+
+:root {
+  --forest-deep: #1B322C;
+  --forest-panel: #223D36;
+  --forest-rule: #33524A;
+  --mist-bg: #EEF2EE;
+  --stone-surface: #E1E8E2;
+  --mist-light: #F3F6F3;
+  --ink-deep: #13231E;
+  --ink-slate: #4D6059;
+  --mist-muted: #B7C7C0;
+  --accent-ibanez: #9A3B26;
+  --stone-rule: #C4D0C8;
+
+  --font-display: 'Instrument Serif', 'Playfair Display', 'Times New Roman', Times, serif;
+  --font-sans: 'Inter', 'InterLocal', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  --size-hero: clamp(2.35rem, 4.6vw, 4.1rem);
+  --size-h2: clamp(1.65rem, 2.8vw, 2.45rem);
+  --size-h3: 1.35rem;
+  --size-body: 1rem;
+  --size-tag: 0.75rem;
+
+  --max-shell: 1280px;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  background-color: var(--mist-bg);
+  color: var(--ink-deep);
+  font-family: var(--font-sans);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  background-color: var(--mist-bg);
+  color: var(--ink-deep);
+  overflow-x: hidden;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: opacity 160ms ease, background-color 160ms ease, color 160ms ease;
+}
+
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--accent-ibanez);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+.shell {
+  max-width: var(--max-shell);
+  margin: 0 auto;
+  padding: 0 28px;
+}
+
+/* Cabecera y Hero en bloque Verde Profundo con silencio visual */
+.refuge-canopy {
+  background-color: var(--forest-deep);
+  color: var(--mist-light);
+  border-bottom: 1px solid var(--forest-rule);
+}
+
+.canopy-bar {
+  border-bottom: 1px solid var(--forest-rule);
+  padding: 12px 0;
+  font-size: var(--size-tag);
+  color: var(--mist-muted);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.canopy-header {
+  padding: 24px 0;
+  border-bottom: 1px solid var(--forest-rule);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.canopy-brand {
+  text-decoration: none;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.canopy-brand-name {
+  font-family: var(--font-display);
+  font-size: 1.85rem;
+  font-weight: 400;
+  line-height: 1;
+  color: var(--mist-light);
+}
+
+.canopy-brand-loc {
+  font-size: var(--size-tag);
+  color: var(--mist-muted);
+  text-transform: uppercase;
+}
+
+.canopy-nav {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 22px;
+}
+
+.canopy-nav a {
+  text-decoration: none;
+  font-size: 0.9rem;
+  color: var(--mist-muted);
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.canopy-nav a:hover,
+.canopy-nav a[aria-current="page"] {
+  color: var(--mist-light);
+}
+
+.canopy-nav a[aria-current="page"] {
+  border-bottom: 1px solid var(--mist-light);
+}
+
+.canopy-nav a.nav-action {
+  background-color: var(--accent-ibanez);
+  color: var(--mist-light);
+  padding: 10px 18px;
+  border-radius: 2px;
+  font-weight: 500;
+}
+
+.canopy-nav a.nav-action:hover {
+  background-color: var(--mist-light);
+  color: var(--forest-deep);
+}
+
+/* Grilla de 8 columnas con espacio negativo (silencio visual) */
+.hero-refuge {
+  padding: 72px 0 68px;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 32px;
+}
+
+.hero-refuge-intro {
+  grid-column: 1 / 6;
+}
+
+.hero-refuge-aside {
+  grid-column: 6 / 9;
+  border-left: 1px solid var(--forest-rule);
+  padding-left: 28px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.context-kicker {
+  font-size: var(--size-tag);
+  text-transform: uppercase;
+  color: var(--mist-muted);
+  display: block;
+  margin-bottom: 16px;
+}
+
+.hero-refuge h1 {
+  font-family: var(--font-display);
+  font-size: var(--size-hero);
+  font-weight: 400;
+  line-height: 1.04;
+  margin-bottom: 24px;
+  max-width: 18ch;
+}
+
+.hero-refuge-lead {
+  font-size: 1.05rem;
+  color: var(--mist-muted);
+  max-width: 56ch;
+  margin-bottom: 32px;
+}
+
+.refuge-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.btn-ibanez {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  padding: 12px 22px;
+  background-color: var(--accent-ibanez);
+  color: var(--mist-light);
+  text-decoration: none;
+  font-size: 0.925rem;
+  font-weight: 500;
+  border: 1px solid var(--accent-ibanez);
+  border-radius: 2px;
+}
+
+.btn-ibanez:hover {
+  background-color: var(--ink-deep);
+  border-color: var(--ink-deep);
+}
+
+.btn-ghost-light {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  padding: 12px 20px;
+  background-color: transparent;
+  color: var(--mist-light);
+  text-decoration: none;
+  font-size: 0.925rem;
+  border: 1px solid var(--forest-rule);
+  border-radius: 2px;
+}
+
+.btn-ghost-light:hover {
+  background-color: var(--forest-panel);
+}
+
+.btn-ghost-dark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  padding: 12px 20px;
+  background-color: transparent;
+  color: var(--ink-deep);
+  text-decoration: none;
+  font-size: 0.925rem;
+  border: 1px solid var(--ink-deep);
+  border-radius: 2px;
+}
+
+.btn-ghost-dark:hover {
+  background-color: var(--stone-surface);
+}
+
+.aside-facts {
+  list-style: none;
+}
+
+.aside-facts li {
+  padding: 12px 0;
+  border-top: 1px solid var(--forest-rule);
+  font-size: 0.875rem;
+  color: var(--mist-muted);
+}
+
+.aside-facts strong {
+  display: block;
+  color: var(--mist-light);
+  font-weight: 500;
+}
+
+/* Tratamiento de foto Ruta C: Díptico Afuera (Paisaje) / Adentro (Refugio) al ras con barra de contexto */
+.diptych-row {
+  padding: 0 0 68px;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 24px;
+}
+
+.diptych-card {
+  grid-column: span 4;
+  border: 1px solid var(--forest-rule);
+  background-color: var(--forest-panel);
+  border-radius: 2px;
+  overflow: hidden;
+  max-width: 760px;
+}
+
+.diptych-card.light-surface {
+  border-color: var(--stone-rule);
+  background-color: var(--mist-light);
+}
+
+.plate-bar {
+  padding: 8px 14px;
+  font-size: var(--size-tag);
+  text-transform: uppercase;
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--forest-rule);
+  color: var(--mist-muted);
+}
+
+.diptych-card.light-surface .plate-bar {
+  border-bottom-color: var(--stone-rule);
+  color: var(--ink-slate);
+}
+
+.diptych-card img {
+  width: 100%;
+  max-width: 800px;
+  aspect-ratio: 8 / 5;
+  object-fit: cover;
+}
+
+.plate-foot {
+  padding: 12px 14px;
+  font-size: 0.875rem;
+  color: var(--mist-muted);
+}
+
+.diptych-card.light-surface .plate-foot {
+  color: var(--ink-slate);
+}
+
+/* Secciones con silencio visual (3 columnas de pausa/título + 5 columnas de contenido en grilla de 8) */
+.quiet-section {
+  padding: 76px 0;
+  border-bottom: 1px solid var(--stone-rule);
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 32px;
+}
+
+.quiet-lead {
+  grid-column: 1 / 4;
+}
+
+.quiet-content {
+  grid-column: 4 / 9;
+}
+
+.quiet-kicker {
+  font-size: var(--size-tag);
+  text-transform: uppercase;
+  color: var(--ink-slate);
+  display: block;
+  margin-bottom: 12px;
+}
+
+.quiet-title {
+  font-family: var(--font-display);
+  font-size: var(--size-h2);
+  font-weight: 400;
+  line-height: 1.12;
+  margin-bottom: 16px;
+}
+
+.quiet-sub {
+  font-size: 0.95rem;
+  color: var(--ink-slate);
+  max-width: 32ch;
+}
+
+.quiet-prose {
+  max-width: 62ch;
+  margin-bottom: 32px;
+}
+
+.quiet-prose p + p {
+  margin-top: 14px;
+}
+
+/* Contexto geográfico / Distancias desde Teniente Merino 1080 */
+.territory-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin-top: 28px;
+}
+
+.territory-card {
+  border: 1px solid var(--stone-rule);
+  background-color: var(--mist-light);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.territory-card img {
+  width: 100%;
+  aspect-ratio: 8 / 5;
+  object-fit: cover;
+  border-bottom: 1px solid var(--stone-rule);
+}
+
+.territory-card-body {
+  padding: 16px;
+}
+
+.territory-card-body span {
+  font-size: var(--size-tag);
+  text-transform: uppercase;
+  color: var(--ink-slate);
+  display: block;
+  margin-bottom: 4px;
+}
+
+.territory-card-body h3 {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 400;
+  margin-bottom: 6px;
+}
+
+.territory-card-body p {
+  font-size: 0.9rem;
+  color: var(--ink-slate);
+}
+
+/* Dormitorios en Ruta C: módulos silenciosos */
+.refuge-rooms-list {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+
+.refuge-room-module {
+  border: 1px solid var(--stone-rule);
+  background-color: var(--mist-light);
+  border-radius: 2px;
+  display: grid;
+  grid-template-columns: 5fr 4fr;
+  overflow: hidden;
+}
+
+.refuge-room-info {
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-left: 1px solid var(--stone-rule);
+}
+
+.refuge-room-info h3 {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 400;
+  margin-bottom: 10px;
+}
+
+.refuge-room-info p {
+  font-size: 0.95rem;
+  color: var(--ink-slate);
+  margin-bottom: 18px;
+}
+
+.refuge-specs {
+  list-style: none;
+  border-top: 1px solid var(--stone-rule);
+  margin-bottom: 20px;
+}
+
+.refuge-specs li {
+  padding: 8px 0;
+  border-bottom: 1px solid var(--stone-rule);
+  font-size: 0.875rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.refuge-specs li span:first-child {
+  color: var(--ink-slate);
+}
+
+/* Hueco honesto en Ruta C */
+.plate-missing {
+  background-color: var(--stone-surface);
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 250px;
+}
+
+.plate-missing-label {
+  font-size: var(--size-tag);
+  text-transform: uppercase;
+  color: var(--accent-ibanez);
+  font-weight: 600;
+}
+
+/* Servicios en lista minimalista de 6 puntos */
+.minimal-services {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px 32px;
+}
+
+.min-service-item {
+  border-top: 1px solid var(--ink-deep);
+  padding-top: 14px;
+}
+
+.min-service-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.min-service-svg {
+  width: 18px;
+  height: 18px;
+  stroke: var(--forest-deep);
+  stroke-width: 1.6;
+  fill: none;
+}
+
+.min-service-head h3 {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.min-service-item p {
+  font-size: 0.9rem;
+  color: var(--ink-slate);
+}
+
+/* Bitácora de clima y descanso: Reseñas */
+.quiet-reviews {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.quiet-review-card {
+  background-color: var(--stone-surface);
+  border: 1px solid var(--stone-rule);
+  border-radius: 2px;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.quiet-review-card p {
+  font-size: 0.9375rem;
+  margin-bottom: 14px;
+}
+
+.quiet-review-card cite {
+  font-style: normal;
+  font-size: var(--size-tag);
+  text-transform: uppercase;
+  color: var(--ink-slate);
+}
+
+/* Bloque final de refugio y contacto */
+.refuge-closing {
+  background-color: var(--forest-deep);
+  color: var(--mist-light);
+  padding: 68px 0;
+}
+
+.closing-grid {
+  display: grid;
+  grid-template-columns: 5fr 3fr;
+  gap: 32px;
+  align-items: center;
+}
+
+.closing-grid h2 {
+  font-family: var(--font-display);
+  font-size: var(--size-h2);
+  font-weight: 400;
+  margin-bottom: 12px;
+}
+
+.refuge-footer {
+  background-color: var(--forest-deep);
+  color: var(--mist-muted);
+  border-top: 1px solid var(--forest-rule);
+  padding: 36px 0 52px;
+  font-size: 0.875rem;
+}
+
+.refuge-footer-grid {
+  display: grid;
+  grid-template-columns: 4fr 4fr 4fr;
+  gap: 24px;
+}
+
+.refuge-footer strong {
+  color: var(--mist-light);
+  display: block;
+  margin-bottom: 8px;
+  font-size: var(--size-tag);
+  text-transform: uppercase;
+}
+
+.refuge-footer ul {
+  list-style: none;
+}
+
+.refuge-footer li + li {
+  margin-top: 6px;
+}
+
+/* Responsive 768 y 360 */
+@media (max-width: 960px) {
+  .hero-refuge {
+    grid-template-columns: 1fr;
+    padding: 44px 0;
+  }
+  .hero-refuge-intro,
+  .hero-refuge-aside {
+    grid-column: span 1;
+    border-left: none;
+    padding-left: 0;
+  }
+  .diptych-row {
+    grid-template-columns: 1fr;
+  }
+  .diptych-card {
+    grid-column: span 1;
+  }
+  .quiet-section {
+    grid-template-columns: 1fr;
+    padding: 48px 0;
+  }
+  .quiet-lead,
+  .quiet-content {
+    grid-column: span 1;
+  }
+  .refuge-room-module {
+    grid-template-columns: 1fr;
+  }
+  .refuge-room-info {
+    border-left: none;
+    border-top: 1px solid var(--stone-rule);
+  }
+  .territory-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .closing-grid,
+  .refuge-footer-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .shell {
+    padding: 0 16px;
+  }
+  .territory-grid,
+  .minimal-services,
+  .quiet-reviews {
+    grid-template-columns: 1fr;
+  }
+  .canopy-nav {
+    gap: 12px;
+  }
+}
