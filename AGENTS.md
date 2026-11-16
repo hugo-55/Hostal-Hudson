@@ -83,6 +83,21 @@ plataforma. Para que funcione localmente se usa el fallback WASM:
   encabezados, enlaces internos, JSON-LD) al editar.
 - Reservas: el flujo principal es WhatsApp (`waLink` en `lib/site.js`).
 
+## Equipo y handoff
+
+- El repo lo trabajan dos entornos: **opencode** (spec, memoria, QA y deploy) y
+  **Antigravity** (exploración visual e implementación pesada). Nunca los dos
+  escribiendo a la vez sobre la misma carpeta.
+- Se trabaja en la rama `rediseno/2026-11`. `main` requiere aprobación.
+- La spec se lee en `docs/handoff/spec.md` y el reporte se escribe en
+  `docs/handoff/reporte.md` con comandos y capturas reales.
+- Antes de tocar estilos, cargar la skill `direccion-de-arte` de
+  `.agents/skills/`. Nada de emojis como iconos, count-up ni comparativas del
+  propio sitio.
+- No generar fotos del hostal ni de personas con IA.
+- No tocar `/admin` ni endpoints de reservas en el rediseño sin acordarlo por
+  T-2026-11-016.
+
 ## Git
 
 1. `git pull` antes de empezar a trabajar.
