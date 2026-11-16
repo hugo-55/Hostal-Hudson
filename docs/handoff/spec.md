@@ -66,22 +66,24 @@ muestra como precio cerrado.
 El resto de los datos del hostal llega más adelante; no se inventa nada para
 completar fichas.
 
-## Dirección de arte propuesta
+## Dirección de arte
 
-"Cuaderno de Patagonia": editorial, sobrio, de casa de familia. El río y la
-madera como atmósfera, no como decoración.
+La primera propuesta, "Cuaderno de Patagonia", se descartó tras la revisión del
+dueño: demasiado texto y sensación de blog. La dirección vigente es **foto
+primero**: foto real grande, una línea honesta, CTA de reserva visible y muy
+poco texto por pantalla. Se apoya en la anatomía de sitios de hostal que
+convierten (HostelMate) y en referencias como Ecomama Amsterdam, Calle 11,
+Spin Designer Hostel, Kex y Hostel Kucha.
 
-- Papel `#F7F4EE`, tinta `#191714`, neutro `#6B655D`, verde profundo `#24413C`,
-  óxido `#9A3B26` solo para acciones críticas.
-- Fraunces para títulos, Inter para texto. Cuatro tamaños, sin tracking
-  decorativo.
-- Retícula de 12 columnas, texto de 60-72 caracteres, asimetría 7/5.
-- Sin sombras. Reglas de 1 px. Radios de 0-4 px. Botones rectangulares.
-- Un solo gesto de motion: fade de 150-200 ms. Nada de count-up, ken burns ni
-  reveal por bloque.
-- Mientras las fotos sean las actuales: **hero tipográfico con una foto
-  contenida**, no a sangre completa. La estructura debe permitir pasar a
-  full-bleed cuando lleguen las fotos nuevas, sin rehacer el layout.
+- Paleta verde de Patagonia: papel `#F4F6EF`, verde profundo `#163A2E`, verde
+  medio `#245143`, musgo `#7C8A57`. Sin rojo.
+- Fraunces para títulos, Inter para texto. Tamaños grandes, párrafos cortos.
+- Retícula 7/5 en hero y habitaciones; 3 columnas solo para grupos de fotos.
+- Sin sombras, gradientes, glassmorphism, emojis ni contadores animados.
+- Sin la palabra "casa": se lee como "casa de huéspedes" y baja la categoría.
+- Mientras las fotos sean las actuales: foto contenida en el hero, no a sangre
+  completa. La estructura permite pasar a full-bleed cuando lleguen las fotos
+  nuevas (≥2400 px), sin rehacer el layout.
 
 ## Tres rutas para Antigravity
 
