@@ -12,7 +12,7 @@
   <header class="site-header" id="site-header">
     <div class="wrap header-inner">
       <a class="brand" href="index.html">
-        <span class="brand-name">Hostal Hudson</span>
+        <img class="brand-logo" src="../../../../public/img/logo.png" width="179" height="70" alt="Hostal Hudson" />
         <span class="brand-place">Puerto Aysén · Patagonia chilena</span>
       </a>
 
@@ -23,6 +23,7 @@
 
       <nav class="site-nav" id="primary-nav" aria-label="Navegación principal">
         <a href="index.html">Inicio</a>
+        <a href="habitaciones.html" aria-current="page">Habitaciones</a>
         <a href="index.html#el-hostal">El hostal</a>
         <a href="index.html#resenas">Reseñas</a>
         <a href="index.html#ubicacion">Ubicación</a>
@@ -33,8 +34,10 @@
 
   <main>
 
-    <section class="page-intro">
-      <div class="wrap">
+    <section class="page-hero">
+      <img class="page-hero-bg" src="../../../../public/img/aysen-puente.jpg" width="2400" height="1568" alt="Puente Presidente Ibáñez sobre el río Aysén" />
+      <div class="page-hero-overlay" aria-hidden="true"></div>
+      <div class="wrap page-hero-content">
         <h1>Habitaciones con baño privado.</h1>
         <p class="lead">Todas incluyen desayuno, Wi-Fi, TV por cable, calefacción y limpieza diaria antes del mediodía.</p>
       </div>
@@ -53,13 +56,14 @@
       </div>
     </div>
 
-    <div class="wrap">
+    <div class="wrap rooms-rows">
 
       <article class="room-row">
         <div class="room-row-media">
           <img src="../../../../public/img/gal-hostal-interior3.jpg" width="800" height="500" alt="Habitación individual con cama de una plaza, respaldo de madera y ventana con cortina clara" />
         </div>
         <div class="room-row-body">
+          <span class="badge-private">Baño privado</span>
           <h2>Individual</h2>
           <p>Cama de una plaza, respaldo de madera y luz natural. Para quien viaja solo o viene a trabajar a la región.</p>
           <ul class="specs">
@@ -77,6 +81,7 @@
           <img src="../../../../public/img/gal-hostal-interior4.jpg" width="800" height="500" loading="lazy" alt="Habitación doble con dos camas individuales y ventana iluminada" />
         </div>
         <div class="room-row-body">
+          <span class="badge-private">Baño privado</span>
           <h2>Doble</h2>
           <p>Dos camas de una plaza, ventana al exterior y ropa de cama abrigada. Silencio nocturno para reponer fuerzas.</p>
           <ul class="specs">
@@ -98,7 +103,7 @@
           <p class="lead">La distribución de camas cambia según la pieza libre para tus fechas. Escríbenos y te enviamos fotos actuales del dormitorio antes de reservar.</p>
         </div>
         <div class="group-action">
-          <a class="btn" href="https://wa.me/56994391571?text=Hola%20Hostal%20Hudson%2C%20viajo%20en%20familia%20y%20quiero%20consultar%20opciones">Consultar por WhatsApp</a>
+          <a class="btn btn-light" href="https://wa.me/56994391571?text=Hola%20Hostal%20Hudson%2C%20viajo%20en%20familia%20y%20quiero%20consultar%20opciones">Consultar por WhatsApp</a>
           <p>Todas las piezas tienen baño privado y desayuno incluido.</p>
         </div>
       </div>
@@ -118,27 +123,32 @@
 
   </main>
 
-  <footer class="site-footer wrap">
-    <div>
-      <strong>Hostal Hudson</strong>
-      <p>Teniente Merino 1080, Puerto Aysén.</p>
-      <p>Atención directa de sus dueños.</p>
+  <footer class="site-footer">
+    <div class="wrap footer-inner">
+      <div>
+        <strong>Hostal Hudson</strong>
+        <p>Teniente Merino 1080, Puerto Aysén.</p>
+        <p>Atención directa de sus dueños.</p>
+      </div>
+      <div>
+        <strong>Contacto</strong>
+        <ul class="footer-list">
+          <li><a href="https://wa.me/56994391571">WhatsApp +56 9 9439 1571</a></li>
+          <li><a href="mailto:hostalhudson@gmail.com">hostalhudson@gmail.com</a></li>
+          <li>Recepción 24 horas</li>
+        </ul>
+      </div>
+      <div>
+        <strong>Navegación</strong>
+        <ul class="footer-list">
+          <li><a href="index.html">Inicio</a></li>
+          <li><a href="habitaciones.html">Habitaciones</a></li>
+          <li><a href="index.html#ubicacion">Ubicación</a></li>
+        </ul>
+      </div>
     </div>
-    <div>
-      <strong>Contacto</strong>
-      <ul class="footer-list">
-        <li><a href="https://wa.me/56994391571">WhatsApp +56 9 9439 1571</a></li>
-        <li><a href="mailto:hostalhudson@gmail.com">hostalhudson@gmail.com</a></li>
-        <li>Recepción 24 horas</li>
-      </ul>
-    </div>
-    <div>
-      <strong>Navegación</strong>
-      <ul class="footer-list">
-        <li><a href="index.html">Inicio</a></li>
-        <li><a href="habitaciones.html">Habitaciones</a></li>
-        <li><a href="index.html#ubicacion">Ubicación</a></li>
-      </ul>
+    <div class="wrap footer-credit">
+      <p>Foto del puente: <a href="https://commons.wikimedia.org/wiki/File:Puente_Presidente_Ib%C3%A1%C3%B1ez.jpg" target="_blank" rel="noopener noreferrer">Davidlohr Bueso, CC BY 2.0</a></p>
     </div>
   </footer>
 
