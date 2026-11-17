@@ -91,46 +91,50 @@ nuevos.
 
 ### 4. Más color en la página de habitaciones
 
-- Cabecera de página con foto de Aysén a sangre (puente o río) y overlay verde
-  bosque al 55 %, texto blanco. Título: "Habitaciones con baño privado."
+- Cabecera de página con `aysen-puente.jpg` a sangre y overlay verde bosque al
+  55 %, texto blanco. Título: "Habitaciones con baño privado."
 - Debajo, la franja de servicios con fondo `--paper-2` y bullets musgo.
 - Filas de habitaciones sobre blanco, con foto más grande (7/5), borde suave y
   una etiqueta "Baño privado" en verde.
 - Banda "Familias y grupos" en verde bosque con texto blanco y botón claro.
 - CTA final y footer en verde bosque.
-- Usar las fotos reales de la zona que ya están en `public/img/`:
-  `gal-quevisitar-puente.jpg`, `gal-quevisitar-caleta.jpg`,
-  `gal-quevisitar-plaza1.jpg`, `gal-quevisitar-cascada.jpg`.
 - No usar `slide1.jpg` (es el coliseo, no el hostal).
 
 ## Fotos de Aysén
 
-- Hero: `gal-quevisitar-puente.jpg` (puente colgante Presidente Ibáñez sobre el
-  río Aysén). Es la foto más característica y colorida de la zona.
-- Si esa foto no alcanza por resolución, evaluar `gal-quevisitar-caleta.jpg` o
-  `gal-quevisitar-cascada.jpg`; nunca `slide1.jpg` (es el coliseo).
+- **Hero**: `public/img/aysen-puente.jpg` (2400×1568). Foto del puente
+  Presidente Ibáñez con el río y las montañas, de Davidlohr Bueso, licencia
+  CC BY 2.0. Es la imagen más fuerte y colorida para la portada.
+- **Ubicación**: `public/img/aysen-letrero.jpg` (2400×1600), letrero de Puerto
+  Aysén con el puente detrás, de Gyoanny78, licencia CC0. No requiere
+  atribución.
+- **Atribución obligatoria**: en el footer, agregar "Foto del puente: Davidlohr
+  Bueso, CC BY 2.0" con enlace a
+  `https://commons.wikimedia.org/wiki/File:Puente_Presidente_Ib%C3%A1%C3%B1ez.jpg`.
+  El detalle completo está en `creditos.md`.
 - La foto del frontis (`gal-hostal-exterior1.jpg`) se usa en la sección "El
   hostal", no en el hero. Ahí el letrero tallado se lee como detalle de marca.
-- Ubicación: `gal-quevisitar-plaza1.jpg` o `gal-quevisitar-caleta.jpg`, para no
-  repetir la misma foto del hero.
-- Si hace falta una foto externa, solo de Unsplash o Pexels, con licencia libre,
-  y registrar autor y URL en `docs/diseno/rutas/d-foto-primero/creditos.md`.
+- Las fotos locales de la zona (`gal-quevisitar-*.jpg`) quedan como respaldo y
+  para bloques secundarios.
+- No usar `slide1.jpg` (es el coliseo, no el hostal).
+- Si hace falta otra foto externa, solo de Unsplash, Pexels o Wikimedia Commons
+  con licencia comercial, y registrar autor y URL en `creditos.md`.
 - Nada de imágenes generadas con IA del hostal, de personas o de lugares que se
   presenten como reales.
 
 ## Estructura de la home (orden)
 
 1. Header con logo, navegación y "Reservar".
-2. Hero: foto del puente o del río a la izquierda, panel verde con título y dos
+2. Hero: `aysen-puente.jpg` a la izquierda, panel verde con título y dos
    botones.
 3. Franja de servicios.
 4. Habitaciones: dos fichas y tarjeta verde de consulta.
 5. El hostal: foto del frontis con el letrero, texto breve y el mosaico del
    salón con estufa y estar.
 6. Reseñas en verde con tarjetas blancas.
-7. Ubicación con foto de la plaza o la caleta y datos.
+7. Ubicación con `aysen-letrero.jpg` y datos.
 8. CTA final verde.
-9. Footer verde.
+9. Footer verde, con el crédito de la foto del puente.
 
 ## Estructura de habitaciones
 
@@ -149,6 +153,8 @@ nuevos.
 - Fondo blanco, verde en header/footer/CTA/reseñas; se percibe más color y no
   papel.
 - Reseñas con estrellas, tarjetas y fuente Google; sin promedio inventado.
+- Crédito de la foto del puente visible en el footer, con enlace a Wikimedia
+  Commons.
 - Capturas 1440/768/360 sin desborde horizontal ni imágenes rotas.
 - Contraste AA, foco visible y navegación por teclado.
 - Sin emojis-icono, gradientes, glassmorphism ni sombras duras.
