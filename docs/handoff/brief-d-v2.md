@@ -6,7 +6,9 @@ La base es `docs/diseno/rutas/d-foto-primero/`. No se toca `main`; todo va en
 
 ## Lo que el dueño aprobó y se mantiene
 
-- El hero con la foto real del frontis y el letrero tallado con el nombre.
+- El hero con una foto característica de Aysén (el puente o el río), no la
+  fachada del hostal. La foto del frontis con el letrero tallado se mueve a la
+  sección "El hostal".
 - La estructura foto primero: poco texto, CTA de reserva visible, franja de
   servicios, habitaciones con "consultar", reseñas reales y ubicación.
 - La paleta verde de Patagonia, sin rojo.
@@ -103,8 +105,14 @@ nuevos.
 
 ## Fotos de Aysén
 
-- Prioridad absoluta: fotos reales del hostal y de la zona que ya están en
-  `public/img/`.
+- Hero: `gal-quevisitar-puente.jpg` (puente colgante Presidente Ibáñez sobre el
+  río Aysén). Es la foto más característica y colorida de la zona.
+- Si esa foto no alcanza por resolución, evaluar `gal-quevisitar-caleta.jpg` o
+  `gal-quevisitar-cascada.jpg`; nunca `slide1.jpg` (es el coliseo).
+- La foto del frontis (`gal-hostal-exterior1.jpg`) se usa en la sección "El
+  hostal", no en el hero. Ahí el letrero tallado se lee como detalle de marca.
+- Ubicación: `gal-quevisitar-plaza1.jpg` o `gal-quevisitar-caleta.jpg`, para no
+  repetir la misma foto del hero.
 - Si hace falta una foto externa, solo de Unsplash o Pexels, con licencia libre,
   y registrar autor y URL en `docs/diseno/rutas/d-foto-primero/creditos.md`.
 - Nada de imágenes generadas con IA del hostal, de personas o de lugares que se
@@ -113,12 +121,14 @@ nuevos.
 ## Estructura de la home (orden)
 
 1. Header con logo, navegación y "Reservar".
-2. Hero: foto del frontis a la izquierda, panel verde con título y dos botones.
+2. Hero: foto del puente o del río a la izquierda, panel verde con título y dos
+   botones.
 3. Franja de servicios.
 4. Habitaciones: dos fichas y tarjeta verde de consulta.
-5. El salón: mosaico con estufa y estar, más lista breve.
+5. El hostal: foto del frontis con el letrero, texto breve y el mosaico del
+   salón con estufa y estar.
 6. Reseñas en verde con tarjetas blancas.
-7. Ubicación con foto del puente y datos.
+7. Ubicación con foto de la plaza o la caleta y datos.
 8. CTA final verde.
 9. Footer verde.
 
@@ -134,6 +144,8 @@ nuevos.
 ## Criterios de aceptación
 
 - Logo visible y nítido en la esquina superior izquierda en 1440, 768 y 360.
+- Hero con foto de Aysén (puente o río), no la fachada; la fachada aparece en
+  "El hostal" con el letrero legible.
 - Fondo blanco, verde en header/footer/CTA/reseñas; se percibe más color y no
   papel.
 - Reseñas con estrellas, tarjetas y fuente Google; sin promedio inventado.
