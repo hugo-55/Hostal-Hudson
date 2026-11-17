@@ -1,7 +1,7 @@
 import HabitacionesClient from '../../components/pages/HabitacionesClient';
 import { SEO, openGraph } from '../../lib/seo';
 import { SITE_URL, BUSINESS_ID } from '../../lib/site';
-import { ROOM_CARDS_ES } from '../../lib/contenido';
+import { ROOMS_ES } from '../../lib/contenido';
 
 export const metadata = {
   title: { absolute: SEO.habitaciones.es.title },
@@ -16,9 +16,9 @@ const HABITACIONES_LD = {
   '@context': 'https://schema.org',
   '@type': 'ItemList',
   name: 'Habitaciones de Hostal Hudson',
-  numberOfItems: ROOM_CARDS_ES.length,
+  numberOfItems: ROOMS_ES.length,
   publisher: { '@id': BUSINESS_ID },
-  itemListElement: ROOM_CARDS_ES.map((r, i) => ({
+  itemListElement: ROOMS_ES.map((r, i) => ({
     '@type': 'ListItem',
     position: i + 1,
     item: {

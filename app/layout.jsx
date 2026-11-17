@@ -43,7 +43,7 @@ export const metadata = {
 };
 
 export const viewport = {
-  themeColor: '#164e63',
+  themeColor: '#143D2E',
   width: 'device-width',
   initialScale: 1,
 };
@@ -86,7 +86,7 @@ export default function RootLayout({ children }) {
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-title" content="Hostal Hudson" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="#164e63" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="#143D2E" />
         <link rel="apple-touch-icon" href="/img/icon-192.png" />
       </head>
       <body>

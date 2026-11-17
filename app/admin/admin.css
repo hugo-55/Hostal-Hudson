@@ -1,0 +1,135 @@
+/* ==========================================================================
+   PANEL DEL DUEÑO (/admin)
+   Hoja aislada del sitio público: solo se carga en app/admin.
+   Usa los tokens de app/globals.css (que sí se cargan en todo el sitio).
+   ========================================================================== */
+
+.admin-table-wrap {
+  overflow-x: auto;
+  margin: 0 -6px;
+  padding: 0 6px;
+}
+
+table.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .94rem;
+}
+
+.admin-table th {
+  padding: 12px 14px;
+  border-bottom: 2px solid var(--line);
+  color: var(--muted);
+  font-size: .78rem;
+  letter-spacing: .06em;
+  text-align: left;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.admin-table td {
+  padding: 14px;
+  border-bottom: 1px solid var(--line);
+  vertical-align: middle;
+}
+
+.admin-table tbody tr:hover { background: rgba(30, 90, 67, .05); }
+.admin-table td.name-cell { min-width: 220px; }
+.admin-table td select { width: 100%; min-width: 140px; }
+.admin-table .msg-cell { white-space: nowrap; }
+
+.note-preview {
+  margin: 4px 0;
+  padding: 4px 8px;
+  border-left: 3px solid var(--wood);
+  border-radius: 0 6px 6px 0;
+  background: #FDF6EC;
+  color: #6B532F;
+  font-size: .8rem;
+  font-style: italic;
+}
+
+.note-btn {
+  margin-top: 4px;
+  padding: 4px 10px !important;
+  font-size: .78rem !important;
+}
+
+.note-row td { background: #FDF6EC; }
+.note-row textarea { background: var(--white); }
+
+.stat {
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--white);
+  text-align: center;
+}
+.stat b { display: block; font-size: 1.6rem; }
+.stat span { color: var(--muted); font-size: .8rem; }
+
+/* Ocupación y barras */
+.occ-strip {
+  display: grid;
+  grid-template-columns: repeat(15, 1fr);
+  gap: 4px;
+  font-size: .75rem;
+  text-align: center;
+}
+.occ-day {
+  position: relative;
+  padding: 6px 0;
+  border-radius: 6px;
+  background: #E4F0DE;
+  color: #1F5A43;
+  font-weight: 700;
+}
+.occ-day.busy { background: #FBE4E0; color: #8F2D1F; }
+.occ-day.today { outline: 2px solid var(--forest-2); }
+.occ-day i {
+  position: absolute;
+  top: 0;
+  right: 3px;
+  color: var(--forest-2);
+  font-size: .62rem;
+  font-style: normal;
+}
+
+.bar-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 8px 0;
+  font-size: .88rem;
+}
+.bar-label { width: 70px; font-weight: 700; }
+.bar-track {
+  flex: 1;
+  height: 14px;
+  overflow: hidden;
+  border-radius: 6px;
+  background: var(--paper-2);
+}
+.bar-fill { height: 100%; border-radius: 6px; background: var(--moss); }
+.bar-val { width: 110px; font-weight: 700; text-align: right; }
+
+/* Calendario por rango */
+.cal-range { background: #F6E7CF !important; color: #6B532F !important; }
+.cal-dragging { outline: 2px solid var(--forest-2); outline-offset: -2px; }
+
+@media (max-width: 640px) {
+  .admin-table-wrap { overflow-x: auto; }
+  .admin-table { font-size: .82rem; }
+  .admin-table th, .admin-table td { padding: 8px 10px; white-space: nowrap; }
+  .admin-table td.name-cell { min-width: auto; }
+  .note-btn { padding: 2px 6px !important; font-size: .7rem !important; }
+  .msg-cell .btn { padding: 4px 6px !important; font-size: .76rem !important; }
+}
+
+/* Impresión: solo la tabla de reservas */
+@media print {
+  .topbar, .site-header, .sticky-book, .wa-float, .no-print, .site-footer { display: none !important; }
+  .container { max-width: 100%; padding: 0; }
+  body { background: #fff; }
+  .card { box-shadow: none; break-inside: avoid; }
+}

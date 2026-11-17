@@ -1,147 +1,200 @@
 'use client';
+import Image from 'next/image';
 import WhatsAppButton, { Footer } from '../Chrome';
-import Slideshow from '../Slideshow';
-import BookingBar from '../BookingBar';
-import ReservaCTA from '../ReservaCTA';
-import Weather from '../Weather';
-import SmartImg from '../SmartImg';
-import { CountUp, Reveal, ReviewsLive } from '../Widgets';
+import FactsStrip from '../FactsStrip';
+import FinalCta from '../FinalCta';
+import Reviews from '../Reviews';
 import { useLang } from '../../lib/i18n';
 import { useSeo } from '../../lib/useSeo';
 import { SEO } from '../../lib/seo';
-import { SERVICES, TESTIMONIALS, waLink, MAPS_URL, REVIEW_URL } from '../../lib/site';
-
-const SLIDES = [
-  { src: '/img/slide1.jpg', alt: 'Hostal Hudson frente al río Aysén' },
-  { src: '/img/slide2.jpg', alt: 'Vista al río desde el hostal' },
-  { src: '/img/slide3.jpg', alt: 'Habitaciones acogedoras' },
-  { src: '/img/slide4.jpg', alt: 'Paisaje patagónico' },
-];
-
-const VISIT = [
-  { src: '/img/gal-quevisitar-puente.jpg', alt: 'Puente Presidente Ibáñez' },
-  { src: '/img/gal-quevisitar-cascada.jpg', alt: 'Cascada de la región' },
-  { src: '/img/gal-quevisitar-caleta.jpg', alt: 'Caleta de pescadores' },
-  { src: '/img/gal-quevisitar-camino.jpg', alt: 'Carretera Austral' },
-];
-
-const ROOM_IMGS = ['/img/gal-hostal-interior1.jpg', '/img/gal-hostal-interior2.jpg', '/img/gal-hostal-interior4.jpg'];
+import { ADDRESS, HOSTAL_PHONE_DISPLAY, MAPS_URL, waLink } from '../../lib/site';
 
 export default function HomeClient() {
-  const { t, lang } = useLang();
+  const { t } = useLang();
+  const h = t.home;
+  const [individual, double] = t.roomsPage.items;
 
-  // El título y la descripción los manda el servidor; esto solo los actualiza
+  // El servidor manda título y descripción en español; esto solo los actualiza
   // cuando el visitante cambia de idioma.
   useSeo(SEO.home.es, SEO.home.en);
 
   return (
-    <div>
-      <div className="hero-full">
-        <Slideshow slides={SLIDES} />
-        <div className="hero-full-text">
-          <div className="hero-kicker gold rise">{t.hero.kicker}</div>
-          <h1><span className="rise d1">{t.hero.titleA}</span><br /><span className="rise d2">{t.hero.titleB}</span></h1>
-          <p className="rise d3">{t.hero.sub}</p>
-          <div className="hero-chips rise d3">
-            <span className="hero-chip"><Weather inline /></span>
-            <span className="hero-chip">⭐ {t.reviewsTitle}</span>
-          </div>
-        </div>
-      </div>
-
-      <div className="container" style={{ paddingTop: 0 }}>
-        <BookingBar />
-
-        <Reveal>
-          <div className="stats-band">
-            <div><CountUp to={2} /><span>{t.stats.plaza}</span></div>
-            <div><CountUp to={24} /><span>{t.stats.reception}</span></div>
-            <div><CountUp to={6} suffix="/6" /><span>{t.stats.included}</span></div>
-            <div><CountUp to={1} /><span>{t.stats.bookMin}</span></div>
-          </div>
-        </Reveal>
-
-        <h2 className="section-title">{t.servicesTitle}</h2>
-        <p className="section-sub">{t.servicesSub}</p>
-        <Reveal>
-          <div className="grid">
-            {SERVICES.map((s) => (
-              <div className="card service" key={s.key}>
-                <div className="service-icon">{s.icon}</div>
-                <strong>{t.services[s.key].name}</strong>
-                <p className="muted">{t.services[s.key].desc}</p>
-              </div>
-            ))}
-          </div>
-        </Reveal>
-
-        <h2 className="section-title">{t.roomsTitle}</h2>
-        <Reveal>
-          <div className="grid">
-            {t.roomCards.map((r, k) => (
-              <div className="card room" key={r.name}>
-                <SmartImg src={ROOM_IMGS[k]} alt={r.name} height={200} />
-                <strong>{r.name}</strong>
-                <p className="muted">{r.desc}</p>
-                <a href="/habitaciones">{t.roomsCta}</a>
-              </div>
-            ))}
-          </div>
-        </Reveal>
-
-        <div className="dark-section">
-          <h2>{t.reviewsTitle}</h2>
-          <ReviewsLive fallback={TESTIMONIALS} />
-          <p style={{ marginTop: 18 }}>
-            <a className="btn btn-green" href={waLink('Hola Hostal Hudson, quiero reservar')} target="_blank" rel="noopener noreferrer">{t.wantBook}</a>
-          </p>
-        </div>
-
-        <div className="card">
-          <h3>{t.review.title}</h3>
-          <p className="muted">{t.review.text}</p>
-          <a className="btn btn-outline" href={REVIEW_URL || waLink('Hola, me alojé en el hostal y quiero dejar una opinión en Google')} target="_blank" rel="noopener noreferrer">{t.review.btn}</a>
-        </div>
-
-        <div className="card">
-          <h3>{t.share.title}</h3>
-          <p className="muted">{t.share.text}</p>
-          <a className="btn btn-outline" href={waLink('Hola, les comparto mis fotos de la estadía para la galería')} target="_blank" rel="noopener noreferrer">{t.share.btn}</a>
-        </div>
-
-        <h2 className="section-title">{t.visitTitle}</h2>
-        <p className="section-sub">{t.visitSub}</p>
-        <div className="visit-strip">
-          {VISIT.map((v) => (
-            <a key={v.src} href="/galeria" className="visit-card">
-              <SmartImg src={v.src} alt={v.alt} height={190} />
-              <span>{v.alt}</span>
-            </a>
-          ))}
-        </div>
-
-        <div className="grid-2" style={{ marginTop: 18 }}>
-          <div className="card">
-            <h3>📍 {t.locationTitle}</h3>
-            <p><Weather /></p>
-            <p>{t.locationText}</p>
-            <p><a className="btn btn-outline" href={MAPS_URL} target="_blank" rel="noopener noreferrer">{t.directions}</a></p>
-          </div>
-          <div className="card" style={{ padding: 10 }}>
-            <iframe
-              title="Mapa Hostal Hudson"
-              src="https://www.google.com/maps?q=Teniente+Merino+1080,+Puerto+Ays%C3%A9n&output=embed"
-              style={{ border: 0, borderRadius: 10, width: '100%', height: '100%', minHeight: 300 }}
-              loading="lazy"
+    <>
+      <main>
+        <section className="hero">
+          <div className="hero-media">
+            <Image
+              src="/img/aysen-puente.jpg"
+              alt={h.alt.hero}
+              fill
+              priority
+              sizes="(max-width: 1023px) 100vw, 58vw"
+              style={{ objectFit: 'cover' }}
             />
           </div>
-        </div>
+          <div className="hero-panel">
+            <span className="kicker kicker-light">{h.heroKicker}</span>
+            <h1>{h.heroTitle}</h1>
+            <p className="lead">{h.heroLead}</p>
+            <div className="hero-actions">
+              <a
+                className="btn btn-light"
+                href={waLink('Hola Hostal Hudson, quiero consultar disponibilidad')}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {h.heroWa}
+              </a>
+              <a className="btn btn-ghost-light" href="/habitaciones">{h.heroRooms}</a>
+            </div>
+          </div>
+        </section>
 
-        <ReservaCTA />
+        <FactsStrip />
 
-        <Footer />
-      </div>
+        <section className="section" id="habitaciones">
+          <div className="wrap">
+            <div className="section-head">
+              <h2>{h.roomsTitle}</h2>
+              <p>{h.roomsSub}</p>
+            </div>
+
+            <div className="rooms-grid">
+              {[individual, double].map((room) => (
+                <article className="room-card" key={room.key}>
+                  <div className="room-media">
+                    <Image
+                      src={room.img}
+                      alt={room.alt}
+                      fill
+                      sizes="(max-width: 900px) 100vw, 33vw"
+                      style={{ objectFit: 'cover' }}
+                    />
+                  </div>
+                  <div className="room-body">
+                    <span className="badge-private">{h.badgePrivate}</span>
+                    <h3>{room.name}</h3>
+                    <p className="room-desc">{room.homeDesc}</p>
+                    <p className="room-meta">{room.meta}</p>
+                    <a className="room-link" href="/habitaciones">{h.seeRoom}</a>
+                  </div>
+                </article>
+              ))}
+
+              <article className="room-inquiry">
+                <h3>{h.inquiryTitle}</h3>
+                <p>{h.inquiryText}</p>
+                <a
+                  className="btn btn-light"
+                  href={waLink('Hola Hostal Hudson, viajo en familia y quiero consultar opciones')}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {h.inquiryCta}
+                </a>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section className="section section-tight" id="el-hostal">
+          <div className="wrap">
+            <div className="section-head">
+              <h2>{h.hostelTitle}</h2>
+              <p>{h.hostelSub}</p>
+            </div>
+
+            <div className="common">
+              <figure className="common-main">
+                <Image
+                  src="/img/gal-hostal-exterior1.jpg"
+                  alt={h.alt.exterior}
+                  fill
+                  sizes="(max-width: 900px) 100vw, 58vw"
+                  style={{ objectFit: 'cover', objectPosition: 'center bottom' }}
+                />
+              </figure>
+
+              <div className="common-side">
+                <div className="common-mosaic">
+                  <figure>
+                    <Image
+                      src="/img/gal-hostal-interior1.jpg"
+                      alt={h.alt.stove}
+                      fill
+                      sizes="(max-width: 900px) 50vw, 29vw"
+                      style={{ objectFit: 'cover' }}
+                    />
+                  </figure>
+                  <figure>
+                    <Image
+                      src="/img/gal-hostal-interior2.jpg"
+                      alt={h.alt.dining}
+                      fill
+                      sizes="(max-width: 900px) 50vw, 29vw"
+                      style={{ objectFit: 'cover' }}
+                    />
+                  </figure>
+                </div>
+
+                <ul className="common-list">
+                  {h.hostelList.map((item) => (
+                    <li key={item.title}>
+                      <strong>{item.title}</strong>
+                      {item.text}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <Reviews />
+
+        <section className="section" id="ubicacion">
+          <div className="wrap location">
+            <div>
+              <h2>{h.locationTitle}</h2>
+              <p className="lead">{h.locationLead}</p>
+              <address className="addr">
+                <strong>Hostal Hudson</strong>
+                {ADDRESS}
+                <br />
+                WhatsApp {HOSTAL_PHONE_DISPLAY}
+              </address>
+              <div className="location-actions">
+                <a className="btn" href={MAPS_URL} target="_blank" rel="noopener noreferrer">
+                  {h.locationMaps}
+                </a>
+                <a
+                  className="btn btn-outline"
+                  href={waLink('Hola Hostal Hudson, quiero consultar cómo llegar')}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {h.locationAsk}
+                </a>
+              </div>
+            </div>
+
+            <figure className="location-media">
+              <Image
+                src="/img/aysen-letrero.jpg"
+                alt={h.alt.location}
+                fill
+                sizes="(max-width: 1023px) 100vw, 58vw"
+                style={{ objectFit: 'cover' }}
+              />
+            </figure>
+          </div>
+        </section>
+
+        <FinalCta />
+      </main>
+
+      <Footer credit />
       <WhatsAppButton />
-    </div>
+    </>
   );
 }
