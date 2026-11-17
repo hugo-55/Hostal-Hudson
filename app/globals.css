@@ -315,9 +315,17 @@ ul { margin: 0; padding: 0; }
 }
 
 @media (max-width: 900px) {
-  .site-header-inner { min-height: 64px; }
-  .brand-logo { height: 32px; }
-  .brand-place { font-size: .58rem; }
+  .site-header-inner { min-height: 64px; min-width: 0; }
+  .brand { min-width: 0; overflow: hidden; }
+  .brand-logo { height: 32px; max-width: 120px; }
+  .brand-place {
+    font-size: .58rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+  .header-end { flex: none; gap: 6px; }
 
   .site-nav {
     display: none;
@@ -344,7 +352,8 @@ ul { margin: 0; padding: 0; }
     border-bottom: 0;
     min-height: 48px;
   }
-  .nav-toggle { display: inline-flex; }
+  .nav-toggle { display: inline-flex; padding: 0 10px; }
+  .nav-toggle span { display: none; }
 }
 
 /* Footer verde (global: todas las páginas lo usan) */

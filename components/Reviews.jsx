@@ -37,7 +37,12 @@ export default function Reviews() {
           <p className="reviews-sub">{h.reviewsSub}</p>
         </div>
 
-        <div className="quote-cards">
+        <div
+          className="quote-cards"
+          tabIndex={0}
+          role="group"
+          aria-label={h.reviewsA11y}
+        >
           {featuredReviews().map((r) => (
             <blockquote className="quote-card" key={r.name}>
               <div>

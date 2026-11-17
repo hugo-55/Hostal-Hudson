@@ -177,3 +177,15 @@ con Playwright antes de aprobar el corte.
   habitaciones y su JSON-LD usan `ROOMS_ES`.
 - **QA pendiente**: capturas 360/768/1024/1440, desborde horizontal, tap
   targets, foco visible, contraste AA y navegación por teclado en la app real.
+
+## 7. Correcciones post-QA (2026-11-17)
+
+QA rechazó la ronda anterior por dos fallos. Corregidos:
+
+- **B1 (bloqueante), header desbordaba en móvil** (`scrollWidth 428` vs 360; el botón de menú caía fuera de pantalla): en `@media (max-width: 900px)` se agregó `min-width:0` a `.site-header-inner`, `min-width:0; overflow:hidden` a `.brand`, truncado con ellipsis en `.brand-place`, logo limitado a `max-width:120px`, `gap:6px` en `.header-end`, `padding:0 10px` en `.nav-toggle` y su texto `Menú` oculto (el botón conserva `aria-label`). `app/globals.css`.
+- **A1 (axe serious), carrusel de reseñas no operable con teclado**: `.quote-cards` ahora tiene `tabIndex={0}`, `role="group"` y `aria-label` ("Reseñas de huéspedes" / "Guest reviews"). `components/Reviews.jsx`, clave nueva `home.reviewsA11y` en `lib/i18n.js` (ES/EN).
+- **C2, warning del manifest**: se sacó `logo.png` (179×70) de los iconos; quedan `icon-192.png` y `icon-512.png`. `app/manifest.js`.
+
+Build: `npm.cmd run build` verde, 22 rutas generadas. Las capturas de QA quedaron commiteadas en `docs/diseno/rutas/d-foto-primero/capturas-v2/`.
+
+Pendiente y no tocado: C6 (barra fija "Reservar" se superpone a contenido en móvil; es el comportamiento normal de una barra fija y corregirlo requiere decisión de diseño), C1 (banner de cookies modal tapa el hero, preexistente), C3 (`.wa-float` fuera de landmark), C5 (enlaces internos con `<a>`, recarga completa).
