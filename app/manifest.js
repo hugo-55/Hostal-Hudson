@@ -41,9 +41,9 @@ export default function manifest() {
         icons: [{ src: '/img/icon-192.png', sizes: '192x192', type: 'image/png' }],
       },
       {
-        name: 'Tarifas',
-        url: '/tarifas',
-        description: 'Tarifas y formas de pago',
+        name: 'Galería',
+        url: '/galeria',
+        description: 'Fotos del hostal y de Aysén',
         icons: [{ src: '/img/icon-192.png', sizes: '192x192', type: 'image/png' }],
       },
     ],

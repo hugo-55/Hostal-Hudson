@@ -12,7 +12,7 @@ import { ADDRESS, HOSTAL_PHONE_DISPLAY, MAPS_URL, waLink } from '../../lib/site'
 export default function HomeClient() {
   const { t } = useLang();
   const h = t.home;
-  const [individual, double] = t.roomsPage.items;
+  const rooms = t.roomsPage.items;
 
   // El servidor manda título y descripción en español; esto solo los actualiza
   // cuando el visitante cambia de idioma.
@@ -60,7 +60,7 @@ export default function HomeClient() {
             </div>
 
             <div className="rooms-grid">
-              {[individual, double].map((room) => (
+              {rooms.map((room) => (
                 <article className="room-card" key={room.key}>
                   <div className="room-media">
                     <Image
@@ -80,24 +80,30 @@ export default function HomeClient() {
                   </div>
                 </article>
               ))}
-
-              <article className="room-inquiry">
-                <h3>{h.inquiryTitle}</h3>
-                <p>{h.inquiryText}</p>
-                <a
-                  className="btn btn-light"
-                  href={waLink('Hola Hostal Hudson, viajo en familia y quiero consultar opciones')}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {h.inquiryCta}
-                </a>
-              </article>
             </div>
           </div>
         </section>
 
-        <section className="section section-tight" id="el-hostal">
+        <section className="group-band">
+          <div className="wrap group-inner">
+            <div>
+              <h2>{h.inquiryTitle}</h2>
+              <p className="lead">{h.inquiryText}</p>
+            </div>
+            <div className="group-action">
+              <a
+                className="btn btn-light"
+                href={waLink('Hola Hostal Hudson, viajo en familia y quiero consultar opciones')}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {h.inquiryCta}
+              </a>
+            </div>
+          </div>
+        </section>
+
+        <section className="section" id="el-hostal">
           <div className="wrap">
             <div className="section-head">
               <h2>{h.hostelTitle}</h2>
@@ -107,11 +113,11 @@ export default function HomeClient() {
             <div className="common">
               <figure className="common-main">
                 <Image
-                  src="/img/gal-hostal-exterior1.jpg"
-                  alt={h.alt.exterior}
+                  src="/img/hostal-entrada-01.jpg"
+                  alt={h.alt.entrance}
                   fill
                   sizes="(max-width: 900px) 100vw, 58vw"
-                  style={{ objectFit: 'cover', objectPosition: 'center bottom' }}
+                  style={{ objectFit: 'cover', objectPosition: 'center' }}
                 />
               </figure>
 
@@ -119,7 +125,7 @@ export default function HomeClient() {
                 <div className="common-mosaic">
                   <figure>
                     <Image
-                      src="/img/gal-hostal-interior1.jpg"
+                      src="/img/hostal-living-01.jpg"
                       alt={h.alt.stove}
                       fill
                       sizes="(max-width: 900px) 50vw, 29vw"
@@ -128,7 +134,7 @@ export default function HomeClient() {
                   </figure>
                   <figure>
                     <Image
-                      src="/img/gal-hostal-interior2.jpg"
+                      src="/img/hostal-comedor-01.jpg"
                       alt={h.alt.dining}
                       fill
                       sizes="(max-width: 900px) 50vw, 29vw"

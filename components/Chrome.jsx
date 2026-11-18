@@ -50,7 +50,6 @@ export function Footer({ credit = false }) {
           <ul className="footer-list">
             <li><a href="/">{t.nav.home}</a></li>
             <li><a href="/habitaciones">{t.nav.rooms}</a></li>
-            <li><a href="/tarifas">{t.nav.rates}</a></li>
             <li><a href="/galeria">{t.nav.gallery}</a></li>
             <li><a href="/visitar">{t.nav.visit}</a></li>
             <li><a href="/guia">{h.footerGuide}</a></li>

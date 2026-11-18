@@ -25,7 +25,7 @@ const VERCEL_HOST = 'hostal-hudson.vercel.app';
 // Tabla URL vieja → página nueva:
 //   /index.php/ y /index.php/en/                        (portada)        → /
 //   /index.php/{,en/}2016-01-15-14-52-35 (Habitaciones)                  → /habitaciones
-//   /index.php/{,en/}2016-01-15-14-53-28 (Tarifas)                       → /tarifas
+//   /tarifas y /index.php/{,en/}2016-01-15-14-53-28 (ex Tarifas)        → /reservas
 //   /index.php/{,en/}2016-01-15-14-54-32 (Servicios, hoy en la portada)  → /
 //   /index.php/{,en/}2016-01-15-14-55-57 (Qué Visitar)                   → /visitar
 //   /index.php/{,en/}2016-01-15-14-56-39 (Galería)                       → /galeria
@@ -34,12 +34,13 @@ const VERCEL_HOST = 'hostal-hudson.vercel.app';
 // Lo que no aguante arriba (feeds RSS, búsqueda, variaciones nuevas) cae al
 // catch-all /index.php/:path* → /. No se tocan /admin ni /api.
 const REDIRECTS_JOOMLA = [
+  { source: '/tarifas', destination: '/reservas', permanent: true },
   { source: '/index.php/en/contact', destination: '/reservas', permanent: true },
   { source: '/index.php/contact', destination: '/reservas', permanent: true },
   { source: '/index.php/en/2016-01-15-14-52-35', destination: '/habitaciones', permanent: true },
   { source: '/index.php/2016-01-15-14-52-35', destination: '/habitaciones', permanent: true },
-  { source: '/index.php/en/2016-01-15-14-53-28', destination: '/tarifas', permanent: true },
-  { source: '/index.php/2016-01-15-14-53-28', destination: '/tarifas', permanent: true },
+  { source: '/index.php/en/2016-01-15-14-53-28', destination: '/reservas', permanent: true },
+  { source: '/index.php/2016-01-15-14-53-28', destination: '/reservas', permanent: true },
   { source: '/index.php/en/2016-01-15-14-54-32', destination: '/', permanent: true },
   { source: '/index.php/2016-01-15-14-54-32', destination: '/', permanent: true },
   { source: '/index.php/en/2016-01-15-14-55-57', destination: '/visitar', permanent: true },

@@ -16,7 +16,6 @@ const HABITACIONES_LD = {
   '@context': 'https://schema.org',
   '@type': 'ItemList',
   name: 'Habitaciones de Hostal Hudson',
-  numberOfItems: ROOMS_ES.length,
   publisher: { '@id': BUSINESS_ID },
   itemListElement: ROOMS_ES.map((r, i) => ({
     '@type': 'ListItem',
@@ -26,6 +25,10 @@ const HABITACIONES_LD = {
       name: r.name,
       description: r.desc,
       image: `${SITE_URL}${r.img}`,
+      amenityFeature: [
+        { '@type': 'LocationFeatureSpecification', name: 'Baño privado' },
+        { '@type': 'LocationFeatureSpecification', name: 'Chapa electrónica con clave' },
+      ],
       containedInPlace: { '@id': BUSINESS_ID },
     },
   })),

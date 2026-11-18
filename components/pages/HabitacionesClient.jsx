@@ -58,9 +58,6 @@ export default function HabitacionesClient() {
                     <li key={spec}>{spec}</li>
                   ))}
                 </ul>
-                <p className="price-line">
-                  <strong>{rp.priceLabel}</strong> {rp.priceNote}
-                </p>
                 <a
                   className="btn"
                   href={waLink(`Hola Hostal Hudson, consulto disponibilidad para la habitación ${room.name.toLowerCase()}`)}
@@ -72,6 +69,24 @@ export default function HabitacionesClient() {
               </div>
             </article>
           ))}
+        </div>
+
+        <div className="wrap">
+          <aside className="security-band">
+            <div className="security-media">
+              <Image
+                src="/img/hostal-pasillo-01.jpg"
+                alt={rp.securityAlt}
+                fill
+                sizes="(max-width: 900px) 100vw, 42vw"
+                style={{ objectFit: 'cover' }}
+              />
+            </div>
+            <div className="security-body">
+              <h2>{rp.securityTitle}</h2>
+              <p>{rp.securityText}</p>
+            </div>
+          </aside>
         </div>
 
         <section className="group-band">

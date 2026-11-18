@@ -17,7 +17,7 @@ export default function FinalCta() {
         <div className="cta-actions">
           <a
             className="btn btn-light"
-            href={waLink('Hola Hostal Hudson, quiero consultar disponibilidad y tarifa')}
+            href={waLink('Hola Hostal Hudson, quiero consultar disponibilidad')}
             target="_blank"
             rel="noopener noreferrer"
           >

@@ -886,8 +886,32 @@ ul { margin: 0; padding: 0; }
   background: var(--moss);
 }
 
-.price-line { margin-bottom: 20px; color: var(--muted); font-size: .95rem; }
-.price-line strong { color: var(--ink); font-weight: 600; }
+.security-band {
+  display: grid;
+  grid-template-columns: 5fr 7fr;
+  margin: 0 auto clamp(32px, 5vw, 56px);
+  max-width: var(--max);
+  overflow: hidden;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--card-shadow);
+}
+.security-media {
+  position: relative;
+  min-height: 320px;
+  aspect-ratio: 4 / 3;
+  background: var(--paper-2);
+}
+.security-media img { object-fit: cover; }
+.security-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(24px, 3.5vw, 42px);
+}
+.security-body h2 { margin: 0 0 10px; font-size: clamp(1.4rem, 2.2vw, 1.9rem); }
+.security-body p { max-width: 46ch; margin: 0; color: var(--muted); }
 
 /* Banda familias y grupos */
 .group-band {
@@ -944,6 +968,9 @@ ul { margin: 0; padding: 0; }
   .room-row--flip { grid-template-columns: 1fr; }
   .room-row--flip .room-row-media { order: 0; }
   .room-row-media { min-height: 240px; aspect-ratio: 4 / 3; }
+
+  .security-band { grid-template-columns: 1fr; }
+  .security-media { min-height: 0; aspect-ratio: 16 / 10; }
 }
 
 @media (max-width: 720px) {
@@ -1011,8 +1038,6 @@ ul { margin: 0; padding: 0; }
   font-size: .8rem;
   font-weight: 600;
 }
-
-.price { font-size: 1.4rem; font-weight: 700; }
 
 input, select, textarea {
   width: 100%;

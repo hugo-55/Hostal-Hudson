@@ -69,13 +69,13 @@ export default function RootLayout({ children }) {
     telephone: '+56994391571',
     url: SITE_URL,
     hasMap: MAPS_URL,
-    priceRange: '$$',
     sameAs: ['https://www.hostalhudson.cl'],
     amenityFeature: [
       { '@type': 'LocationFeatureSpecification', name: 'Wi-Fi gratis' },
       { '@type': 'LocationFeatureSpecification', name: 'Desayuno incluido' },
       { '@type': 'LocationFeatureSpecification', name: 'Estacionamiento' },
       { '@type': 'LocationFeatureSpecification', name: 'Recepción 24 h' },
+      { '@type': 'LocationFeatureSpecification', name: 'Chapa electrónica con clave' },
     ],
   };
   // El FAQPage se emite en app/reservas/page.jsx: Google exige que el texto
