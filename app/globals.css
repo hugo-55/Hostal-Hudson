@@ -1255,22 +1255,85 @@ label { font-size: .85rem; font-weight: 600; }
 /* Consentimiento de cookies */
 .cookie-consent {
   position: fixed;
-  inset: 0;
+  inset: auto auto 0 0;
   z-index: 100;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  background: rgba(18, 33, 27, .86);
+  display: block;
+  padding: 0;
+  background: none;
 }
 .cookie-consent-content {
-  width: 100%;
-  max-width: 560px;
-  padding: 28px 32px;
+  width: min(680px, calc(100vw - 120px));
+  max-width: none;
+  margin: 0 0 18px 18px;
+  padding: 14px 16px 14px 18px;
   background: var(--white);
-  border-radius: 12px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: 0 12px 32px rgba(18, 33, 27, .16);
+  display: grid;
+  grid-template-columns: 1fr 168px;
+  align-items: center;
+  gap: 2px 18px;
 }
-.cookie-title { margin: 0 0 8px; color: var(--ink); font-size: 1.1rem; font-weight: 700; }
-.cookie-text { margin: 0 0 18px; color: var(--muted); font-size: .9rem; line-height: 1.6; }
-.cookie-actions { display: flex; flex-wrap: wrap; gap: 10px; }
-.cookie-actions .btn { flex: 1; }
+.cookie-title {
+  margin: 0;
+  color: var(--ink);
+  font-size: .8rem;
+  font-weight: 700;
+  letter-spacing: .01em;
+  grid-column: 1;
+}
+.cookie-text {
+  margin: 0;
+  color: var(--muted);
+  font-size: .78rem;
+  line-height: 1.45;
+  grid-column: 1;
+}
+.cookie-text a {
+  color: var(--forest);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  white-space: nowrap;
+}
+.cookie-actions {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+}
+.cookie-actions .btn {
+  width: 100%;
+  min-height: 34px;
+  padding: 0 12px;
+  font-size: .76rem;
+  border-radius: 8px;
+}
+@media (max-width: 900px) {
+  .cookie-consent { inset: auto 0 0 0; }
+  .cookie-consent-content {
+    width: auto;
+    max-width: none;
+    margin: 0;
+    border-radius: 16px 16px 0 0;
+    padding: 13px 16px 15px;
+    grid-template-columns: 1fr;
+    gap: 6px;
+    box-shadow: 0 -8px 28px rgba(18, 33, 27, .14);
+  }
+  .cookie-title,
+  .cookie-text { grid-column: 1; }
+  .cookie-actions {
+    grid-column: 1;
+    grid-row: auto;
+    flex-direction: row;
+    margin-top: 9px;
+  }
+  .cookie-actions .btn {
+    flex: 1 1 0;
+    min-height: 42px;
+    font-size: .82rem;
+  }
+}
