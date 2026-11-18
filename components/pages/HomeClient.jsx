@@ -113,11 +113,11 @@ export default function HomeClient() {
             <div className="common">
               <figure className="common-main">
                 <Image
-                  src="/img/hostal-entrada-01.jpg"
-                  alt={h.alt.entrance}
+                  src="/img/gal-hostal-exterior1.jpg"
+                  alt={h.alt.exterior}
                   fill
                   sizes="(max-width: 900px) 100vw, 58vw"
-                  style={{ objectFit: 'cover', objectPosition: 'center' }}
+                  style={{ objectFit: 'cover', objectPosition: 'center bottom' }}
                 />
               </figure>
 

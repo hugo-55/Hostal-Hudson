@@ -8,7 +8,7 @@ import { SEO } from '../../lib/seo';
 
 const HOSTAL = [
   { src: '/img/hostal-entrada-01.jpg', alt: 'Entrada de Hostal Hudson con banco de madera y letrero hacia la plaza' },
-  { src: '/img/hostal-living-01.jpg', alt: 'Living de Hostal Hudson con estufa a combustión lenta y sillones verdes' },
+  { src: '/img/hostal-living-01.jpg', alt: 'Living de Hostal Hudson con estufa a pellet y sillones verdes' },
   { src: '/img/hostal-comedor-01.jpg', alt: 'Comedor de madera de Hostal Hudson con mesas servidas para el desayuno' },
   { src: '/img/hostal-comedor-02.jpg', alt: 'Comedor de madera y cocina de Hostal Hudson' },
   { src: '/img/hostal-desayuno-01.jpg', alt: 'Desayuno continental servido en Hostal Hudson' },
